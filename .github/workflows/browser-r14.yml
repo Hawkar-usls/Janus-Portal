@@ -31,8 +31,11 @@ jobs:
       - name: Start local Portal and simulate complete AFK journey
         run: |
           PORT=4173 node tools/dev-server.mjs > /tmp/janus-r14-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           for attempt in $(seq 1 30); do
             if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
             sleep 1
           done
-          PORTAL_URL=http://127.0.0.1:4173/ node tools/browser-afk-game-r14-check.mjs
+          curl --fail --silent http://127.0.0.1:4173/ >/dev/null
+          timeout 90s env PORTAL_URL=http://127.0.0.1:4173/ node tools/browser-afk-game-r14-check.mjs
