@@ -458,7 +458,7 @@ class SphericalImageProvider {
     gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,source);
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
     this.camera={heading:0,pitch:0,zoom:0};
     const uni=k=>gl.getUniformLocation(program,k);
@@ -565,6 +565,7 @@ export class Merged360Provider {
     if(!adapter)throw new Error('Неизвестный провайдер панорамы '+candidate.provider);
     this.current?.stopRotation();
     this.current=adapter;
+    this.currentProviderId=candidate.provider;
     await adapter.show(candidate,container);
   }
   getPose(){return this.current?.getPose()||{heading:0,pitch:0,zoom:0};}
