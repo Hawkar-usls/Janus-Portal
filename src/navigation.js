@@ -93,7 +93,7 @@ export async function findNext({
     if (signal?.aborted) throw new DOMException('Search cancelled', 'AbortError');
     const radiusKm = radii[i];
     if (i) onExpand({radiusKm, previousRadiusKm: radii[i - 1], step: i});
-    const results = await searchAtRadius({origin, radiusKm, visited, random, signal});
+    const results = await searchAtRadius({origin, radiusKm, visited, visitedPoints, minSeparationKm, random, signal});
     if (signal?.aborted) throw new DOMException('Search cancelled', 'AbortError');
     const next = chooseCandidate(results, origin, radiusKm, visited, random, visitedPoints, minSeparationKm);
     if (next) return {...next, searchRadiusKm: radiusKm, expansions: i};
