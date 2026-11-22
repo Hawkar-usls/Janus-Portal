@@ -71,6 +71,8 @@ export function installDiscovery({
         card.append(make('span','card-meta',isTours
           ?item.subtitle+' · '+item.stops.length+' остановок'
           :item.country));
+        if(isTours)card.append(make('span','card-route',
+          item.stops.slice(0,3).map(s=>s.name).join(' · ')+(item.stops.length>3?' · …':'')));
         card.append(make('span','card-action',isTours?'▶ Начать экскурсию':'↪ Исследовать'));
         card.addEventListener('click',()=>isTours?onTour(item):onDestination(item));
         grid.append(card);
