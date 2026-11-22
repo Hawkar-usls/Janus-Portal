@@ -1,3 +1,12 @@
+## R8 published unified gateway — 2026-11-22
+
+- [PR #18](https://github.com/Hawkar-usls/Janus-Portal/pull/18) merged into main as `4c13009d0fb766ad1d6d48c24edf7712379164bf`. [GitHub Pages run 45025652089](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45025652089): **SUCCESS**.
+- Public URL: https://hawkar-usls.github.io/Janus-Portal/?gateway=r8-4c13009d. The HTML and `./src/app.js` return HTTP 200 and the original R2 **five imports are unchanged**.
+- **36/36 tests PASS.** Deployed HTTPS Edge/Playwright: DPRK & Giza source cards, safe external links and missing-Google-key gate PASS; actual Fes 360 Panoramax & natural gaze PASS; mocked Pyongyang no-photo result resets Start, no fictitious visits; Edge mobile 390px gateway layout PASS; **0 page JS exceptions**.
+- The gateway provides a **unified source/destination UI**, not a universal media rehosting proxy. Panoramax can be viewed inside the unchanged JANUS R2 player, Google via official Maps key, while DPRK Panorama / Harvard Giza 3D / Egypt Ministry media use source-owned external links. Embed/redistribution rights not established; don't attempt unauthorized framing or scraping.
+- **Owner device not retested**. Confirm normal R2 Start and gateway separately before further changes; in case of user-site failure, revert R8 to R7 and inspect error. R3–R5 remain archived, wallet and main-site tab gates stay open.
+- Full spec: [UNIFIED_SOURCE_GATEWAY_R8.md](UNIFIED_SOURCE_GATEWAY_R8.md), browser regression: `tools/browser-gateway-check.mjs`.
+
 ## R8 — Unified Source Gateway, one Portal interface — 2026-11-22
 
 - User requested a **universal gateway** so Panoramax, Google and North Korea/Cairo/Africa external 360/3D tours are discoverable in one JANUS interface, after owner had explicitly confirmed R2 reliability and earlier R3–R5 had broken JavaScript initialization.
