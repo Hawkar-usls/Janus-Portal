@@ -1,3 +1,13 @@
+## R13 LIVE on public HTTPS — one automatic three-source location mixer (2026-11-22)
+
+- [PR #25](https://github.com/Hawkar-usls/Janus-Portal/pull/25) squash merged main as `74f5c86ae360498a142492e6f28f8bd607ddc12b`; [main CI run 45033878317](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45033878317) **55/55 PASS**; [Pages 45033878318](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45033878318) **SUCCESS**.
+- Live: https://hawkar-usls.github.io/Janus-Portal/?mix=r13-74f5c86 . Public HTML and both SHA-coherent JS/CSS HTTP 200; app.js still exactly FIVE original R2 import paths.
+- **REAL PUBLIC HTTPS Edge E2E** `tools/browser-merged-r13-check.mjs`: ONE automatically mixed list of **20 distinct currently available regions** across 39 known anchors; Panoramax 19 / KartaView 7 / Wikimedia Commons 1 provider-covered areas overlap, so totals NOT additive. No visible provider selection. Successfully rendered ACTUAL KartaView sphere Fes + Wikimedia 2:1 San Diego photos inside JANUS with correct sky orientation and author/license/source attribution; original Fes Start and fullscreen/exit PASS; mobile no provider selector; **ZERO uncaught JS errors**.
+- WebGL equirectangular display, smooth R2 camera, pause safety and proper CC credits tested. All three free providers checked with ONE refresh and five-minute idle refresh. No random country entries, stale source availability, or client-side J Coins.
+- **Mapillary not integrated**: developer token and browser/rights audit required. **Google not in automatic background pool**: paid Street View only optional explicit manual consent + user restricted key, max four API metadata requests during manual journey. Do not invent a key or perform uncontrolled paid scans.
+- Owner own-browser acceptance STILL PENDING. Confirm one geographical list, Refresh across all sources, visible actual 360, source attribution and fullscreen. If owner sees old UI, use fresh query URL / Ctrl+F5 and inspect any failure status. Source counts change; known centres only, not global world inventory.
+- Full changelog [MIXED_SOURCES_R13.md](MIXED_SOURCES_R13.md); original R3–R5 UI modules remain archived.
+
 ## R13 — unified provider mixer without source selection (2026-11-22)
 
 - Latest owner request: all source panoramas intermixed by location, one Update for every source together, zero visible provider selection.
