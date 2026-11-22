@@ -35,5 +35,9 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
+      # Artifact metadata is occasionally not visible immediately after a 200 OK
+      # upload. Give GitHub's Actions artifact index time to become consistent.
+      - name: Wait for Pages artifact indexing
+        run: sleep 20
       - id: deployment
         uses: actions/deploy-pages@v4
