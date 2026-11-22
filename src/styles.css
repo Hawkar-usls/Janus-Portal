@@ -74,3 +74,34 @@ body.portal-fullscreen-locked{overflow:hidden}
 .source-360-frame canvas{position:absolute;inset:0;width:100%;height:100%}
 .external-360-attribution{position:absolute;bottom:12px;left:12px;right:12px;max-width:min(720px,calc(100% - 24px));display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:9px 11px;color:#e9f7ff;background:rgba(5,20,35,.83);border:1px solid #446278;border-radius:9px;font-size:11px;line-height:1.4;pointer-events:auto}
 .external-360-attribution a{color:#81f4d9;font-weight:700;text-decoration:underline}
+
+/* R14 AFK WANDERER / PASSPORT / WORLD CONQUEST.
+   All game mechanics use the original 360 viewer, original map and local log. */
+.afk-game-control{margin:14px 0 0;padding:13px;border:1px solid #356a6b;border-radius:13px;background:linear-gradient(125deg,#113a3c,#0e2437)}
+.afk-primary{width:100%;min-height:43px;padding:11px 13px;border:1px solid #6bd6bc;border-radius:10px;background:linear-gradient(110deg,#1f5665,#1d4a52);color:#d1fff0;font-weight:750;font-size:12px}
+.afk-primary[aria-pressed=true]{border-color:#9af5cf;background:#1b604b;color:#f3fff7}
+.afk-primary:hover:not(:disabled){filter:brightness(1.12)}
+.afk-game-control small{display:block;margin-top:9px;line-height:1.5;color:#a2cfc7}
+.afk-view-indicator{display:inline-flex;border:1px solid #43ad94;padding:8px 11px;border-radius:20px;color:#aff7d8;background:#173e3a;font-size:11px;white-space:nowrap;letter-spacing:.8px;font-weight:800}
+.afk-view-indicator[hidden]{display:none}
+.travel-game{padding:24px;margin:18px 0}
+.travel-game .game-icon{font-size:28px}
+.travel-game h3{margin:7px 0 0;font-size:18px}
+.game-note{font-size:12px;line-height:1.65;color:#9eb7ca;max-width:850px}
+.passport-numbers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:17px 0 14px}
+.passport-numbers>div{border:1px solid #2d4b5c;border-radius:11px;background:#0b2030;padding:14px 16px}
+.passport-numbers small{display:block;color:#82a9b9;font-size:10px;font-weight:750;letter-spacing:1px}
+.passport-numbers strong{display:block;font-size:clamp(21px,2.8vw,32px);font-variant-numeric:tabular-nums;color:#b0f4dd;margin-top:9px}
+.passport-progress{height:8px;overflow:hidden;border-radius:10px;background:#1a3343;margin-bottom:9px}
+.passport-progress>div{height:100%;width:0;background:linear-gradient(90deg,#53e4ce,#71aeff);transition:width .25s}
+#passportNextLevel{display:block;font-size:11px;color:#96adbf}
+.country-heading{margin-top:28px}
+.country-collection{display:flex;flex-wrap:wrap;gap:9px;margin:15px 0 18px}
+.country-stamp{display:inline-flex;align-items:center;gap:10px;min-height:55px;padding:8px 12px;border:1px solid #386571;border-radius:12px;background:linear-gradient(140deg,#143944,#0b2235);color:#dff6ff;text-align:left}
+.country-stamp:hover{border-color:#68b6a8;background:#1a4652}
+.country-stamp:focus-visible,.afk-primary:focus-visible{outline:2px solid #7af1d2;outline-offset:3px}
+.country-stamp-flag{font-size:25px}
+.country-stamp-detail strong{display:block;font-size:12px}
+.country-stamp-detail small{display:block;margin-top:3px;color:#91c2bf;font-size:10px}
+.game-warning{display:block;padding-top:10px;border-top:1px solid #264152;color:#829eaf;font-size:11px;line-height:1.6}
+@media(max-width:650px){.travel-game{padding:17px}.passport-numbers{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.passport-numbers>div{padding:12px}.country-stamp{flex:1 1 140px}.afk-view-indicator{font-size:9px;padding:5px 7px}}
