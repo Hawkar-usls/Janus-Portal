@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": null,
-  "engineering_status": "R11_PUBLISHED__CI_MAIN_45_OF_45__PUBLIC_EDGE_LIVE_CATALOGUE_19_OF_38_FULLSCREEN_MOBILE_PASS",
+  "branch_under_review": "fix/r12-live-catalogue-refresh-cache-and-google-key-help",
+  "engineering_status": "R12_CACHE_COHERENT_PAGES_BUILD__LOCAL_50_50__EDGE_API_ERROR_RETRY_TIMEOUT_PASS__CI_DEPLOY_PENDING",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -51,7 +51,12 @@
     "r11_browser": "Yaksa real Edge returned 19/38 fresh 360 area hits, Cairo and Pyongyang excluded; Fes real 360 and R10 fullscreen PASS. Mock changed Fes to Kathmandu then empty and HTTP 503, and no stale entries remained; Google auto paid catalogue disabled; mobile PASS, zero JS page errors.",
     "r11_single_runtime": "Original R2 ./src/app.js five imports, one source/origin search, R9 in-viewer feedback, R10 fullscreen, viewer, history and JC server-only policy unchanged; manual coordinate action outside confirmed list.",
     "r11_release": "PR #22 squash-merged as 5b0f959d26905832fef3cb9737f3e61006ac3b6b; main CI run 45028842182 SUCCESS 45/45; GitHub Pages run 45028842222 SUCCESS. Original live HTML and app.js both HTTP 200, five R2 imports retained.",
-    "r11_public_browser": "Public HTTPS in Yaksa Edge: live API confirmed 19 of 38 known geographic starts; no Pyongyang Cairo Giza Nairobi etc where source lacks 360. Fes real panorama 34.06167,-4.97711 and fullscreen PASS; mocked source refresh swaps Fes->Kathmandu, empty, HTTP 503 removes all stale options. Google bulk API disabled/manual only, mobile 390px PASS, 0 JS page errors."
+    "r11_public_browser": "Public HTTPS in Yaksa Edge: live API confirmed 19 of 38 known geographic starts; no Pyongyang Cairo Giza Nairobi etc where source lacks 360. Fes real panorama 34.06167,-4.97711 and fullscreen PASS; mocked source refresh swaps Fes->Kathmandu, empty, HTTP 503 removes all stale options. Google bulk API disabled/manual only, mobile 390px PASS, 0 JS page errors.",
+    "r12_cache_root_cause": "Owner screenshot showed stuck R11 placeholder and native-style refresh button. Public GitHub Pages headers Cache-Control: max-age=600 on HTML, app.js, CSS: likely old JS/CSS + new HTML. Specific user browser cache not directly inspected.",
+    "r12_cache_fix": "Pages dist build injects same GITHUB_SHA version query into app.js and styles.css HTML references while source original R2 script path and 5 imports remain untouched.",
+    "r12_refresh_fix": "18-second overall Panoramax scan timeout, clear HTTP failure/timeout status, refresh enabled during in-flight scan and every click cancels prior generation; 1.5s silent click throttling discovered in local browser regression and removed.",
+    "r12_google": "Official Maps Demo Key does not include Street View. Google official key setup link and instructions added to existing settings; no fake or shared key committed, real Google provider remains opt-in with owner-issued restricted key/billing.",
+    "r12_local_tests": "npm run verify 50/50 PASS. Real Edge mock 503->manual retry->source restored, stuck fetch 18sec timeout with usable retry, Google setup link and no JS errors. R11 real catalogue/photo & fullscreen regression in progress."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
@@ -113,7 +118,12 @@
     "r11_no_stale": "PASS_PUBLIC_HTTPS_EDGE_API_FEED_SWAP_EMPTY_503",
     "r11_google_no_paid_auto": "PASS_MANUAL_ONLY_NO_BILLABLE_AUTOMATIC_GOOGLE_CATALOGUE",
     "r11_public_pages": "PASS_PUBLIC_HTTPS_EDGE_AND_PAGES_45028842222",
-    "r11_user_browser": "PENDING_OWNER_DEVICE_CONFIRMATION"
+    "r11_user_browser": "PENDING_OWNER_DEVICE_CONFIRMATION",
+    "r12_unit_tests": "PASS_LOCAL_50_OF_50",
+    "r12_browser": "PASS_LOCAL_EDGE_HTTP_503_RECOVERY_AND_STALLED_18SEC_TIMEOUT",
+    "r12_google_auth": "PENDING_OWNER_GOOGLE_API_KEY_NO_DEMO_STREETVIEW",
+    "r12_pages_versioned_assets": "PENDING_PAGES_RUN",
+    "r12_user_browser": "PENDING_OWNER_CONFIRMATION"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -130,7 +140,7 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "R11 deployed and publicly tested from Yaksa. Owner to verify the dropdown on own browser, manual refresh and 360 fullscreen. Count may vary by provider availability. 38 known centres only, not global complete coverage; metadata not independent geotag truth. Future sources require licensed APIs and independent photo provenance checks.",
+  "next": "R12: finish R11 regression, PR CI merge, Pages successful public deployment, verify public deployed JS and CSS have SAME build SHA despite GitHub Pages max-age=600, full Edge R11+R12 browser tests; user to try new URL and their Google Cloud restricted JS API key. No universal Google Maps demo key supports Street View.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
