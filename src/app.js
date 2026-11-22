@@ -87,7 +87,9 @@ function scheduleNext() {
 function showLocation(candidate) {
   $('coords').textContent = candidate.lat.toFixed(5) + ', ' + candidate.lng.toFixed(5);
   $('placeLabel').textContent = candidate.provider === 'google' ? 'Google Street View' : 'Panoramax 360°';
-  $('mapLink').href = 'https://www.openstreetmap.org/?mlat=' + candidate.lat + '&mlon=' + candidate.lng + '#map=15/' + candidate.lat + '/' + candidate.lng;
+  $('mapLink').href = candidate.provider === 'google'
+    ? 'https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=' + candidate.lat + ',' + candidate.lng
+    : 'https://www.openstreetmap.org/?mlat=' + candidate.lat + '&mlon=' + candidate.lng + '#map=15/' + candidate.lat + '/' + candidate.lng;
   $('mapLink').hidden = false;
 }
 async function travel() {
@@ -133,7 +135,7 @@ async function travel() {
       ? 'Поиск расширен ' + candidate.expansions + ' раз(а)'
       : 'Найдено в начальном радиусе');
     message('✓ Новая панорама • прыжок ' + jumpDistance.toFixed(2) + ' км' +
-      (saved.added ? ' • сохранено в локальной истории' : ' • локальное сохранение недоступно или точка повторная') +
+      (candidate.provider === 'google' ? ' • Google: только статистика текущей сессии' : saved.persisted ? ' • сохранено в локальной истории' : ' • локальное сохранение недоступно') +
       '. JC пока не начисляются.');
     renderStats();
     if (!state.paused) {
@@ -212,7 +214,7 @@ function updateMap() {
   }
   if (state.mapLayer) state.map.removeLayer(state.mapLayer);
   state.mapLayer = L.layerGroup().addTo(state.map);
-  const entries = state.history.slice(-300);
+  const entries = state.history.filter(e => e.provider === 'panoramax').slice(-300);
   if (!entries.length) return;
   const points = entries.map(e => [e.lat, e.lng]);
   L.polyline(points, {color: '#4cbed8', weight: 2, opacity: 0.7}).addTo(state.mapLayer);
@@ -265,7 +267,9 @@ function renderHistory() {
     const sub = document.createElement('small'); sub.textContent = e.lat.toFixed(5) + ', ' + e.lng.toFixed(5) +
       ' · ' + new Date(e.visitedAt).toLocaleString('ru-RU');
     const link = document.createElement('a'); link.target = '_blank'; link.rel = 'noopener noreferrer';
-    link.href = 'https://www.openstreetmap.org/?mlat=' + e.lat + '&mlon=' + e.lng + '#map=15/' + e.lat + '/' + e.lng;
+    link.href = e.provider === 'google'
+      ? 'https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=' + e.lat + ',' + e.lng
+      : 'https://www.openstreetmap.org/?mlat=' + e.lat + '&mlon=' + e.lng + '#map=15/' + e.lat + '/' + e.lng;
     link.textContent = 'Карта ↗';
     details.append(title, sub); row.append(num, details, link); list.append(row);
   }
