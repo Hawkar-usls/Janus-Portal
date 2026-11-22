@@ -34,6 +34,7 @@
           <div class="viewer-toolbar">
             <div><span class="label">ТЕКУЩАЯ ПАНОРАМА</span><h2 id="placeLabel">Ждём первого прыжка</h2></div>
             <div class="viewer-toolbar-actions">
+              <span class="afk-view-indicator" id="afkIndicator" hidden>🌙 AFK</span>
               <span class="status" id="runStatus"><span class="dot"></span> Ожидание</span>
               <button id="fullscreenBtn" type="button" class="viewer-fullscreen-btn" aria-label="Развернуть панораму на весь экран" aria-pressed="false" title="На весь экран">⛶ <span class="fullscreen-label">На весь экран</span></button>
             </div>
@@ -154,6 +155,10 @@
             <small id="attentionStatus">Пока нет результатов анализа</small>
           </div>
           <button id="boost" class="secondary wide" aria-pressed="false">⚡ Турбо ×2: выключено</button>
+          <div class="afk-game-control">
+            <button id="afkBtn" type="button" class="afk-primary" aria-pressed="false" disabled>🌙 Начать AFK-экспедицию</button>
+            <small id="afkNote" role="status" aria-live="polite">После проверки источников можно запустить самостоятельное путешествие по доступным 360°.</small>
+          </div>
           <div class="controls"><button id="startBtn" class="primary">▶ Запустить</button><button id="pauseBtn" class="secondary" disabled>Ⅱ Пауза</button><button id="nextBtn" class="secondary" disabled>↪ Прыжок</button></div>
           <small class="footnote">Отсутствие результата поиска не означает полного отсутствия панорам: данные источников могут быть неполными. Google требует квоты и биллинг.</small>
         </aside>
@@ -175,6 +180,29 @@
           <div class="achievement-grid" id="achievements"></div>
           <p class="muted">Глобальный рейтинг и награды JC появятся после подключения авторизации и серверного кошелька сайта.</p>
         </div>
+      </section>
+      <section class="panel travel-game" id="passportGame" aria-label="JANUS Passport и World Conquest">
+        <div class="section-heading">
+          <div><span class="label">JANUS PASSPORT · WORLD CONQUEST</span><h2>Паспорт исследователя</h2></div>
+          <span class="game-icon" aria-hidden="true">🛂</span>
+        </div>
+        <p class="game-note">Личные открытия и исследованные регионы — по координатам источников. Страны определяются приблизительно возле известных стартовых точек; это не GPS-аттестация и не глобальный рейтинг.</p>
+        <div class="passport-numbers">
+          <div><small>УРОВЕНЬ</small><strong id="passportLevel">1</strong></div>
+          <div><small>ИГРОВОЙ XP</small><strong id="passportXp">0</strong></div>
+          <div><small>СТРАН ОТКРЫТО</small><strong id="passportCountries">0</strong></div>
+          <div><small>ПАНОРАМ</small><strong id="passportViews">0</strong></div>
+        </div>
+        <div class="passport-progress"><div id="passportProgress" style="width:0%"></div></div>
+        <small id="passportNextLevel">До следующего уровня: 100 XP</small>
+        <div class="section-heading country-heading">
+          <div><span class="label">WORLD CONQUEST · ЛОКАЛЬНАЯ КАРТА</span><h3>Открытые страны</h3></div>
+        </div>
+        <div class="country-collection" id="passportCountryList">
+          <p class="muted">Страны появятся после открытия настоящих панорам.</p>
+        </div>
+        <p class="game-note" id="passportSources">Источник посещений: —</p>
+        <small class="game-warning">XP и достижения — локальная игровая статистика, не J Coins. Глобальные рейтинги и начисление JC требуют проверки аккаунта на сервере.</small>
       </section>
       <section class="history panel">
         <div class="history-heading"><div><span class="label">ЖУРНАЛ ЭКСПЕДИЦИИ</span><h2>Посещённые места</h2></div>
