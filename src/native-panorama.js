@@ -95,6 +95,7 @@ export class NativePanorama {
   mount(candidate){
     this.container.replaceChildren();
     const root=el('div');
+    root.__janusViewer=this; // local browser diagnostics; never contains Google imagery
     root.className='native-panorama';root.style.cssText='position:relative;width:100%;height:100%;overflow:hidden;background:#091522';
     const canvas=el('canvas');
     canvas.style.cssText='width:100%;height:100%;display:block;touch-action:none;cursor:grab';
