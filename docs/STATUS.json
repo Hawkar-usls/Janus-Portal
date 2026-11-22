@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": null,
-  "engineering_status": "R4_LIVE_AND_PAGES_CACHE_REPAIR_PASS__USER_NETWORK_SYMPTOM_UNREPRODUCED",
+  "branch_under_review": "fix/start-reliability-native-viewer-r5",
+  "engineering_status": "R5_NATIVE_PANORAMA_AND_QUICK_START_LOCAL_PASS_36_OF_36__PR_CI_AND_PAGES_PENDING",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -39,7 +39,11 @@
     "extreme_r4_https_browser": "Edge/Playwright on deployed HTTPS: 19 tours and 70 places including 7 extreme tours and 33 extreme locations, India/Africa regional filters, fullscreen and simulated mobile ESC PASS; mocked Cairo+Spiti zero coverage caused no fake visits/JC; no uncaught JavaScript errors.",
     "extreme_r4_https_photo": "Deployed HTTPS version opened a genuine Panoramax 360 image at Reine Norway (67.92775, 13.07143), recorded one local unique visit and started gaze; optional live smoke exited 0.",
     "pages_cache_repair": "PR #13 merged as 6430bd40035839d42b1f8194353f4cec7b9ba087; GitHub Pages run 45016735561 success; revisioned assets /assets/6430bd400358/app.js HTTP 200; browser cache mismatch risk reduced.",
-    "pages_live_retest": "Edge remote browser both desktop/mobile with fresh Pages: 19 tours, 70 places, regional India/Africa filters, fullscreen/mobile ESC, fake coverage safety PASS; real 360 Reine at 67.92775, 13.07143 loaded, gaze started."
+    "pages_live_retest": "Edge remote browser both desktop/mobile with fresh Pages: 19 tours, 70 places, regional India/Africa filters, fullscreen/mobile ESC, fake coverage safety PASS; real 360 Reine at 67.92775, 13.07143 loaded, gaze started.",
+    "r5_startup_fix": "Verified 360 Reine source direct quick-start button in hero; self-contained WebGL equirectangular renderer with Panoramax photographer+CC BY-SA attribution; fallback static when WebGL unavailable; no jsdelivr library.",
+    "r5_network_guard": "Panoramax metadata requests capped 6.5s, first found candidate returns early; overall search capped 18s and returns Start button with actionable error instead of requiring extra Stop click.",
+    "r5_google_fix": "GoogleProvider.searchAtRadius now accepts probeCount, visitedPoints and minSeparationKm; mocked official service test passes, live Google API key not tested.",
+    "r5_local_browser": "Yaksa Edge: clean desktop first-click real 360 + gaze PASS; mobile with api.panoramax.xyz/cdn.jsdelivr/unpkg blocked still opened 360 image + gaze PASS; no WebGL device presented credited static image. Photo rendered upright after fixing texture flip. Zero uncaught JavaScript exceptions in test."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_33_OF_33_RUN_45015425907",
@@ -47,7 +51,7 @@
     "real_browser_panoramax_rotation": "PASS_EDGE_NATURAL_GAZE_ZOOM_PAUSE_RESUME",
     "real_browser_google_key_restricted": "PENDING",
     "github_actions_ci": "PASS_MAIN_RUN_45015425907",
-    "github_pages_publish": "PASS_R4_PAGES_RUN_45015425891",
+    "github_pages_publish": "R4_OLD_SITE_LIVE__R5_PENDING_RELEASE",
     "main_site_tab": "BLOCKED_SITE_EDITOR_ACCESS",
     "main_site_account_auth": "BLOCKED_SITE_SOURCE",
     "server_authoritative_J_coins": "BLOCKED_WALLET_API_AND_RULE_APPROVAL",
@@ -71,7 +75,13 @@
     "extreme_live_360": "PASS_DEPLOYED_HTTPS_EDGE_PANORAMAX_REINE_67_92775_13_07143",
     "extreme_all_locs_360": "OPEN_ISSUE_12_SOURCE_COVERAGE_UNVERIFIED_INDIA_AFRICA",
     "cache_repair": "PASS_MAIN_34_34_UNIT__PAGES_RUN_45016735561__HTTPS_EDGE_SMOKE",
-    "end_user_network": "UNKNOWN_USER_REPORTED_NOT_WORKING__YAKSA_CANNOT_REPRODUCE"
+    "end_user_network": "UNKNOWN_USER_REPORTED_FAILURE__CANNOT_VERIFY_USER_BROWSER_YET",
+    "r5_unit_tests": "PASS_LOCAL_36_OF_36",
+    "r5_first_click": "PASS_EDGE_LOCAL_REAL_REINE_360",
+    "r5_blocked_cdns": "PASS_EDGE_BLOCKED_JS_CDN_AND_METADATA_API",
+    "r5_webgl_unavailable": "PASS_EDGE_STATIC_IMAGE_FALLBACK",
+    "r5_google_mock": "PASS_UNIT_MOCKED_STREET_VIEW_SERVICE",
+    "r5_google_live": "PENDING_RESTRICTED_KEY"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -88,7 +98,7 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "Ask end user what fails: GitHub Pages connection vs blank UI vs no panoramas in rural India/Africa. The site is verified on Yaksa only; do not claim universal access. If domain blocked on user's network, arrange a second hosting domain with authorized credentials. Keep provider coverage issue #12, existing site tab/wallet issues open.",
+  "next": "Review R5 PR and CI; merge, deploy Pages, run tools/browser-start-check.mjs and tools/browser-discovery-check.mjs on HTTPS with optional Playwright; verify first-click without CDN/metadata and actual panorama photo. If user still cannot open, get browser error and inspect network restrictions or provide alternate authorized host.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
