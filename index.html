@@ -45,7 +45,7 @@
           <p class="notice" id="notice" role="status" aria-live="polite">Каждый прыжок ведёт к новой панораме. История записывается только после загрузки изображения.</p>
         </section>
         <aside class="settings panel">
-          <div class="panel-title"><div><span class="label">КОНТРОЛЬ МИССИИ</span><h2>Настройки</h2></div><span class="gear" aria-hidden="true">⚙</span></div>
+          <div class="panel-title"><div><span class="label">КОНТРОЛЬ МИССИИ</span><h2>Поиск панорам</h2></div><span class="gear" aria-hidden="true">⚙</span></div>
           <label for="provider">Источник панорам</label>
           <select id="provider"><option value="panoramax">Panoramax · открытые 360°</option><option value="google">Google Street View · API</option></select>
           <div id="googleKeyWrap" hidden><label for="googleKey">Google Maps API-ключ</label><input type="password" id="googleKey" autocomplete="off" placeholder="Ограниченный по домену браузерный ключ"><small>Ключ не сохраняется; Google API может тарифицироваться.</small></div>
@@ -103,14 +103,7 @@
             <option value="random-verified">🌍 Случайный проверенный 360° из новых регионов</option>
             <option value="custom">Свои координаты</option>
           </select>
-          <small>Новые точки R7 (Северная Корея, Каир, часть Африки) — только географические ориентиры. Подтверждённого Panoramax 360° там пока нет: поиск ограничен ближайшими 40 км, чтобы не показывать другую страну под неверным названием. Старые проверенные регионы и Париж работают как раньше.</small>
-          <div class="external-panorama-links">
-            <strong>🌐 Альтернативные 360° туры (открываются у правообладателей)</strong>
-            <p><a href="https://www.north-korea-travel.com/dprk-panorama.html" target="_blank" rel="noopener noreferrer">🇰🇵 Панорамы Северной Кореи: Пхеньян, Кэсон и другие места ↗</a></p>
-            <p><a href="https://giza.fas.harvard.edu/giza3d/" target="_blank" rel="noopener noreferrer">🇪🇬 Гиза: виртуальная экскурсия Digital Giza (Гарвард) ↗</a></p>
-            <p><a href="https://egymonuments.gov.eg/en/media-hub/" target="_blank" rel="noopener noreferrer">🇪🇬 Египет: 360° медиатека Министерства туризма ↗</a></p>
-            <small>Внешние туры не начисляют посещения JANUS и не передают фотографии в Портал. Марокко (Фес и Мерзуга) доступно в обычном просмотрщике 360°.</small>
-          </div>
+          <small>Выбирай место и нажимай «Запустить» — все 360° открываются здесь через выбранный источник. Для Северной Кореи, Каира и части Африки покрытие Panoramax пока не подтверждено; поиск рядом ограничен, чтобы не выдавать фотографии другой страны за нужную точку.</small>
           <div id="customOrigin" hidden><label for="latlng">Широта, долгота</label><input id="latlng" placeholder="48.8647, 2.3404" spellcheck="false"></div>
           <div class="range-top"><label for="radius">Начальный радиус</label><strong id="radiusVal">5 км</strong></div>
           <input id="radius" type="range" min="1" max="50" step="1" value="5">
@@ -141,40 +134,6 @@
           <small class="footnote">Отсутствие результата поиска не означает полного отсутствия панорам: данные источников могут быть неполными. Google требует квоты и биллинг.</small>
         </aside>
       </div>
-      <section id="sourceGateway" class="panel source-gateway" aria-label="Единый шлюз панорам и виртуальных экскурсий">
-        <div class="gateway-header">
-          <div><span class="label">JANUS GATEWAY · ЕДИНОЕ МЕНЮ ИСТОЧНИКОВ</span><h2>Один Портал — разные миры</h2>
-            <p>Выбери место. Доступные 360° можно открыть здесь, а специальные экскурсии — на официальном сайте источника. Доступность и формат обозначены отдельно.</p>
-          </div>
-          <span class="gateway-symbol" aria-hidden="true">🌐</span>
-        </div>
-        <div class="gateway-controls">
-          <label for="gatewayPlace">Страна или место</label>
-          <select id="gatewayPlace" aria-label="Выбрать направление шлюза">
-            <optgroup label="🇰🇵 Северная Корея">
-              <option value="pyongyang">Пхеньян</option><option value="kaesong">Кэсон</option><option value="wonsan">Вонсан</option>
-            </optgroup>
-            <optgroup label="🇪🇬 Египет">
-              <option value="cairo">Каир</option><option value="giza">Пирамиды Гизы</option><option value="saqqara">Саккара</option>
-              <option value="alexandria">Александрия</option><option value="luxor">Луксор</option>
-            </optgroup>
-            <optgroup label="🌍 Африка">
-              <option value="fes">Фес, Марокко</option><option value="merzouga">Мерзуга и Сахара</option>
-              <option value="nairobi">Найроби, Кения</option><option value="zanzibar">Занзибар, Танзания</option>
-              <option value="capetown">Кейптаун, ЮАР</option>
-            </optgroup>
-            <optgroup label="🌏 Азия и Южная Америка">
-              <option value="pune">Пуна, Индия</option><option value="kathmandu">Катманду, Непал</option>
-              <option value="cebu">Себу, Филиппины</option><option value="georgetown">Пенанг, Малайзия</option>
-              <option value="cuenca">Куэнка, Эквадор</option>
-            </optgroup>
-            <option value="paris">Париж — контрольный маршрут</option>
-          </select>
-        </div>
-        <p class="gateway-status" id="gatewayStatus" role="status" aria-live="polite">Выбери место, чтобы увидеть источники.</p>
-        <div class="gateway-sources" id="gatewaySources" aria-label="Способы просмотра выбранного места"></div>
-        <p class="gateway-disclaimer">Шлюз объединяет выбор источника, но не копирует чужие экскурсии. Внешние туры открываются на своих сайтах; посещения JANUS и J Coins по ним не записываются. Google требует собственного официального API-ключа.</p>
-      </section>
       <section class="stats" aria-label="Статистика экспедиции">
         <div class="stat"><span>УНИКАЛЬНЫХ МЕСТ</span><strong id="statUnique">0</strong><small>отдельных панорам</small></div>
         <div class="stat"><span>УДАЧНЫХ ПРЫЖКОВ</span><strong id="statJumps">0</strong><small>успешно открытых</small></div>
