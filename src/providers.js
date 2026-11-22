@@ -388,7 +388,7 @@ export async function probeCommons360(origin,{signal,timeoutMs=7000}={}){
 class SphericalImageProvider {
   constructor(){this.camera={heading:0,pitch:0,zoom:0};this.drawPending=0;this.cleanup=null;}
   async show(candidate,container){
-    this.stopRotation();
+    this.dispose();
     if(!candidate?.imageUrl||!isHttpsHost(candidate.imageUrl,
       candidate.provider==='commons'?commonsImageHost:kvImageHost))
       throw new Error('Источник не предоставил разрешённый URL панорамы');
@@ -516,7 +516,11 @@ class SphericalImageProvider {
   getPose(){return {...this.camera};}
   setPose(p){this.camera={heading:p.heading,pitch:p.pitch,zoom:p.zoom};this.render?.();}
   getFrontHeading(){return this.camera.heading;}
-  stopRotation(){if(this.cleanup){this.cleanup();this.cleanup=null;}if(this.drawPending)cancelAnimationFrame(this.drawPending);this.drawPending=0;}
+  // Pause stops the GazeDirector, NOT WebGL drawing resources.
+  // Destroying them here would blank the panorama when clicking "Пауза".
+  stopRotation(){}
+  dispose(){if(this.cleanup){this.cleanup();this.cleanup=null;}
+    if(this.drawPending)cancelAnimationFrame(this.drawPending);this.drawPending=0;}
 }
 export async function probeMerged360(origin,{signal,includeCommons=true,includeKartaView=true}={}){
   const queries=[
@@ -563,7 +567,7 @@ export class Merged360Provider {
   async show(candidate,container){
     const adapter=this.providers[candidate.provider];
     if(!adapter)throw new Error('Неизвестный провайдер панорамы '+candidate.provider);
-    this.current?.stopRotation();
+    if(this.current&&this.current!==adapter)this.current.dispose?.();
     this.current=adapter;
     this.currentProviderId=candidate.provider;
     await adapter.show(candidate,container);
