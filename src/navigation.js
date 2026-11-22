@@ -103,3 +103,30 @@ export async function findNext({
   error.checkedRadii = radii;
   throw error;
 }
+
+// R14 AFK: choose a fresh geographic region only from currently source-verified
+// candidate panoramas. Never use unverified place labels or paywalled Google
+// for passive cross-region jumps. Pure and independently testable.
+export function chooseAfkRegion({
+  coverage, centers, history = [], exhausted = new Set(),
+  from, maxPhotoDistanceKm = 5
+}) {
+  if (!coverage || !centers || !from) return null;
+  const visited = new Set(history.map(visitKey));
+  const choices = [];
+  for (const [key, photos] of coverage) {
+    const center = centers[key];
+    if (!center || exhausted.has(key)) continue;
+    for (const photo of photos || []) {
+      if (!photo || !['panoramax', 'kartaview', 'commons'].includes(photo.provider)) continue;
+      if (visited.has(visitKey(photo))) continue;
+      if (!Number.isFinite(photo.lat) || !Number.isFinite(photo.lng)) continue;
+      if (distanceKm(center, photo) > maxPhotoDistanceKm + 0.005) continue;
+      if (history.some(point => distanceKm(point, photo) < 0.02)) continue;
+      choices.push({key, photo, km: distanceKm(from, center)});
+    }
+  }
+  choices.sort((a,b) => a.km - b.km || a.key.localeCompare(b.key) ||
+    a.photo.provider.localeCompare(b.photo.provider));
+  return choices[0] || null;
+}

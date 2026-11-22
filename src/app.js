@@ -1,6 +1,6 @@
-import {findNext, distanceKm, visitKey} from './navigation.js';
+import {findNext, distanceKm, visitKey, chooseAfkRegion} from './navigation.js';
 import {Merged360Provider, probeMerged360} from './providers.js';
-import {readHistory, addVisit, getStats, STORAGE_KEY} from './storage.js';
+import {readHistory, addVisit, getStats, getPassport, STORAGE_KEY} from './storage.js';
 import {GazeDirector, buildGazePlan} from './gaze.js';
 import {analyzeInterest} from './attention.js';
 
@@ -69,8 +69,40 @@ const state = {
   turbo: false, provider: null, current: null, origin: null,
   abort: null, timer: null, gaze: null, interest: null, planBaseSeconds: 16,
   generation: 0, map: null, mapLayer: null, leaflet: null, limitedCoverage: false,
-  manualMode: false, startCandidate: null, selectedSourceKey: null
+  manualMode: false, startCandidate: null, selectedSourceKey: null,
+  afk: false, afkExhausted: new Set(), afkSwitches: 0
 };
+
+// Local-only Passport attribution: geotags close to an audited geographic
+// anchor. Do not claim accurate geopolitical boundaries from image metadata.
+const PASSPORT_COUNTRY_GROUPS = [
+  {code:'FR',name:'Франция',flag:'🇫🇷',keys:['paris','rennes','lyon']},
+  {code:'UA',name:'Украина',flag:'🇺🇦',keys:['kyiv']},
+  {code:'JP',name:'Япония',flag:'🇯🇵',keys:['tokyo']},
+  {code:'US',name:'США',flag:'🇺🇸',keys:['newyork','sandiego']},
+  {code:'BR',name:'Бразилия',flag:'🇧🇷',keys:['rio']},
+  {code:'IN',name:'Индия',flag:'🇮🇳',keys:['pune']},
+  {code:'NP',name:'Непал',flag:'🇳🇵',keys:['kathmandu']},
+  {code:'MA',name:'Марокко',flag:'🇲🇦',keys:['fes','merzouga']},
+  {code:'PH',name:'Филиппины',flag:'🇵🇭',keys:['cebu','busay']},
+  {code:'MY',name:'Малайзия',flag:'🇲🇾',keys:['georgetown','balikpulau','bayanlepas']},
+  {code:'EC',name:'Эквадор',flag:'🇪🇨',keys:['cuenca','sayaussi','ricaurte','banoscuenca','elvalle']},
+  {code:'KP',name:'Северная Корея',flag:'🇰🇵',keys:['pyongyang','kaesong','wonsan']},
+  {code:'EG',name:'Египет',flag:'🇪🇬',keys:['cairo','giza','saqqara','alexandria','luxor']},
+  {code:'KE',name:'Кения',flag:'🇰🇪',keys:['nairobi']},
+  {code:'TZ',name:'Танзания',flag:'🇹🇿',keys:['zanzibar']},
+  {code:'UG',name:'Уганда',flag:'🇺🇬',keys:['kampala']},
+  {code:'ET',name:'Эфиопия',flag:'🇪🇹',keys:['addis']},
+  {code:'SN',name:'Сенегал',flag:'🇸🇳',keys:['dakar']},
+  {code:'NG',name:'Нигерия',flag:'🇳🇬',keys:['lagos']},
+  {code:'NA',name:'Намибия',flag:'🇳🇦',keys:['windhoek']},
+  {code:'ZA',name:'ЮАР',flag:'🇿🇦',keys:['capetown']},
+  {code:'ZW',name:'Зимбабве',flag:'🇿🇼',keys:['victoriafalls']}
+];
+const PASSPORT_ANCHORS=PASSPORT_COUNTRY_GROUPS.flatMap(group=>
+  group.keys.filter(key=>CITY[key]).map(key=>({...CITY[key],
+    code:group.code,name:group.name,flag:group.flag})));
+const passport=()=>getPassport(state.history,PASSPORT_ANCHORS);
 
 // R11: a source-backed list, never the old static/unverified selector.
 // No storage of results: every session queries current Panoramax 360° data.
@@ -228,6 +260,10 @@ function refreshControls(){
   $('refreshCoverageBtn').disabled=state.running;
   $('googleKey').disabled=state.running;
   $('googleConsent').disabled=state.running;
+  $('afkBtn').disabled = !state.afk && !state.running && liveCoverage.size===0;
+  $('afkBtn').setAttribute('aria-pressed',String(state.afk));
+  $('afkBtn').textContent=state.afk?'■ Завершить AFK':'🌙 Начать AFK-экспедицию';
+  $('afkIndicator').hidden=!state.afk;
 }
 function updateRadius(radius, note) {
   $('activeRadius').textContent = Number(radius).toLocaleString('ru-RU') + ' км';
@@ -289,7 +325,40 @@ function viewerFeedback(text, kind='searching') {
   overlay.querySelector('.view-feedback-icon').textContent=kind==='missing'?'⌕':'◌';
   overlay.querySelector('.view-feedback-text').textContent=text;
 }
+// R14 WANDERER: when a real source-backed region is exhausted, select a
+// different currently verified start with an unvisited, spatially distinct
+// panorama. Deterministic near-first order, no random origin menu or paid Google.
+function nextAfkRegion() {
+  return chooseAfkRegion({
+    coverage:liveCoverage,centers:CITY,history:state.history,
+    exhausted:state.afkExhausted,
+    from:state.current||state.origin,
+    maxPhotoDistanceKm:Number($('radius').value)
+  });
+}
+function setAfkMode(value) {
+  state.afk=Boolean(value);
+  $('afkNote').textContent=state.afk
+    ? 'AFK активно: JANUS осматривает снимки и переключается между подтверждёнными регионами без платных Google-запросов.'
+    : 'AFK выключено. Открытые панорамы остаются в паспорте этого браузера.';
+  refreshControls();
+}
+function toggleAfk() {
+  if(state.afk){stop();return;}
+  if(state.running)stop();
+  if(!liveCoverage.has($('originChoice').value)){
+    message('Для AFK сначала дождись подтверждённых панорам в каталоге.',true);
+    return;
+  }
+  state.afkExhausted.clear();
+  state.afkSwitches=0;
+  setAfkMode(true);
+  run();
+  if(!state.running)setAfkMode(false);
+}
 function stop() {
+  state.afk=false;
+  state.afkExhausted.clear();
   viewerFeedback(null);
   state.generation++;
   state.running = false;
@@ -304,6 +373,7 @@ function stop() {
   $('gazeStage').textContent = 'Взгляд остановлен';
   state.busy = false;
   setStatus('Остановлено');
+  $('afkNote').textContent='AFK выключено. Новые открытия сохраняются в локальном паспорте.';
   refreshControls();
   // A long autonomous session cannot keep an old catalogue indefinitely.
   maybeRefreshCoverage();
@@ -386,6 +456,7 @@ async function travel() {
   setStatus('Поиск новой точки…', 'warn');
   viewerFeedback('Ищу доступную 360° панораму в выбранном районе…');
   const origin = state.current || state.origin;
+  let continueAfk=false;
   updateRadius(Number($('radius').value), 'Поиск ещё не посещённых панорам');
   try {
     const visited = new Set(state.history.map(visitKey));
@@ -456,7 +527,31 @@ async function travel() {
   } catch (error) {
     if (error?.name !== 'AbortError' && state.running && generation === state.generation) {
       const noPoints = error?.name === 'NoLocationsError';
-      if (noPoints && state.limitedCoverage) {
+      if(noPoints && state.afk && !state.manualMode) {
+        state.afkExhausted.add(state.selectedSourceKey);
+        const next=nextAfkRegion();
+        if(next){
+          state.selectedSourceKey=next.key;
+          $('originChoice').value=next.key; // Keep the disabled selector in sync with the AFK destination.
+          state.origin={...CITY[next.key]};
+          state.current=null;
+          state.startCandidate=next.photo;
+          state.limitedCoverage=LIMITED_COVERAGE_KEYS.has(next.key);
+          state.afkSwitches++;
+          setStatus('AFK · следующий регион','live');
+          viewerFeedback('🌍 Перехожу к следующему подтверждённому региону…');
+          message('🌙 AFK: текущий район исчерпан. Продолжаю из нового доступного района.');
+          continueAfk=true;
+        }else{
+          state.afk=false;
+          state.running=false;
+          state.paused=false;
+          setStatus('AFK · доступные точки исследованы');
+          viewerFeedback('В текущем подтверждённом каталоге больше нет новых панорам. Обнови список, чтобы продолжить.','missing');
+          message('AFK завершён: новых непосещённых панорам в проверенных стартовых районах не обнаружено. Это не означает, что исследован весь мир.');
+          $('afkNote').textContent='AFK завершён · новых точек в текущем каталоге нет.';
+        }
+      }else if (noPoints && state.limitedCoverage) {
         message('Для выбранного региона в проверенных выборках Panoramax не нашлось новых 360° снимков поблизости (радиус до ' +
           Math.max(MAX_LIMITED_SEARCH_KM, Number($('radius').value)) +
           ' км). Не подменяем их фотографиями другой страны. Выбери другое место в нашем поиске или официальный источник в настройках.', true);
@@ -482,6 +577,7 @@ async function travel() {
           else liveCoverage.delete(state.selectedSourceKey);
           state.running=false;
           state.paused=false;
+          state.afk=false;
           renderLiveOptions();
           updateCoverageStatus();
         }else{
@@ -494,7 +590,15 @@ async function travel() {
       state.busy = false;
       state.abort = null;
       refreshControls();
-      // The gaze timeline (not a fixed timeout) initiates the next jump.
+      // Only verified source candidates can trigger an AFK cross-region hop.
+      // A guarded timer lets STOP abort before another request begins.
+      if(continueAfk&&state.running&&!state.paused){
+        state.timer=setTimeout(()=>{
+          state.timer=null;
+          if(state.running&&state.afk&&generation===state.generation)travel();
+        },650);
+      }
+      // Otherwise the original gaze timeline initiates the next jump.
     }
   }
 }
@@ -576,7 +680,8 @@ function updateMap() {
   }
   if (state.mapLayer) for (const layer of state.mapLayer) state.map.removeLayer(layer);
   state.mapLayer = [];
-  const entries = state.history.filter(e => e.provider === 'panoramax').slice(-300);
+  // Open-source photo coordinates only. Never show Google-derived points on OSM.
+  const entries = state.history.filter(e => ['panoramax','kartaview','commons'].includes(e.provider)).slice(-300);
   if (!entries.length) return;
   const points = entries.map(e => [e.lat, e.lng]);
   state.mapLayer.push(leaflet.polyline(points, {color: '#4cbed8', weight: 2, opacity: 0.7}).addTo(state.map));
@@ -585,22 +690,71 @@ function updateMap() {
       color: '#99ffea', fillColor: i === entries.length - 1 ? '#60e9bc' : '#327b9b', fillOpacity: 0.85,
       weight: 1}).addTo(state.map);
     state.mapLayer.push(marker);
-    marker.bindPopup('<strong>' + (e.provider === 'google' ? 'Google Street View' : 'Panoramax') +
+    marker.bindPopup('<strong>' + ({panoramax:'Panoramax',kartaview:'KartaView',commons:'Wikimedia Commons'})[e.provider] +
       '</strong><br>№ ' + (state.history.length - entries.length + i + 1) +
       '<br>' + e.lat.toFixed(5) + ', ' + e.lng.toFixed(5));
   });
   state.map.fitBounds(leaflet.latLngBounds(points).pad(0.35), {maxZoom: 12});
 }
+// R14 PASSPORT / WORLD CONQUEST: a local-only interactive view of actual
+// successful panorama opens. Country association is based on proximity to a
+// known source-search anchor, not a reverse-geocoded or legally authoritative
+// national boundary dataset. No XP can ever be converted to server-side JC.
+function renderPassport() {
+  const data=passport();
+  $('passportLevel').textContent=String(data.level);
+  $('passportXp').textContent=data.xp.toLocaleString('ru-RU');
+  $('passportCountries').textContent=String(data.countryCount);
+  $('passportViews').textContent=data.unique.toLocaleString('ru-RU');
+  $('passportProgress').style.width=String(data.xp%100)+'%';
+  $('passportNextLevel').textContent='До следующего уровня: '+data.nextLevelXp+' XP';
+  const list=$('passportCountryList');
+  list.replaceChildren();
+  if(!data.countries.length){
+    const empty=document.createElement('p');
+    empty.className='muted';
+    empty.textContent='Пока нет исследованных районов возле известных стартовых точек.';
+    list.append(empty);
+  }else{
+    for(const country of data.countries){
+      const item=document.createElement('button');
+      item.type='button';item.className='country-stamp';
+      item.title='Показать посещённые точки этого района на карте';
+      const flag=document.createElement('span');flag.className='country-stamp-flag';flag.textContent=country.flag;
+      const desc=document.createElement('span');desc.className='country-stamp-detail';
+      const title=document.createElement('strong');title.textContent=country.name;
+      const count=document.createElement('small');count.textContent=country.count+' панорам(ы)';
+      desc.append(title,count);
+      item.append(flag,desc);
+      item.addEventListener('click',()=>{
+        $('map').scrollIntoView({behavior:'smooth',block:'center'});
+        if(state.map?.setView)state.map.setView([country.lat,country.lng],9);
+      });
+      list.append(item);
+    }
+  }
+  const providerNames={panoramax:'Panoramax',kartaview:'KartaView',
+    commons:'Wikimedia Commons',google:'Google (текущая сессия)'};
+  const sourceCounts=data.providers.map(p=>
+    (providerNames[p.name]||p.name)+': '+p.count).join(' · ');
+  $('passportSources').textContent='Источники: '+(sourceCounts||'нет посещений')+
+    (data.unassigned?' · без подтверждённой близости к району: '+data.unassigned:'');
+}
+
 function renderAchievements() {
   const n = state.history.length;
   const km = getStats(state.history).km;
+  const profile=passport();
   const values = [
     ['🌱', 'Первый шаг', '1 место', n >= 1],
     ['🧭', 'Исследователь', '10 мест', n >= 10],
     ['🌍', 'Путешественник', '50 мест', n >= 50],
     ['🚀', 'Открытия без границ', '100 мест', n >= 100],
     ['✨', 'Дальний прыжок', '100 км пути', km >= 100],
-    ['🏅', 'Марафон', '1000 км пути', km >= 1000]
+    ['🏅', 'Марафон', '1000 км пути', km >= 1000],
+    ['🛂', 'Первая печать', '1 исследованная страна', profile.countryCount >= 1],
+    ['🌐', 'Три горизонта', '3 исследованные страны', profile.countryCount >= 3],
+    ['📸', 'Коллекционер источников', '3 разных источника', profile.providers.length >= 3]
   ];
   $('achievements').replaceChildren(...values.map(([emoji, name, target, unlocked]) => {
     const div = document.createElement('div');
@@ -626,7 +780,7 @@ function renderHistory() {
     const num = document.createElement('span'); num.className = 'number';
     num.textContent = '#' + (state.history.length - i);
     const details = document.createElement('span'); details.className = 'details';
-    const title = document.createElement('strong'); title.textContent = e.provider === 'google' ? 'Google Street View' : 'Panoramax 360°';
+    const title = document.createElement('strong'); title.textContent = ({google:'Google Street View',panoramax:'Panoramax 360°',kartaview:'KartaView 360°',commons:'Wikimedia Commons 360°'})[e.provider]||'360°';
     const sub = document.createElement('small'); sub.textContent = e.lat.toFixed(5) + ', ' + e.lng.toFixed(5) +
       ' · ' + new Date(e.visitedAt).toLocaleString('ru-RU');
     const link = document.createElement('a'); link.target = '_blank'; link.rel = 'noopener noreferrer';
@@ -644,12 +798,15 @@ function renderStats() {
   $('statKm').textContent = km < 100 ? km.toFixed(1) + ' км' : Math.round(km).toLocaleString('ru-RU') + ' км';
   $('statCoins').textContent = '—';
   renderAchievements();
+  renderPassport();
   renderHistory();
   try {updateMap();} catch (err) {console.error('Local map unavailable:', err);}
 }
 function downloadHistory() {
   const payload = {schema: 'janus-portal-history-v1', exportedAt: new Date().toISOString(),
-    authority: 'local-only-not-valid-for-rewards', visits: state.history};
+    authority: 'local-only-not-valid-for-rewards', visits: state.history,
+    passport: passport(), game: {xpFormula: '10 per unique view + 25 per approximate country',
+      accountSync: false, jCoinsCredited: false}};
   const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a'); link.href = url; link.download = 'janus-portal-expedition.json';
@@ -767,6 +924,7 @@ if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
   stageText('Автодвижение выключено по системным настройкам');
 }
 $('startBtn').addEventListener('click', run);
+$('afkBtn').addEventListener('click',toggleAfk);
 $('pauseBtn').addEventListener('click', togglePause);
 $('nextBtn').addEventListener('click', skip);
 $('downloadBtn').addEventListener('click', downloadHistory);
