@@ -1,3 +1,12 @@
+## R7 публичный выпуск — 2026-11-22
+
+- [PR #17](https://github.com/Hawkar-usls/Janus-Portal/pull/17) **merged**, squash `c1fd6498acc1b354eb7a6d59c3b64e629f6365f2`.
+- [Main CI 45024553613](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45024553613): **30/30 PASS**. [Pages 45024553601](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45024553601): **SUCCESS**.
+- Public URL: https://hawkar-usls.github.io/Janus-Portal/?r7=c1fd6498 . HTML and `./src/app.js` both HTTP 200; original **five R2 imports unchanged**, page includes Pyongyang and Cairo selections.
+- Edge on **actual public HTTPS**: mocked empty Panoramax searches for Pyongyang and Cairo both stop after 16 bounded probes, no fictitious views/JC, `▶ Запустить` becomes usable again; then **real Fes/Morocco Panoramax 360** loaded and gaze started, **0** uncaught JS errors.
+- External panorama sources (North Korea Travel DPRK panorama; Harvard Digital Giza; Egyptian ministry media hub) all HTTP 200 and open as normal owner-hosted links; no redistribution or iframe/new JS dependencies.
+- **User device not retested yet.** Original R2 user-confirmed working; ask user to open R7, try Fes first, then Cairo and a DPRK external link. Do not say Pyongyang and Cairo themselves have built-in 360 coverage. See [KOREA_CAIRO_AFRICA_R7.md](KOREA_CAIRO_AFRICA_R7.md). Deeper source coverage and R3–R5 archived functionality remain pending.
+
 ## R7 — КНДР, Каир, Африка: осторожный каталог поверх подтверждённой R2 — 2026-11-22
 
 - Потребность: добавить Северную Корею, Каир и больше Африки. Сохранён R2 браузерный запуск с `./src/app.js` и пятью прежними импортами; новых runtime-модулей нет.
