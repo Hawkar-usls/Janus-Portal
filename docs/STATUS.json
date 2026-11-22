@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": null,
-  "engineering_status": "ROLLBACK_TO_FIRST_PUBLIC_R2__LOCAL_EDGE_REAL_PANORAMA_PASS__USER_BROWSER_RETEST_REQUIRED",
+  "branch_under_review": "feat/r2-verified-regional-360-sources-20261122",
+  "engineering_status": "R2_USER_CONFIRMED_WORKING__R6_14_VERIFIED_REGIONAL_STARTS__LOCAL_CI_26_OF_26_AND_EDGE_15_OF_15_PASS__PR_PENDING",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -20,7 +20,11 @@
     "person_model": "Edge loaded MediaPipe 1.2.3 and model; a Panoramax Paris test photo produced one tentative person category score 0.5021. This is NOT independently validated accuracy.",
     "browser_proof": "Edge Panoramax x 247.97 to 320.10 over 1.7s; pause exact freeze, resume movement, zoom max 50/100, second automatic jump unique 1 to 2, JS errors none.",
     "local_model": "MediaPipe v1.2.3 bundle/WASM/model HTTP 200; photo 0c5a2b1b-62dc-4a37-a744-bdf0bab67002 gave tentative person confidence 0.5021, not benchmarked.",
-    "deployment": "https://hawkar-usls.github.io/Janus-Portal/ — Pages workflow run 45012393984 success; all needed R2 JS assets returned HTTP 200."
+    "deployment": "https://hawkar-usls.github.io/Janus-Portal/ — Pages workflow run 45012393984 success; all needed R2 JS assets returned HTTP 200.",
+    "r6_regional_locations": "R2 original module graph preserved; 14 source-checked Panoramax 360 start anchors in six countries (India Nepal Morocco Philippines Malaysia Ecuador), including periurban and Saharan regions. One new select option samples only these verified regions.",
+    "r6_independent_metadata": "Panoramax API /api/search with longitude-latitude bbox and 360 equirectangular/FOV>=300 confirmed Pune 48, Kathmandu 10, Fes 1, Merzouga 1, Cebu 6, Cuenca and Penang 1000 records in respective capped sampled windows; overlapping regions and frames not additive.",
+    "r6_browser": "Yaksa real Edge R2, existing Start button, 15/15 live panorama opens (14 added plus unchanged Paris), photographed positions <=5.02 km of audited anchors, 0 uncaught JS errors.",
+    "r6_r2_runtime_unchanged": "Only src/app.js CITY choices/getOrigin and index.html selector modified; old script path ./src/app.js and five imports preserved; no additional JS modules or third-party scripts."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
@@ -28,7 +32,7 @@
     "real_browser_panoramax_rotation": "PASS_EDGE_NATURAL_GAZE_ZOOM_PAUSE_RESUME",
     "real_browser_google_key_restricted": "PENDING",
     "github_actions_ci": "PASS_MAIN_RUN_45012146536",
-    "github_pages_publish": "PENDING_ROLLBACK_DEPLOY",
+    "github_pages_publish": "PASS_PRIOR_R2_ROLLBACK_RUN_45020427093__R6_PENDING_DEPLOY",
     "main_site_tab": "BLOCKED_SITE_EDITOR_ACCESS",
     "main_site_account_auth": "BLOCKED_SITE_SOURCE",
     "server_authoritative_J_coins": "BLOCKED_WALLET_API_AND_RULE_APPROVAL",
@@ -41,8 +45,13 @@
     "google_gaze_api": "PENDING_RESTRICTED_KEY_LIVE_TEST",
     "semantic_heading_accuracy": "OPEN_ISSUE_9",
     "live_https_gaze": "PASS_PRODUCTION_EDGE_PANORAMAX_PAN_AND_PAUSE",
-    "first_user_browser_launch": "PENDING_USER_CONFIRMATION",
-    "standalone_browser_R2": "PASS_LOCAL_EDGE_PARIS_REAL_360"
+    "first_user_browser_launch": "PASS_USER_CONFIRMED_R2_2026_11_22",
+    "standalone_browser_R2": "PASS_LOCAL_EDGE_PARIS_REAL_360",
+    "regional_360_catalogue": "PASS_METADATA_14_SITES_SIX_COUNTRIES_WITH_SOURCE_360",
+    "r6_unit_tests": "PASS_LOCAL_26_OF_26",
+    "r6_real_browser": "PASS_LOCAL_EDGE_15_OF_15_PANORAMAX_360",
+    "r6_r2_startup_guard": "PASS_NO_NEW_RUNTIME_IMPORTS_SAME_SCRIPT_URL",
+    "r6_main_site": "PENDING_PR_CI_PAGES_DEPLOY"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -59,7 +68,7 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "Deploy the first public R2 code, verify public URL loads src/app.js (not revisioned asset), then user confirms. No further feature re-add until root cause isolated; R3-R5 work preserved in archive branch.",
+  "next": "After R6 PR CI, merge and verify Pages actual HTTPS with original R2 script path and real live non-European 360. Obtain user's confirmation that new selector entries work on their original browser. Continue to refrain from mass R3-R5 reintroduction; other countries need independently sourced licensed imagery.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
@@ -77,6 +86,6 @@
     "archive_sha": "20fd3848927b4e93346498df95eddaaa6e88aed1",
     "reason": "R5 styled HTML present but app JS not initialized on user's device; cause not isolated",
     "local_test": "23/23 PASS; real Paris 360 and natural gaze, no page errors",
-    "user_test": "pending"
+    "user_test": "PASS_USER_CONFIRMED_ORIGINAL_R2_LAUNCH_2026_11_22"
   }
 }

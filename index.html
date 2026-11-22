@@ -53,8 +53,34 @@
           <select id="originChoice">
             <option value="paris">Париж, Франция</option><option value="rennes">Ренн, Франция</option><option value="lyon">Лион, Франция</option>
             <option value="kyiv">Киев, Украина</option><option value="tokyo">Токио, Япония</option><option value="newyork">Нью-Йорк, США</option>
-            <option value="rio">Рио-де-Жанейро, Бразилия</option><option value="random">Случайный город</option><option value="custom">Свои координаты</option>
+            <option value="rio">Рио-де-Жанейро, Бразилия</option>
+            <optgroup label="🌏 Южная Азия · реальные 360°">
+              <option value="pune">🇮🇳 Пуна, Индия · улицы</option>
+              <option value="kathmandu">🇳🇵 Катманду, Непал · панорамы</option>
+            </optgroup>
+            <optgroup label="🌍 Северная Африка · реальные 360°">
+              <option value="fes">🇲🇦 Фес, Марокко · старый город</option>
+              <option value="merzouga">🇲🇦 Район Мерзуги, Марокко · Сахара</option>
+            </optgroup>
+            <optgroup label="🌴 Юго-Восточная Азия · реальные 360°">
+              <option value="cebu">🇵🇭 Себу, Филиппины</option>
+              <option value="busay">🇵🇭 Окрестности Себу, Филиппины</option>
+              <option value="georgetown">🇲🇾 Джорджтаун, Малайзия</option>
+              <option value="balikpulau">🇲🇾 Окрестности Балик-Пулау, Малайзия</option>
+              <option value="bayanlepas">🇲🇾 Баян-Лепас, Малайзия</option>
+            </optgroup>
+            <optgroup label="🌎 Южная Америка · реальные 360°">
+              <option value="cuenca">🇪🇨 Куэнка, Эквадор · исторический район</option>
+              <option value="sayaussi">🇪🇨 Саяуси, Эквадор · окраины</option>
+              <option value="ricaurte">🇪🇨 Рикаурте, Эквадор · окрестности</option>
+              <option value="banoscuenca">🇪🇨 Район Баньос, Эквадор</option>
+              <option value="elvalle">🇪🇨 Юго-восток Куэнки, Эквадор</option>
+            </optgroup>
+            <option value="random">🎲 Случайное место мира</option>
+            <option value="random-verified">🌍 Случайный проверенный 360° из новых регионов</option>
+            <option value="custom">Свои координаты</option>
           </select>
+          <small>Новые страны добавлены по найденным 360° снимкам Panoramax. Кадры могут исчезать из источника; если место недоступно, выбери другое. Обычный запуск Парижа не изменён.</small>
           <div id="customOrigin" hidden><label for="latlng">Широта, долгота</label><input id="latlng" placeholder="48.8647, 2.3404" spellcheck="false"></div>
           <div class="range-top"><label for="radius">Начальный радиус</label><strong id="radiusVal">5 км</strong></div>
           <input id="radius" type="range" min="1" max="50" step="1" value="5">

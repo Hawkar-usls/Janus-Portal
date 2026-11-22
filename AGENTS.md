@@ -39,3 +39,7 @@
 Use labels: `UNIT_PASS`, `LIVE_PROVIDER_PASS`, `BROWSER_E2E_PASS`, `PAGES_DEPLOYED`, `SITE_TAB_LIVE`, `WALLET_BACKEND_PASS`. Never promote a missing gate. Prefer links to concrete run IDs and PRs.
 
 **First read** `docs/CONTINUATION.md` plus `docs/HUMAN_GAZE_R2.md`; check PR #8 and its verification gates. For browser regression run `tools/browser-gaze-check.mjs` with live Panoramax/Playwright when possible. Never mark actual person identification: only tentative category detections with confidence. The map and J Coins remain separately gated.
+
+## R6 browser compatibility and verified regional imagery
+
+The owner explicitly confirmed **R2 works in their browser** after R3–R5 rollback; preserve its only `<script type="module" src="./src/app.js">` entrypoint and five imports. R6 adds 14 independently checked geographic anchors in `src/app.js`, corresponding options in `index.html`, optional offline/browser tests, and no runtime JS modules. Only claim Panoramax 360 photo availability for actually observed equirectangular/FOV≥300 source results. Read `docs/VERIFIED_REGIONAL_PANORAMAS_R6.md`. **Do not redeploy archived R3–R5 automatically.** If a change introduces an inactive UI, revert it rather than adding more speculative mechanisms. The original 5km and adaptive global radius must remain intact.
