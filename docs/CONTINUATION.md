@@ -1,3 +1,14 @@
+## R5 public release verified — 2026-11-22
+
+- [PR #14](https://github.com/Hawkar-usls/Janus-Portal/pull/14) merged into main SHA 1426c88a77136b9b2ea6812ee4825f2ec20da4cf.
+- [Main CI 45019779385](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45019779385): PASS 36/36.
+- [Pages deploy 45019779402](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45019779402): SUCCESS; HTTPS build meta 1426c88a7713 HTTP 200.
+- Tested public URL: https://hawkar-usls.github.io/Janus-Portal/?r5=1426c88a
+- Real Edge on public HTTPS: hero 'Начать путешествие сейчас' loaded credited Panoramax Reine SD image as interactive 360; gaze rotated 0°->50.7°.
+- CDN JS (unpkg/jsdelivr) and Panoramax metadata API deliberately blocked during browser test: quick-start still loaded and animated. 19 tour / 70 destination catalogue, regional filters, fullscreen and empty-provider safeguards passed.
+- R5 uses first-party WebGL sphere and source attribution, 9s image timeout, 18s overall search budget, direct known real demo image; WebGL-disabled browser sees a labeled static preview. Google undefined vars fixed; live official key still outstanding.
+- REMAINING UNKNOWN: end-user's actual network and browser. Remote Yaksa PASS is not proof the end-user sees it. If user still gets no response, inspect displayed error, `github.io` access, actual Panoramax photo-host access, browser extensions/embedded views, and hosting alternative with properly authorized connection.
+
 ## R5 critical start repair — 2026-11-22
 
 - User twice reported: «не работает», then «не работает и не запускает ничего». Prior main Pages loaded correctly on Yaksa desktop/mobile, but this did NOT prove it worked in the user's browser. We found a definite broken Google path and several potential first-visit blockers.
