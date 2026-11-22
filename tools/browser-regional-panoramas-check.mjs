@@ -29,7 +29,7 @@ try {
     {waitUntil:'domcontentloaded',timeout:25000});
   if(response.status()!==200)throw new Error('HTML HTTP '+response.status());
   const script=await page.locator('script[type="module"]').getAttribute('src');
-  if(script!=='./src/app.js')throw new Error('NOT the user's proven R2 JS path: '+script);
+  if(script!=='./src/app.js')throw new Error('Wrong R2 JS path: '+script);
   await page.locator('#seconds').fill('60');
   for(const [key,lat,lng] of targets) {
     const label=await page.locator('#originChoice option[value="'+key+'"]').count();
