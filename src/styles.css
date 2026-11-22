@@ -57,3 +57,10 @@ body.portal-fullscreen-locked{overflow:hidden}
 .manual-origin button{margin-top:10px;width:100%}
 .manual-origin small{margin-top:9px}
 @media(max-width:650px){.coverage-bar{align-items:flex-start}.coverage-refresh{flex:0 0 auto}}
+
+/* R12: keep Google setup in the same search form, never imply an API demo key
+   gives permission to load Google's paid Street View panoramas. */
+.settings .google-key-help{display:inline-flex;margin-top:10px;color:#8be9db;font-size:12px;font-weight:650;line-height:1.5;text-decoration:underline;text-underline-offset:3px}
+.settings .google-key-help:hover{color:#d5fffb}
+.coverage-bar small[data-state="timeout"],.coverage-bar small[data-state="error"]{color:#ffbd96}
+.coverage-refresh:not(:disabled){cursor:pointer}

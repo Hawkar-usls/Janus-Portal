@@ -20,7 +20,7 @@ try{
  page.on('pageerror',e=>errors.push('real: '+e.message));
  const response=await page.goto(url,{waitUntil:'domcontentloaded',timeout:25000});
  assert.equal(response.status(),200);
- assert.equal(await page.locator('script[type=module]').getAttribute('src'),'./src/app.js');
+ assert.match(await page.locator('script[type=module]').getAttribute('src'),/^\.\/src\/app\.js(?:\?build=[0-9a-f]{40})?$/);
  assert.equal(await page.locator('#originChoice option[value="random"]').count(),0);
  assert.equal(await page.locator('#originChoice option[value="random-verified"]').count(),0);
  assert.equal(await page.locator('#sourceGateway').count(),0);
@@ -103,10 +103,12 @@ try{
  console.log('PASS_EMPTY_CATALOGUE_HAS_ZERO_UNVERIFIED_LOCATIONS');
  mode='error';
  await mocked.locator('#refreshCoverageBtn').click();
- await waitComplete(mocked);
+ await mocked.waitForFunction(
+   ()=>document.querySelector('#coverageStatus')?.dataset.state==='error',
+   null,{timeout:15000});
  names=(await getItems(mocked)).map(x=>x.id);
  assert.deepEqual(names,[]);
- assert.match(await mocked.locator('#coverageStatus').innerText(),/не ответили/);
+ assert.match(await mocked.locator('#coverageStatus').innerText(),/Не удалось проверить каталог/);
  console.log('PASS_API_FAILURE_NEVER_REUSES_STALE_LIST');
  await mocked.locator('#provider').selectOption('google');
  assert.equal(await mocked.locator('#originChoice').isDisabled(),true);

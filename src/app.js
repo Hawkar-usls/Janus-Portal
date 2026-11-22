@@ -75,6 +75,9 @@ const state = {
 // No storage of results: every session queries current Panoramax 360° data.
 const LIVE_REFRESH_MS=5*60*1000;
 const LIVE_CONCURRENCY=4;
+// In a blocked network, 38 x 8-second queries would otherwise leave a disabled
+// selector and no usable retry for more than a minute.
+const LIVE_MAX_SCAN_MS=18000;
 const liveCoverage=new Map();
 const liveOptions=[...$('originCatalog').content.querySelectorAll('option[value]')]
   .filter(option=>Object.prototype.hasOwnProperty.call(CITY,option.value))
@@ -85,6 +88,7 @@ let liveRefreshing=false;
 let liveLastCheck=0;
 let liveChecked=0;
 let liveFailed=0;
+let liveTimedOut=false;
 let manualNext=false;
 function renderLiveOptions(){
   const select=$('originChoice'),previous=select.value;
@@ -109,7 +113,10 @@ function renderLiveOptions(){
     placeholder.disabled=true;
     placeholder.textContent=!inPanoramax
       ? 'Google: ручной поиск по координатам'
-      :liveRefreshing?'⏳ Проверяем доступные 360°…':'Подтверждённых 360° пока нет';
+      :liveRefreshing?'⏳ Проверяем доступные 360°…':
+        liveTimedOut||liveFailed===liveOptions.length
+          ? 'Источник не ответил · нажми «Обновить»'
+          : 'Подтверждённых 360° пока нет';
     frag.append(placeholder);
   }
   select.replaceChildren(frag);
@@ -124,15 +131,27 @@ function updateCoverageStatus(){
     return;
   }
   const count=liveCoverage.size;
+  const status=$('coverageStatus');
+  status.dataset.state=liveRefreshing?'checking':liveTimedOut?'timeout':
+    liveFailed===liveOptions.length?'error':'ready';
   if(liveRefreshing){
     $('coverageStatus').textContent='Проверено '+liveChecked+'/'+liveOptions.length+
       ' районов · доступны '+count+' · идёт проверка свежих 360°…';
   }else if(liveLastCheck){
     const time=new Date(liveLastCheck).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
-    $('coverageStatus').textContent='Проверено сейчас: '+count+' районов из '+
-      liveOptions.length+' · обновлено в '+time+
-      (liveFailed?' · '+liveFailed+' районов не ответили (не включены)':'')+
-      '. Список не гарантирует подлинность геометки.';
+    if(liveTimedOut){
+      status.textContent='Источник отвечает слишком медленно: проверено '+liveChecked+
+        '/'+liveOptions.length+' районов, подтверждены '+count+
+        '. Достигнут предел 18 секунд. Нажми «Обновить» для повторной проверки.';
+    }else if(liveFailed===liveOptions.length){
+      status.textContent='Не удалось проверить каталог: '+liveFailed+
+        ' запросов не ответили. Проверь подключение к api.panoramax.xyz и нажми «Обновить».';
+    }else{
+      status.textContent='Проверено сейчас: '+count+' районов из '+
+        liveOptions.length+' · обновлено в '+time+
+        (liveFailed?' · '+liveFailed+' районов не ответили (не включены)':'')+
+        '. Список не гарантирует подлинность геометки.';
+    }
   }else{
     $('coverageStatus').textContent='Наличие панорам пока не подтверждено. Нажми «Обновить».';
   }
@@ -144,7 +163,13 @@ async function refreshLiveCoverage(){
   const generation=++liveGeneration;
   liveController=controller;
   liveCoverage.clear();
-  liveChecked=0;liveFailed=0;liveRefreshing=true;liveLastCheck=0;
+  liveChecked=0;liveFailed=0;liveTimedOut=false;liveRefreshing=true;liveLastCheck=0;
+  const deadline=setTimeout(()=>{
+    if(generation===liveGeneration&&!controller.signal.aborted){
+      liveTimedOut=true;
+      controller.abort();
+    }
+  },LIVE_MAX_SCAN_MS);
   renderLiveOptions();
   updateCoverageStatus();
   let index=0;
@@ -168,9 +193,10 @@ async function refreshLiveCoverage(){
   try{
     await Promise.all(Array.from({length:LIVE_CONCURRENCY},worker));
   }finally{
+    clearTimeout(deadline);
     if(generation===liveGeneration){
       liveRefreshing=false;
-      liveLastCheck=controller.signal.aborted?0:Date.now();
+      liveLastCheck=Date.now();
       liveController=null;
       renderLiveOptions();
       updateCoverageStatus();
@@ -212,7 +238,9 @@ function refreshControls() {
   $('startBtn').disabled = !state.running && !panoramaListReady;
   $('latlng').disabled = state.running;
   $('manualStartBtn').disabled = state.running;
-  $('refreshCoverageBtn').disabled = state.running || liveRefreshing ||
+  // Always allow an explicit retry, even while a slow request is in progress.
+  // The previous generation is aborted and cannot overwrite the new results.
+  $('refreshCoverageBtn').disabled = state.running ||
     $('provider').value!=='panoramax';
   $('googleKey').disabled = state.running;
 }
@@ -682,7 +710,11 @@ $('provider').addEventListener('change', () => {
   updateCoverageStatus();
   if(!google)maybeRefreshCoverage();
 });
-$('refreshCoverageBtn').addEventListener('click',()=>{void refreshLiveCoverage();});
+$('refreshCoverageBtn').addEventListener('click',()=>{
+  // Every click is a real retry: abort the previous generation immediately.
+  // Ignoring rapid clicks made the button appear broken to users.
+  void refreshLiveCoverage();
+});
 $('manualStartBtn').addEventListener('click',()=>{
   manualNext=true;
   run();

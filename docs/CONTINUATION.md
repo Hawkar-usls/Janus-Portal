@@ -1,3 +1,12 @@
+## R12 — fix frozen "Проверяем..." and Google key onboarding, 2026-11-22
+
+- Owner screenshot shows dropdown stuck at initial R11 HTML placeholder, with apparently unstyled "Обновить"; asks to get updating working and embed a demo Google Street View key. Published GitHub Pages headers independently confirmed `Cache-Control: max-age=600` on HTML/JS/CSS; **probable mixed cache revision**, not definitively observed in owner's browser.
+- Branch `fix/r12-live-catalogue-refresh-cache-and-google-key-help`. `.github/workflows/pages.yml` stamps the **same deployment GITHUB_SHA** into published `dist/index.html` URLs of `./src/app.js?build=SHA` and `./src/styles.css?build=SHA`. The source R2 `index.html` still imports exact original `./src/app.js` with 5 imports. No new JS module/loader.
+- `src/app.js` adds a **hard 18-second deadline** for 38-centre Panoramax scan, error/timeout text and state; refresh button **works while a scan is active** and starts a new generation after aborting old. **No throttle**: a 1.5s silent ignore initially found by browser regression was removed. Never show failed/stale places as live.
+- Google Street View is offered via existing official Maps JS provider with owner's own correctly restricted key. Added official key setup link, clearer UI language. Official **Google Maps Demo Key** does not include Street View; production key can incur Dynamic Street View charges. No demo or user key published, no live Google call/test.
+- Local Yaksa `npm run verify`: **50/50 PASS**. Edge `tools/browser-catalogue-r12-check.mjs`: 503 -> informative error & retry -> one live target, mobile stalled source stops in 18s with retry, Google guide. R11 browser regression including live 360 and fullscreen must also remain green. See `docs/CATALOGUE_CACHE_R12.md`.
+- **Remaining release gates:** PR CI, merge, Pages artifact/green deploy, real public HTTPS Edge check that app.js and styles.css URLs carry **same commit SHA**, plus real Panoramax 360/refresh/outage regression, and owner-browser confirmation. Prior R3–R5 broken loader and present user's cache issue justify rollout caution.
+
 ## R11 deployed — live-only 360 origins, two random modes removed (2026-11-22)
 
 - [PR #22](https://github.com/Hawkar-usls/Janus-Portal/pull/22) merged main as 5b0f959d26905832fef3cb9737f3e61006ac3b6b. [Main CI run 45028842182](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45028842182) **45/45 PASS**, [Pages 45028842222](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45028842222) **SUCCESS**.
