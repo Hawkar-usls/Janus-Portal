@@ -54,7 +54,7 @@ function getOrigin() {
     return {lat:choice.lat,lng:choice.lng};
   }
   if(key==='custom'){
-    const vals=$('latlng').value.split(/[,;\\s]+/).filter(Boolean).map(Number);
+    const vals=$('latlng').value.split(/[,;\s]+/).filter(Boolean).map(Number);
     if(vals.length!==2||!vals.every(Number.isFinite)||vals[0]<-90||vals[0]>90||vals[1]<-180||vals[1]>180)
       throw new Error('Укажи координаты широта, долгота (например 48.8647, 2.3404).');
     return {lat:vals[0],lng:vals[1]};
