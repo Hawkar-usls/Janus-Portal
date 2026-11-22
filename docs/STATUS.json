@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": "fix/r9-one-search-remove-duplicated-gateway",
-  "engineering_status": "R9_SINGLE_ORIGINAL_SEARCH__LOCAL_36_36_PASS__EDGE_REAL_FES_AND_EMPTY_CAIRO_AND_MOBILE_PASS__RELEASE_PENDING",
+  "branch_under_review": "feat/r10-fullscreen-original-viewer",
+  "engineering_status": "R10_FULLSCREEN_ORIGINAL_R2_VIEWER_LOCAL_EDGE_NATIVE_AND_MOBILE_PASS__RELEASE_PENDING",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -41,7 +41,9 @@
     "r8_public_browser": "Public HTTPS Edge: R8 source cards Pyongyang/Giza PASS, Google no-key safe, real Fes Panoramax 360 + natural gaze PASS, simulated no-photo Pyongyang does not add visits, mobile 390px PASS, 0 uncaught JS errors.",
     "r9_single_search": "Owner requested removal of duplicate JANUS Gateway and Alternative 360 tours after supplying two screenshots. index.html now retains only original #originChoice/#provider/#startBtn, title 'Поиск панорам'; all R6/R7 coordinates retained; src/app.js removes all R8 gateway routing and no-coverage external-link promise; CSS cleaned.",
     "r9_original_R2": "Original ./src/app.js bootstrap with five imports unchanged, existing native source/viewer flow and R7 no-fake-panorama 40km cap intact.",
-    "r9_local_browser": "Yaksa Edge original R2 single-search DOM only, mocked Cairo empty provider 16 requests 0 visits and Start enabled, live Fes 360 34.06167,-4.97711 natural gaze, mobile 390px selection, 0 page JS exceptions."
+    "r9_local_browser": "Yaksa Edge original R2 single-search DOM only, mocked Cairo empty provider 16 requests 0 visits and Start enabled, live Fes 360 34.06167,-4.97711 natural gaze, mobile 390px selection, 0 page JS exceptions.",
+    "r10_fullscreen": "One #fullscreenBtn above existing .viewer-panel expands SAME Panoramax/Google view using Fullscreen API; 'Свернуть' exits. CSS viewport fallback for iOS/restricted browsers; Esc exits fallback; automatic heading and original search unaffected.",
+    "r10_local_browser": "Yaksa Edge/Playwright: real Fes Panoramax 360 within native fullscreen 1366x840 (viewer image 644px), button exits without losing panorama; fullscreen API blocked fallback and Escape PASS; mobile viewport 390x844 fallback image area 703px; 0 page JS errors."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
@@ -91,7 +93,13 @@
     "r9_browser": "PASS_LOCAL_EDGE_REAL_FES_360_AND_MOCK_CAIRO_NO_FALSE_VISITS_AND_MOBILE",
     "r9_r2_imports": "PASS_ORIGINAL_SRC_APP_JS_FIVE_IMPORTS",
     "r9_public_pages": "PENDING_CI_MERGE_DEPLOY",
-    "r9_user_browser": "PENDING_OWNER_CONFIRMATION"
+    "r9_user_browser": "PENDING_OWNER_CONFIRMATION",
+    "r10_unit_tests": "PASS_LOCAL_39_OF_39",
+    "r10_browser": "PASS_LOCAL_EDGE_REAL_FES_360_NATIVE_FULLSCREEN_EXIT",
+    "r10_mobile": "PASS_LOCAL_EDGE_MOBILE_390X844_FALLBACK_ESCAPE",
+    "r10_r2_bootstrap": "PASS_UNCHANGED_SRC_APP_JS_FIVE_IMPORTS",
+    "r10_pages": "PENDING_PR_CI_MERGE_PAGES",
+    "r10_user_browser": "PENDING_OWNER_CONFIRMATION"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -108,7 +116,7 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "R9 removes separate JANUS Gateway and alternate-tour boxes per owner's instruction. Preserve one original panorama search only, do not re-add external links or new JS modules. PR CI -> merge -> Pages -> public Edge browser -> owner test. For uncovered Cairo/DPRK sources need new licensed in-portal adapter before real 360 possible.",
+  "next": "R10 fullscreen locally validated, PR CI/merge/Pages and public HTTPS browser test required, then owner verifies fullscreen toggle alongside original R2 Start. No extra modules, no external provider Gateway, no fake Cairo/DPRK panorama.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",

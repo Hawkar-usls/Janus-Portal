@@ -466,6 +466,69 @@ function downloadHistory() {
   const link = document.createElement('a'); link.href = url; link.download = 'janus-portal-expedition.json';
   link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+// R10: fullscreen for the ORIGINAL panorama panel, not a second page/player.
+// Browser Fullscreen API first; on iPhone/restricted embedded browsers a
+// fixed-viewport CSS fallback stays inside JANUS and closes by button/Escape.
+const fullscreenPanel=document.querySelector('.viewer-panel');
+const fullscreenControl=$('fullscreenBtn');
+function viewerIsNativeFullscreen(){
+  return document.fullscreenElement===fullscreenPanel ||
+    document.webkitFullscreenElement===fullscreenPanel;
+}
+function viewerIsFullscreen(){
+  return viewerIsNativeFullscreen() ||
+    fullscreenPanel.classList.contains('portal-fullscreen-fallback');
+}
+function syncViewerFullscreen(){
+  const expanded=viewerIsFullscreen();
+  fullscreenPanel.classList.toggle('portal-fullscreen-active',expanded);
+  fullscreenControl.setAttribute('aria-pressed',String(expanded));
+  fullscreenControl.setAttribute('aria-label',expanded?
+    'Свернуть панораму':'Развернуть панораму на весь экран');
+  fullscreenControl.title=expanded?'Свернуть':'На весь экран';
+  fullscreenControl.querySelector('.fullscreen-label').textContent=
+    expanded?'Свернуть':'На весь экран';
+  // The embedded native panorama viewer may need a dimension refresh.
+  window.dispatchEvent(new Event('resize'));
+}
+function exitViewportFullscreen(){
+  fullscreenPanel.classList.remove('portal-fullscreen-fallback');
+  document.body.classList.remove('portal-fullscreen-locked');
+}
+async function toggleViewerFullscreen(){
+  if(viewerIsNativeFullscreen()){
+    const exit=document.exitFullscreen||document.webkitExitFullscreen;
+    if(exit){
+      try{await exit.call(document);}
+      catch(error){console.warn('Не удалось закрыть полный экран:',error);}
+    }
+  }else if(fullscreenPanel.classList.contains('portal-fullscreen-fallback')){
+    exitViewportFullscreen();
+  }else{
+    const enter=fullscreenPanel.requestFullscreen||fullscreenPanel.webkitRequestFullscreen;
+    if(enter){
+      try{await enter.call(fullscreenPanel);}
+      catch{
+        fullscreenPanel.classList.add('portal-fullscreen-fallback');
+        document.body.classList.add('portal-fullscreen-locked');
+      }
+    }else{
+      fullscreenPanel.classList.add('portal-fullscreen-fallback');
+      document.body.classList.add('portal-fullscreen-locked');
+    }
+  }
+  syncViewerFullscreen();
+}
+fullscreenControl.addEventListener('click',toggleViewerFullscreen);
+document.addEventListener('fullscreenchange',syncViewerFullscreen);
+document.addEventListener('webkitfullscreenchange',syncViewerFullscreen);
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&fullscreenPanel.classList.contains('portal-fullscreen-fallback')){
+    event.preventDefault();
+    exitViewportFullscreen();
+    syncViewerFullscreen();
+  }
+});
 $('provider').addEventListener('change', () => $('googleKeyWrap').hidden = $('provider').value !== 'google');
 $('originChoice').addEventListener('change', () => $('customOrigin').hidden = $('originChoice').value !== 'custom');
 $('radius').addEventListener('input', () => {

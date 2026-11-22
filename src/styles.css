@@ -16,3 +16,30 @@
 .view-feedback[data-kind="missing"] .view-feedback-icon{color:#ffc875}
 @media(prefers-reduced-motion:no-preference){.view-feedback[data-kind="searching"] .view-feedback-icon{animation:janus-search-spin 2.5s linear infinite}}
 @keyframes janus-search-spin{to{transform:rotate(360deg)}}
+
+/* R10 fullscreen of the same JANUS panorama — no new viewer or JS imports. */
+.viewer-toolbar-actions{display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap}
+.viewer-fullscreen-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;min-height:39px;padding:8px 12px;border:1px solid #397a85;border-radius:10px;color:#b2f9e7;background:#113343;font-size:12px;font-weight:700}
+.viewer-fullscreen-btn:hover{background:#185267}
+.viewer-fullscreen-btn:focus-visible{outline:2px solid #85f5dc;outline-offset:3px}
+body.portal-fullscreen-locked{overflow:hidden}
+.viewer-panel.portal-fullscreen-active{display:flex;flex-direction:column;box-sizing:border-box;width:100%;height:100vh;height:100dvh;max-height:100dvh;max-width:none;border-radius:0;background:#081625;overflow:hidden}
+.viewer-panel.portal-fullscreen-fallback{position:fixed;inset:0;width:100vw;z-index:10000;margin:0;border:0;box-shadow:none}
+.viewer-panel:fullscreen,.viewer-panel:-webkit-full-screen{width:100vw;max-width:none;max-height:100dvh;height:100vh;height:100dvh;border:0;border-radius:0;background:#081625}
+.viewer-panel.portal-fullscreen-active .viewer-toolbar{flex:0 0 auto;min-height:60px;padding:12px 20px}
+.viewer-panel.portal-fullscreen-active .view{flex:1 1 auto;min-height:0;max-height:none;height:auto}
+.viewer-panel.portal-fullscreen-active .view-foot{flex:0 0 auto;padding:10px 20px}
+.viewer-panel.portal-fullscreen-active .notice{flex:0 0 auto;min-height:0;padding:8px 20px}
+@media(max-width:680px){
+  .viewer-toolbar-actions{gap:6px}
+  .viewer-fullscreen-btn{font-size:11px;padding:7px 8px;min-height:34px}
+  .viewer-toolbar-actions .status{font-size:10px;padding:6px 8px}
+  .viewer-panel.portal-fullscreen-active .viewer-toolbar{padding:7px 10px;min-height:53px;gap:7px}
+  .viewer-panel.portal-fullscreen-active .viewer-toolbar h2{font-size:12px;margin-top:3px;max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .viewer-panel.portal-fullscreen-active .viewer-toolbar .label{font-size:8px;letter-spacing:1px}
+  .viewer-panel.portal-fullscreen-active .view-foot{padding:7px 10px}
+  .viewer-panel.portal-fullscreen-active .view-foot small{display:none}
+  .viewer-panel.portal-fullscreen-active .view-foot strong{font-size:12px}
+  .viewer-panel.portal-fullscreen-active .view-foot .label{font-size:8px}
+  .viewer-panel.portal-fullscreen-active .notice{padding:5px 10px;font-size:10px;max-height:40px;overflow:hidden}
+}
