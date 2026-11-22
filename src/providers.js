@@ -85,7 +85,7 @@ export class PanoramaxProvider {
     this.photo = null;
     this.rotation = null;
   }
-  async searchAtRadius({origin, radiusKm, visited, visitedPoints = [], minSeparationKm = 0.02, random, signal}) {
+  async searchAtRadius({origin, radiusKm, visited, visitedPoints = [], minSeparationKm = 0.02, probeCount=4, random, signal}) {
     const found = [];
     // Seeded points offer a reliable escape from empty regions (oceans, deserts)
     // once the expanding radius can geographically reach real coverage.
@@ -96,10 +96,10 @@ export class PanoramaxProvider {
     ].filter(p => distanceKm(origin, p) <= radiusKm)
       .sort((a, b) => distanceKm(origin, a) - distanceKm(origin, b));
     const points = [origin, ...coverage.slice(0, 2)];
-    while (points.length < 4) points.push(randomProbe(origin, radiusKm * 0.85, random));
+    while (points.length < Math.max(1, Math.min(4, probeCount))) points.push(randomProbe(origin, radiusKm * 0.85, random));
     // Search small windows. Full-world bbox queries can be biased by the first
     // page of results and most images in the service are flat rather than 360.
-    for (const point of points) {
+    for (const point of points.slice(0,Math.max(1,Math.min(4,probeCount)))) {
       if (signal?.aborted || found.length >= 8) break;
       const box = bboxAround(point, Math.min(radiusKm / 3, 1.2));
       const url = PANORAMAX_ENDPOINT + '/search?bbox=' + box.join(',') + '&limit=80';
@@ -178,7 +178,7 @@ export class GoogleProvider {
     await this.ready();
     const found = [];
     // Bound paid service lookups; the engine handles expanding to wider radii.
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < Math.max(1,Math.min(4,probeCount)); i++) {
       if (signal?.aborted) break;
       const target = i === 0 ? origin : randomProbe(origin, radiusKm * 0.9, random);
       try {
