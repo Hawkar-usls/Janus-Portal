@@ -79,6 +79,38 @@ function featureToCandidate(feature) {
     previewUrl: feature.assets?.sd?.href || feature.assets?.thumb?.href || null};
 }
 
+// R11 live catalogue: confirm usable 360° metadata on every refresh.
+// One bounded, cache-bypassing public API request per known geographic anchor;
+// unlike static city labels, flat photos and missing image assets never qualify.
+export async function probePanoramaxCoverage(origin,{signal,timeoutMs=8000}={}) {
+  const controller=new AbortController();
+  const onAbort=()=>controller.abort();
+  signal?.addEventListener('abort',onAbort,{once:true});
+  const timer=setTimeout(()=>controller.abort(),timeoutMs);
+  if(signal?.aborted)controller.abort();
+  try {
+    const box=bboxAround(origin,1.2);
+    const url=PANORAMAX_ENDPOINT+'/search?bbox='+box.join(',')+'&limit=120';
+    const response=await fetch(url,{
+      headers:{Accept:'application/geo+json'},
+      cache:'no-store',signal:controller.signal
+    });
+    if(!response.ok)throw new Error('Panoramax: HTTP '+response.status);
+    const data=await response.json();
+    const matching=(data.features||[]).map(featureToCandidate)
+      .filter(c=>c&&(c.previewUrl)&&distanceKm(origin,c)<=5);
+    matching.sort((a,b)=>distanceKm(origin,a)-distanceKm(origin,b));
+    return {candidate:matching[0]||null,count:matching.length};
+  } catch(error) {
+    if(signal?.aborted)throw new DOMException('Catalogue refresh cancelled','AbortError');
+    if(controller.signal.aborted)throw new Error('Panoramax: время ответа каталога истекло');
+    throw error;
+  } finally {
+    clearTimeout(timer);
+    signal?.removeEventListener('abort',onAbort);
+  }
+}
+
 export class PanoramaxProvider {
   constructor() {
     this.view = null;
