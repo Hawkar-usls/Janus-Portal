@@ -454,7 +454,8 @@ class SphericalImageProvider {
       down.getContext('2d').drawImage(img,0,0,down.width,down.height);
       source=down;
     }
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+    // The shader maps v=0 to image top. Do not invert source scanlines.
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
     gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,source);
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
