@@ -103,10 +103,12 @@ try{
  console.log('PASS_EMPTY_CATALOGUE_HAS_ZERO_UNVERIFIED_LOCATIONS');
  mode='error';
  await mocked.locator('#refreshCoverageBtn').click();
- await waitComplete(mocked);
+ await mocked.waitForFunction(
+   ()=>document.querySelector('#coverageStatus')?.dataset.state==='error',
+   null,{timeout:15000});
  names=(await getItems(mocked)).map(x=>x.id);
  assert.deepEqual(names,[]);
- assert.match(await mocked.locator('#coverageStatus').innerText(),/не ответили/);
+ assert.match(await mocked.locator('#coverageStatus').innerText(),/Не удалось проверить каталог/);
  console.log('PASS_API_FAILURE_NEVER_REUSES_STALE_LIST');
  await mocked.locator('#provider').selectOption('google');
  assert.equal(await mocked.locator('#originChoice').isDisabled(),true);
