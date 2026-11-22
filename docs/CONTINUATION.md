@@ -1,3 +1,12 @@
+## R11 deployed — live-only 360 origins, two random modes removed (2026-11-22)
+
+- [PR #22](https://github.com/Hawkar-usls/Janus-Portal/pull/22) merged main as 5b0f959d26905832fef3cb9737f3e61006ac3b6b. [Main CI run 45028842182](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45028842182) **45/45 PASS**, [Pages 45028842222](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45028842222) **SUCCESS**.
+- Public URL: https://hawkar-usls.github.io/Janus-Portal/?catalogue=r11-5b0f959 . Both HTML and src/app.js HTTP 200, original five R2 imports unchanged.
+- **Public HTTPS real Edge E2E** from tools/browser-live-catalogue-r11-check.mjs: 38 known city-centres queried live; 19 found current Panoramax 360 photo metadata. Confirmed selectable Paris, Rennes, Lyon, Tokyo, NYC, Pune, Kathmandu, Fes, Merzouga, Cebu, Busay, 3 Penang and 5 Cuenca areas. No Cairo/Pyongyang static unverified choices. Original Fes panorama (34.06167,-4.97711) and fullscreen/exit PASS.
+- Source-switch mock tested publicly: Fes initially available, then only Kathmandu, then empty, then HTTP 503 — stale entries **never reappear**; Google paid bulk mode disabled (explicit manual/official restricted key only), mobile 390px PASS, **0 uncaught JS errors**.
+- New R11 behavior: exactly one old origin dropdown, two random origins removed, fresh provider verification every new session and 5min while idle plus manual refresh/visible return; per 38 known regions, not whole-world discovery or independent geotag authentication. Actual image load remains the final visit gate; no false visits/J Coins.
+- **Owner-browser confirmation still pending.** User should open new link, see current source count and click Fes or another listed location, test refresh and fullscreen. Earlier R3–R5 loading failures justify caution. Read docs/LIVE_CATALOGUE_R11.md. Future global discovery requires licensed verified source indexes, not guessed city labels.
+
 ## R11 live 360 catalogue instead of random/unverified starts — 2026-11-22
 
 - Latest owner request: remove the two random country choices and show only current source-confirmed 360° places through the single original panorama search, preserving R2 viewer and R10 fullscreen.
