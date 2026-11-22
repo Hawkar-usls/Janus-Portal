@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": null,
-  "engineering_status": "R8_GATEWAY_RELEASED__CI_36_OF_36__PAGES_HTTPS_EDGE_AND_MOBILE_PASS",
+  "branch_under_review": "fix/r9-one-search-remove-duplicated-gateway",
+  "engineering_status": "R9_SINGLE_ORIGINAL_SEARCH__LOCAL_36_36_PASS__EDGE_REAL_FES_AND_EMPTY_CAIRO_AND_MOBILE_PASS__RELEASE_PENDING",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -38,7 +38,10 @@
     "r8_google_bugfix": "Fixed originally undefined visitedPoints and minSeparationKm in existing GoogleProvider.searchAtRadius; mocked service only, live Google key gate remains pending.",
     "r8_browser": "Yaksa Edge desktop on local R2: Pyongyang/Giza source cards & links PASS; Google without key shows field without API call; Fes real Panoramax 360 & gaze PASS; simulated no-photo Pyongyang correctly stops with zero fake increment; mobile 390px cards fit; 0 uncaught JS errors.",
     "r8_release": "PR #18 merged as 4c13009d0fb766ad1d6d48c24edf7712379164bf; Pages 45025652089 SUCCESS; CI 36/36 PASS.",
-    "r8_public_browser": "Public HTTPS Edge: R8 source cards Pyongyang/Giza PASS, Google no-key safe, real Fes Panoramax 360 + natural gaze PASS, simulated no-photo Pyongyang does not add visits, mobile 390px PASS, 0 uncaught JS errors."
+    "r8_public_browser": "Public HTTPS Edge: R8 source cards Pyongyang/Giza PASS, Google no-key safe, real Fes Panoramax 360 + natural gaze PASS, simulated no-photo Pyongyang does not add visits, mobile 390px PASS, 0 uncaught JS errors.",
+    "r9_single_search": "Owner requested removal of duplicate JANUS Gateway and Alternative 360 tours after supplying two screenshots. index.html now retains only original #originChoice/#provider/#startBtn, title 'Поиск панорам'; all R6/R7 coordinates retained; src/app.js removes all R8 gateway routing and no-coverage external-link promise; CSS cleaned.",
+    "r9_original_R2": "Original ./src/app.js bootstrap with five imports unchanged, existing native source/viewer flow and R7 no-fake-panorama 40km cap intact.",
+    "r9_local_browser": "Yaksa Edge original R2 single-search DOM only, mocked Cairo empty provider 16 requests 0 visits and Start enabled, live Fes 360 34.06167,-4.97711 natural gaze, mobile 390px selection, 0 page JS exceptions."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
@@ -83,7 +86,12 @@
     "r8_google_live": "PENDING_RESTRICTED_KEY",
     "r8_pages": "PASS_R8_PAGES_45025652089",
     "r8_user_browser": "PENDING_OWNER_CONFIRMATION_R2_STILL_WORKS",
-    "r8_external_embeds": "NOT_AUTHORIZED_EXTERNAL_SOURCE_LINKS_ONLY"
+    "r8_external_embeds": "NOT_AUTHORIZED_EXTERNAL_SOURCE_LINKS_ONLY",
+    "r9_unit_tests": "PASS_LOCAL_36_OF_36",
+    "r9_browser": "PASS_LOCAL_EDGE_REAL_FES_360_AND_MOCK_CAIRO_NO_FALSE_VISITS_AND_MOBILE",
+    "r9_r2_imports": "PASS_ORIGINAL_SRC_APP_JS_FIVE_IMPORTS",
+    "r9_public_pages": "PENDING_CI_MERGE_DEPLOY",
+    "r9_user_browser": "PENDING_OWNER_CONFIRMATION"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -100,7 +108,7 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "Ask owner to test R8 gateway and original R2 Start in their browser. Next: official license-cleared APIs/embeds to bring more foreign VR inside, not copying/scraping others. No user J Coins/external rewards; R3-R5 remain archived.",
+  "next": "R9 removes separate JANUS Gateway and alternate-tour boxes per owner's instruction. Preserve one original panorama search only, do not re-add external links or new JS modules. PR CI -> merge -> Pages -> public Edge browser -> owner test. For uncovered Cairo/DPRK sources need new licensed in-portal adapter before real 360 possible.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
