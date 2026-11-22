@@ -1,5 +1,5 @@
 import {findNext, distanceKm, visitKey} from './navigation.js';
-import {PanoramaxProvider, GoogleProvider} from './providers.js';
+import {PanoramaxProvider, GoogleProvider, probePanoramaxCoverage} from './providers.js';
 import {readHistory, addVisit, getStats, STORAGE_KEY} from './storage.js';
 import {GazeDirector, buildGazePlan} from './gaze.js';
 import {analyzeInterest} from './attention.js';
@@ -51,13 +51,8 @@ const CITY = {
   capetown: {lat: -33.9249, lng: 18.4241},
   victoriafalls: {lat: -17.9243, lng: 25.8572}
 };
-// Keep this optional source pool isolated from the original R2 modes.
-// These names designate sampled 360° coverage, not guaranteed future views.
-const VERIFIED_REGION_KEYS = Object.freeze([
-  'pune','kathmandu','fes','merzouga','cebu','busay',
-  'georgetown','balikpulau','bayanlepas',
-  'cuenca','sayaussi','ricaurte','banoscuenca','elvalle'
-]);
+// R11: no hard-coded or random "verified" pool. Every visible option must be
+// confirmed against current provider 360° metadata in this browser session.
 // These places are browseable geographic targets but have no verified Panoramax
 // 360° coverage in our bounded 2026-11-22 search. Never mix them into random
 // verified starts or drift to an unrelated distant location.
@@ -72,8 +67,121 @@ const state = {
   history: readHistory(), running: false, paused: false, busy: false,
   turbo: false, provider: null, current: null, origin: null,
   abort: null, timer: null, gaze: null, interest: null, planBaseSeconds: 16,
-  generation: 0, map: null, mapLayer: null, leaflet: null, limitedCoverage: false
+  generation: 0, map: null, mapLayer: null, leaflet: null, limitedCoverage: false,
+  manualMode: false, startCandidate: null, selectedSourceKey: null
 };
+
+// R11: a source-backed list, never the old static/unverified selector.
+// No storage of results: every session queries current Panoramax 360° data.
+const LIVE_REFRESH_MS=5*60*1000;
+const LIVE_CONCURRENCY=4;
+const liveCoverage=new Map();
+const liveOptions=[...$('originCatalog').content.querySelectorAll('option[value]')]
+  .filter(option=>Object.prototype.hasOwnProperty.call(CITY,option.value))
+  .map(option=>({key:option.value,origin:CITY[option.value]}));
+let liveGeneration=0;
+let liveController=null;
+let liveRefreshing=false;
+let liveLastCheck=0;
+let liveChecked=0;
+let liveFailed=0;
+let manualNext=false;
+function renderLiveOptions(){
+  const select=$('originChoice'),previous=select.value;
+  const inPanoramax=$('provider').value==='panoramax';
+  const frag=document.createDocumentFragment();
+  if(inPanoramax){
+    for(const node of $('originCatalog').content.children){
+      if(node.tagName==='OPTION') {
+        if(liveCoverage.has(node.value))frag.append(node.cloneNode(true));
+      } else if(node.tagName==='OPTGROUP') {
+        const group=node.cloneNode(false);
+        for(const option of node.querySelectorAll('option[value]')){
+          if(liveCoverage.has(option.value))group.append(option.cloneNode(true));
+        }
+        if(group.children.length)frag.append(group);
+      }
+    }
+  }
+  if(!frag.children?.length && !frag.childNodes.length){
+    const placeholder=document.createElement('option');
+    placeholder.value='';
+    placeholder.disabled=true;
+    placeholder.textContent=!inPanoramax
+      ? 'Google: ручной поиск по координатам'
+      :liveRefreshing?'⏳ Проверяем доступные 360°…':'Подтверждённых 360° пока нет';
+    frag.append(placeholder);
+  }
+  select.replaceChildren(frag);
+  if(inPanoramax && liveCoverage.has(previous))select.value=previous;
+  else if(inPanoramax && liveCoverage.size)select.selectedIndex=0;
+  else select.selectedIndex=0;
+  refreshControls();
+}
+function updateCoverageStatus(){
+  if($('provider').value==='google'){
+    $('coverageStatus').textContent='Google: автоматический каталог отключён, чтобы не расходовать платную квоту. Используй свои координаты и ограниченный API-ключ.';
+    return;
+  }
+  const count=liveCoverage.size;
+  if(liveRefreshing){
+    $('coverageStatus').textContent='Проверено '+liveChecked+'/'+liveOptions.length+
+      ' районов · доступны '+count+' · идёт проверка свежих 360°…';
+  }else if(liveLastCheck){
+    const time=new Date(liveLastCheck).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+    $('coverageStatus').textContent='Проверено сейчас: '+count+' районов из '+
+      liveOptions.length+' · обновлено в '+time+
+      (liveFailed?' · '+liveFailed+' районов не ответили (не включены)':'')+
+      '. Список не гарантирует подлинность геометки.';
+  }else{
+    $('coverageStatus').textContent='Наличие панорам пока не подтверждено. Нажми «Обновить».';
+  }
+}
+async function refreshLiveCoverage(){
+  if(state.running||$('provider').value!=='panoramax')return;
+  liveController?.abort();
+  const controller=new AbortController();
+  const generation=++liveGeneration;
+  liveController=controller;
+  liveCoverage.clear();
+  liveChecked=0;liveFailed=0;liveRefreshing=true;liveLastCheck=0;
+  renderLiveOptions();
+  updateCoverageStatus();
+  let index=0;
+  async function worker(){
+    while(index<liveOptions.length&&!controller.signal.aborted){
+      const entry=liveOptions[index++];
+      try{
+        const result=await probePanoramaxCoverage(entry.origin,{signal:controller.signal});
+        if(generation!==liveGeneration||controller.signal.aborted)return;
+        if(result.candidate)liveCoverage.set(entry.key,result.candidate);
+      }catch(error){
+        if(controller.signal.aborted)return;
+        liveFailed++;
+      }
+      if(generation!==liveGeneration||controller.signal.aborted)return;
+      liveChecked++;
+      renderLiveOptions();
+      updateCoverageStatus();
+    }
+  }
+  try{
+    await Promise.all(Array.from({length:LIVE_CONCURRENCY},worker));
+  }finally{
+    if(generation===liveGeneration){
+      liveRefreshing=false;
+      liveLastCheck=controller.signal.aborted?0:Date.now();
+      liveController=null;
+      renderLiveOptions();
+      updateCoverageStatus();
+    }
+  }
+}
+function maybeRefreshCoverage(){
+  if(document.hidden||state.running||liveRefreshing)return;
+  if(!liveLastCheck||Date.now()-liveLastCheck>=LIVE_REFRESH_MS)
+    void refreshLiveCoverage();
+}
 
 function setStatus(message, kind = '') {
   $('runStatus').className = 'status ' + kind;
@@ -97,33 +205,32 @@ function refreshControls() {
   $('pauseBtn').textContent = state.paused ? '▶ Продолжить' : 'Ⅱ Пауза';
   $('nextBtn').disabled = !state.running || state.busy;
   $('provider').disabled = state.running;
-  $('originChoice').disabled = state.running;
+  const panoramaListReady=$('provider').value==='panoramax' &&
+    liveCoverage.has($('originChoice').value);
+  $('originChoice').disabled = state.running || !panoramaListReady && liveCoverage.size===0 ||
+    $('provider').value!=='panoramax';
+  $('startBtn').disabled = !state.running && !panoramaListReady;
   $('latlng').disabled = state.running;
+  $('manualStartBtn').disabled = state.running;
+  $('refreshCoverageBtn').disabled = state.running || liveRefreshing ||
+    $('provider').value!=='panoramax';
   $('googleKey').disabled = state.running;
 }
 function updateRadius(radius, note) {
   $('activeRadius').textContent = Number(radius).toLocaleString('ru-RU') + ' км';
   if (note) $('radiusHint').textContent = note;
 }
-function getOrigin() {
-  const key = $('originChoice').value;
-  if (key === 'random') {
-    const keys = Object.keys(CITY).filter(id => !LIMITED_COVERAGE_KEYS.has(id));
-    return {...CITY[keys[Math.floor(Math.random() * keys.length)]]};
-  }
-  if (key === 'random-verified') {
-    const next = VERIFIED_REGION_KEYS[Math.floor(Math.random() * VERIFIED_REGION_KEYS.length)];
-    return {...CITY[next]};
-  }
-  if (key !== 'custom') {
-    if (!CITY[key]) throw new Error('Неизвестная стартовая точка.');
+function getOrigin(manual=false) {
+  if(!manual) {
+    const key=$('originChoice').value;
+    if(!CITY[key]||!liveCoverage.has(key))
+      throw new Error('Место пока не подтверждено в текущем каталоге 360°. Обнови список.');
     return {...CITY[key]};
   }
-  const vals = $('latlng').value.split(/[,;\s]+/).filter(Boolean).map(Number);
-  if (vals.length !== 2 || !vals.every(Number.isFinite) || vals[0] < -90 || vals[0] > 90 || vals[1] < -180 || vals[1] > 180) {
-    throw new Error('Укажи корректные координаты: широта, долгота (например 48.8647, 2.3404).');
-  }
-  return {lat: vals[0], lng: vals[1]};
+  const vals=$('latlng').value.split(/[,;\s]+/).filter(Boolean).map(Number);
+  if(vals.length!==2||!vals.every(Number.isFinite)||vals[0]<-90||vals[0]>90||vals[1]<-180||vals[1]>180)
+    throw new Error('Укажи корректные координаты: широта, долгота (например, 48.8647, 2.3404).');
+  return {lat:vals[0],lng:vals[1]};
 }
 function chooseProvider() {
   if ($('provider').value === 'google') {
@@ -251,7 +358,15 @@ async function travel() {
   updateRadius(Number($('radius').value), 'Поиск ещё не посещённых панорам');
   try {
     const visited = new Set(state.history.map(visitKey));
-    const candidate = await findNext({
+    const pinned=state.startCandidate;
+    state.startCandidate=null;
+    const pinAllowed=pinned&&pinned.provider==='panoramax' &&
+      !visited.has(visitKey(pinned)) &&
+      !state.history.some(point=>distanceKm(point,pinned)<0.02) &&
+      distanceKm(origin,pinned)<=Number($('radius').value)+0.005;
+    const candidate=pinAllowed
+      ? {...pinned,searchRadiusKm:Number($('radius').value),expansions:0}
+      : await findNext({
       origin,
       baseRadiusKm: Number($('radius').value),
       // Preserve the classic 5→10→20→...→20000km explorer for working modes.
@@ -325,21 +440,38 @@ async function travel() {
   }
 }
 function run() {
-  if (state.running) {stop(); return;}
-  try {
-    state.origin = getOrigin();
-    state.provider = chooseProvider();
-    state.limitedCoverage = LIMITED_COVERAGE_KEYS.has($('originChoice').value);
-  } catch (e) {
-    message(e.message, true);
+  if(state.running){stop();return;}
+  const manual=manualNext;
+  manualNext=false;
+  try{
+    if(!manual&&$('provider').value!=='panoramax')
+      throw new Error('Для Google выбери ручной поиск по координатам.');
+    state.origin=getOrigin(manual);
+    state.provider=chooseProvider();
+    state.manualMode=manual;
+    state.selectedSourceKey=manual?null:$('originChoice').value;
+    state.startCandidate=manual?null:liveCoverage.get(state.selectedSourceKey)||null;
+    state.limitedCoverage=manual||LIMITED_COVERAGE_KEYS.has(state.selectedSourceKey);
+  }catch(error){
+    message(error.message,true);
     return;
   }
-  state.current = null;
-  state.running = true;
-  state.paused = false;
+  // While a panorama is active, the already-checked source identity remains
+  // pinned and the catalogue is not allowed to mutate the selected location.
+  if(liveRefreshing){
+    liveController?.abort();
+    ++liveGeneration;
+    liveRefreshing=false;
+    liveController=null;
+    renderLiveOptions();
+    updateCoverageStatus();
+  }
+  state.current=null;
+  state.running=true;
+  state.paused=false;
   state.generation++;
   refreshControls();
-  message('Маршрут запущен. Начинаю с радиуса ' + $('radius').value + ' км.');
+  message('Маршрут запущен. Начинаю с радиуса '+$('radius').value+' км.');
   travel();
 }
 function togglePause() {
@@ -529,8 +661,23 @@ document.addEventListener('keydown',event=>{
     syncViewerFullscreen();
   }
 });
-$('provider').addEventListener('change', () => $('googleKeyWrap').hidden = $('provider').value !== 'google');
-$('originChoice').addEventListener('change', () => $('customOrigin').hidden = $('originChoice').value !== 'custom');
+$('provider').addEventListener('change', () => {
+  const google=$('provider').value==='google';
+  $('googleKeyWrap').hidden=!google;
+  if(google)$('manualOrigin').open=true;
+  renderLiveOptions();
+  updateCoverageStatus();
+  if(!google)maybeRefreshCoverage();
+});
+$('refreshCoverageBtn').addEventListener('click',()=>{void refreshLiveCoverage();});
+$('manualStartBtn').addEventListener('click',()=>{
+  manualNext=true;
+  run();
+});
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden)maybeRefreshCoverage();
+});
+window.addEventListener('online',maybeRefreshCoverage);
 $('radius').addEventListener('input', () => {
   $('radiusVal').textContent = $('radius').value + ' км';
   if (!state.busy) updateRadius($('radius').value);
@@ -580,5 +727,9 @@ $('resetBtn').addEventListener('click', () => {
   $('coords').textContent = '—';
   $('mapLink').hidden = true;
 });
+renderLiveOptions();
+updateCoverageStatus();
 refreshControls();
 renderStats();
+void refreshLiveCoverage();
+setInterval(maybeRefreshCoverage,LIVE_REFRESH_MS);
