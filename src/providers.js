@@ -1,21 +1,7 @@
-import {NativePanorama} from './native-panorama.js';
 import {bboxAround, distanceKm, randomProbe} from './navigation.js';
 
 const PANORAMAX_ENDPOINT = 'https://api.panoramax.xyz/api';
 const PANORAMAX_VIEWER = 'https://cdn.jsdelivr.net/npm/@panoramax/web-viewer@5.2.0/build/cjs/index_photoviewer.js';
-function linkedAbort(signal, timeoutMs=6500) {
-  const controller=new AbortController();
-  const abort=()=>controller.abort();
-  if(signal?.aborted)abort();
-  else signal?.addEventListener('abort',abort,{once:true});
-  const timer=setTimeout(abort,timeoutMs);
-  return {
-    signal:controller.signal,
-    done(){clearTimeout(timer);signal?.removeEventListener('abort',abort)},
-    expired(){return controller.signal.aborted&&!signal?.aborted}
-  };
-}
-
 let panoramaxLoad;
 let googleLoad;
 
@@ -89,14 +75,8 @@ function featureToCandidate(feature) {
   if (!feature?.id || !feature?.collection || !Number.isFinite(lat) || !Number.isFinite(lng)) return null;
   // Full 360 photo only; flat photos cannot be rotated around.
   if (!equirectangular && fieldOfView < 300) return null;
-  const license=feature.links?.find(link=>link.rel==='license');
-  const source=feature.links?.find(link=>link.rel==='via');
   return {provider: 'panoramax', id: feature.id, collection: feature.collection, lat, lng,
-    previewUrl: feature.assets?.sd?.href || feature.assets?.thumb?.href || null,
-    producer:feature.properties?.['geovisio:producer']||feature.providers?.find(p=>p.roles?.includes('producer'))?.name||'Panoramax',
-    license:feature.properties?.license||license?.title||'См. лицензию источника',
-    licenseUrl:license?.href||'https://panoramax.xyz/',
-    sourceUrl:source?.href||'https://panoramax.openstreetmap.fr/'};
+    previewUrl: feature.assets?.sd?.href || feature.assets?.thumb?.href || null};
 }
 
 export class PanoramaxProvider {
@@ -105,7 +85,7 @@ export class PanoramaxProvider {
     this.photo = null;
     this.rotation = null;
   }
-  async searchAtRadius({origin, radiusKm, visited, visitedPoints = [], minSeparationKm = 0.02, probeCount=4, random, signal}) {
+  async searchAtRadius({origin, radiusKm, visited, visitedPoints = [], minSeparationKm = 0.02, random, signal}) {
     const found = [];
     // Seeded points offer a reliable escape from empty regions (oceans, deserts)
     // once the expanding radius can geographically reach real coverage.
@@ -116,25 +96,16 @@ export class PanoramaxProvider {
     ].filter(p => distanceKm(origin, p) <= radiusKm)
       .sort((a, b) => distanceKm(origin, a) - distanceKm(origin, b));
     const points = [origin, ...coverage.slice(0, 2)];
-    while (points.length < Math.max(1, Math.min(4, probeCount))) points.push(randomProbe(origin, radiusKm * 0.85, random));
+    while (points.length < 4) points.push(randomProbe(origin, radiusKm * 0.85, random));
     // Search small windows. Full-world bbox queries can be biased by the first
     // page of results and most images in the service are flat rather than 360.
-    for (const point of points.slice(0,Math.max(1,Math.min(4,probeCount)))) {
+    for (const point of points) {
       if (signal?.aborted || found.length >= 8) break;
       const box = bboxAround(point, Math.min(radiusKm / 3, 1.2));
       const url = PANORAMAX_ENDPOINT + '/search?bbox=' + box.join(',') + '&limit=80';
-      const request=linkedAbort(signal,6500);
-      let json;
-      try {
-        const response=await fetch(url,{signal:request.signal,headers:{Accept:'application/geo+json'}});
-        if(!response.ok)throw new Error('Panoramax: HTTP '+response.status);
-        json=await response.json();
-      } catch(error) {
-        if(signal?.aborted)throw new DOMException('Поиск остановлен','AbortError');
-        throw new Error(request.expired()
-          ? 'Panoramax не отвечает более 6 секунд. Проверь соединение с api.panoramax.xyz.'
-          : 'Не удалось связаться с Panoramax: '+(error?.message||error));
-      } finally {request.done()}
+      const response = await fetch(url, {signal, headers: {Accept: 'application/geo+json'}});
+      if (!response.ok) throw new Error('Panoramax: HTTP ' + response.status);
+      const json = await response.json();
       for (const f of json.features || []) {
         const c = featureToCandidate(f);
         if (!c || visited.has(c.provider + ':' + c.id) || distanceKm(origin, c) > radiusKm + 0.005) continue;
@@ -145,25 +116,12 @@ export class PanoramaxProvider {
         found.push(c);
         if (found.length >= 8) break;
       }
-      // First suitable new view is enough to start, instead of delaying the
-      // visitor for all remaining metadata probes before showing anything.
-      if (found.length) break;
     }
     return found;
   }
-  async show(candidate, container, options={}) {
-    this.stopRotation();
-    this.view?.destroy?.();
-    // Standard R5 path renders open equirectangular imagery directly, with
-    // mandatory photographer/license/source credit, no third-party script CDN.
-    if(candidate.previewUrl){
-      const viewer=await NativePanorama.open(candidate,container,options);
-      this.view=viewer;
-      this.photo=viewer;
-      return;
-    }
-    // Legacy source without an image URL: official viewer fallback.
+  async show(candidate, container) {
     await ensurePanoramaxViewer();
+    this.stopRotation();
     container.replaceChildren();
     const viewer = document.createElement('pnx-photo-viewer');
     viewer.setAttribute('endpoint', PANORAMAX_ENDPOINT);
@@ -216,11 +174,11 @@ export class GoogleProvider {
     this.service ||= new maps.StreetViewService();
     return maps;
   }
-  async searchAtRadius({origin, radiusKm, visited=new Set(), visitedPoints=[], minSeparationKm=0.02, probeCount=4, random=Math.random, signal}) {
+  async searchAtRadius({origin, radiusKm, visited, random, signal}) {
     await this.ready();
     const found = [];
     // Bound paid service lookups; the engine handles expanding to wider radii.
-    for (let i = 0; i < Math.max(1,Math.min(4,probeCount)); i++) {
+    for (let i = 0; i < 4; i++) {
       if (signal?.aborted) break;
       const target = i === 0 ? origin : randomProbe(origin, radiusKm * 0.9, random);
       try {
