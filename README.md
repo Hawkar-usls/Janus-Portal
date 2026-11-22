@@ -19,16 +19,16 @@
 
 Требуется Node.js 20+:
 
-\`\`\`bash
+```bash
 git clone https://github.com/Hawkar-usls/Janus-Portal.git
 cd Janus-Portal
 npm run verify
 npm run dev
-\`\`\`
+```
 
-Откройте **http://127.0.0.1:4173**. Используйте локальный HTTP-сервер, не открывайте \`index.html\` как \`file://\`: ES modules и браузерные API могут блокироваться.
+Откройте **http://127.0.0.1:4173**. Используйте локальный HTTP-сервер, не открывайте `index.html` как `file://`: ES modules и браузерные API могут блокироваться.
 
-**Без Node:** любой статический HTTP-сервер, обслуживающий \`index.html\` и \`src/\`.
+**Без Node:** любой статический HTTP-сервер, обслуживающий `index.html` и `src/`.
 
 ### Google-режим
 
@@ -38,7 +38,7 @@ Google Maps JavaScript API со Street View нужно включить в Googl
 
 ### Публикация GitHub Pages
 
-Workflow \`.github/workflows/pages.yml\` публикует **только** \`index.html\` и нужные \`src/*\` после push в \`main\`. Если Pages ещё не включён: **Settings → Pages → Build and deployment → Source: GitHub Actions**. Затем проверьте Actions и откройте URL из deployment. URL не следует считать работающим до фактического успешного deploy.
+Workflow `.github/workflows/pages.yml` публикует **только** `index.html` и нужные `src/*` после push в `main`. Если Pages ещё не включён: **Settings → Pages → Build and deployment → Source: GitHub Actions**. Затем проверьте Actions и откройте URL из deployment. URL не следует считать работающим до фактического успешного deploy.
 
 ## Как выбирается следующее место
 
@@ -54,21 +54,21 @@ Workflow \`.github/workflows/pages.yml\` публикует **только** \`i
 
 | Путь | Для чего |
 | --- | --- |
-| \`index.html\`, \`src/styles.css\` | Экран игры, адаптивный дизайн |
-| \`src/app.js\` | Игровой цикл, управление, карта и статистика |
-| \`src/navigation.js\` | Чистый геодезический адаптивный алгоритм |
-| \`src/providers.js\` | Официальные Panoramax и Google Street View адаптеры |
-| \`src/storage.js\` | Локальный журнал (Panoramax); Google session-only |
-| \`tests/\` | Проверка маршрутов, дублей и storage |
-| \`.github/workflows/\` | CI + статическая публикация |
-| \`AGENTS.md\` | Входная точка для следующего ChatGPT/кодинг-агента |
-| \`docs/STATUS.json\` | Машиночитаемый статус и оставшиеся блокеры |
-| \`docs/SITE_INTEGRATION.md\` | Контракт аккаунтов, J Coins, защита от накрутки |
-| \`docs/CONTINUATION.md\` | Пошаговый продолжатель проекта |
+| `index.html`, `src/styles.css` | Экран игры, адаптивный дизайн |
+| `src/app.js` | Игровой цикл, управление, карта и статистика |
+| `src/navigation.js` | Чистый геодезический адаптивный алгоритм |
+| `src/providers.js` | Официальные Panoramax и Google Street View адаптеры |
+| `src/storage.js` | Локальный журнал (Panoramax); Google session-only |
+| `tests/` | Проверка маршрутов, дублей и storage |
+| `.github/workflows/` | CI + статическая публикация |
+| `AGENTS.md` | Входная точка для следующего ChatGPT/кодинг-агента |
+| `docs/STATUS.json` | Машиночитаемый статус и оставшиеся блокеры |
+| `docs/SITE_INTEGRATION.md` | Контракт аккаунтов, J Coins, защита от накрутки |
+| `docs/CONTINUATION.md` | Пошаговый продолжатель проекта |
 
 ## Основной сайт
 
-Целевая вкладка: **«Портал»** на [tg-pomoyka.hawkarlol.chatgpt.site](https://tg-pomoyka.hawkarlol.chatgpt.site/). Исходный код сайта и его серверное API кошелька здесь отсутствуют. Нельзя объявлять выполненной интеграцию с действующим сайтом, пока не будут доступ к проекту, авторизация и end-to-end проверки. См. \`docs/SITE_INTEGRATION.md\`.
+Целевая вкладка: **«Портал»** на [tg-pomoyka.hawkarlol.chatgpt.site](https://tg-pomoyka.hawkarlol.chatgpt.site/). Исходный код сайта и его серверное API кошелька здесь отсутствуют. Нельзя объявлять выполненной интеграцию с действующим сайтом, пока не будут доступ к проекту, авторизация и end-to-end проверки. См. `docs/SITE_INTEGRATION.md`.
 
 ## Источники и лицензии
 
@@ -78,4 +78,4 @@ Workflow \`.github/workflows/pages.yml\` публикует **только** \`i
 
 ## Научная/инженерная честность
 
-**PASS для unit tests ≠ проверенный продакшен или экономические выплаты.** Точный статус, ограничения и воспроизводимая очередь задач зафиксированы в \`docs/STATUS.json\` и GitHub Issues.
+**PASS для unit tests ≠ проверенный продакшен или экономические выплаты.** Точный статус, ограничения и воспроизводимая очередь задач зафиксированы в `docs/STATUS.json` и GitHub Issues.
