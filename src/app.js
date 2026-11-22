@@ -334,10 +334,24 @@ function updateMap() {
   }
   if (state.mapLayer) for (const layer of state.mapLayer) state.map.removeLayer(layer);
   state.mapLayer = [];
+  const planned = state.tour?.stops.map(s=>[s.lat,s.lng]) || [];
+  if(planned.length){
+    state.mapLayer.push(leaflet.polyline(planned,{color:'#e6c580',weight:2,dashArray:'6 7',opacity:.75}).addTo(state.map));
+    state.tour.stops.forEach((stop,i)=>{
+      const marker=leaflet.circleMarker([stop.lat,stop.lng],{
+        radius:i===state.tourIndex?7:5,color:'#f0d69b',fillColor:i<state.tourIndex?'#57e0bf':'#6a4d24',
+        fillOpacity:.9,weight:2
+      }).addTo(state.map);
+      const popup=document.createElement('span');
+      popup.textContent=(i+1)+'. '+stop.name+' · плановая точка экскурсии';
+      marker.bindPopup(popup);
+      state.mapLayer.push(marker);
+    });
+  }
   const entries = state.history.filter(e => e.provider === 'panoramax').slice(-300);
-  if (!entries.length) return;
+  if(!entries.length&&!planned.length)return;
   const points = entries.map(e => [e.lat, e.lng]);
-  state.mapLayer.push(leaflet.polyline(points, {color: '#4cbed8', weight: 2, opacity: 0.7}).addTo(state.map));
+  if(points.length>1)state.mapLayer.push(leaflet.polyline(points, {color: '#4cbed8', weight: 2, opacity: 0.7}).addTo(state.map));
   entries.forEach((e, i) => {
     const marker = leaflet.circleMarker([e.lat, e.lng], {radius: i === entries.length - 1 ? 7 : 4,
       color: '#99ffea', fillColor: i === entries.length - 1 ? '#60e9bc' : '#327b9b', fillOpacity: 0.85,
@@ -347,7 +361,8 @@ function updateMap() {
       '</strong><br>№ ' + (state.history.length - entries.length + i + 1) +
       '<br>' + e.lat.toFixed(5) + ', ' + e.lng.toFixed(5));
   });
-  state.map.fitBounds(leaflet.latLngBounds(points).pad(0.35), {maxZoom: 12});
+  const bounds=planned.length?planned:points;
+  if(bounds.length)state.map.fitBounds(leaflet.latLngBounds(bounds).pad(0.35),{maxZoom:12});
 }
 function renderAchievements() {
   const n = state.history.length;
@@ -459,18 +474,20 @@ select.value='paris';
 let discovery;
 discovery=installDiscovery({
   onFree(){
-    if(state.tour){if(state.running)stop();state.tour=null;updateTourStatus();refreshControls();}
+    if(state.tour){if(state.running)stop();state.tour=null;updateTourStatus();refreshControls();updateMap();}
   },
   onTour(tour){
     if(state.running)stop();
     state.tour=tour;state.tourIndex=0;state.tourViewed=0;state.tourSkipped=0;state.lastTourStop=null;
     updateTourStatus('маршрут выбран');
+    updateMap();
     refreshControls();
     run();
   },
   onDestination(place){
     if(state.running)stop();
     state.tour=null;updateTourStatus();
+    updateMap();
     discovery.selectTab('explore');
     select.value=place.id;
     run();
