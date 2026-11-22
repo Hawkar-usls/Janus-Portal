@@ -17,6 +17,14 @@ This file exists so the next authorized ChatGPT agent can continue **without nee
 
 On 2026-11-22 GitHub Actions PR run [45007676303](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45007676303) ran **14/14 tests PASS** including provider spatial deduplication. Edge on Yaksa rendered a real Paris 360° panorama with visible source credits; first visit, Leaflet map, pause/resume worked. A later auto-second-jump test exhausted sampled candidates because the provider filled its result budget with near-identical photos; the provider was patched to filter by 20m *before* that cap and CI passed, but **the second automatic jump has not yet been revalidated in a browser after this fix**. Panoramax API metadata was independently fetched in Paris, Rennes and Lyon. A nonblocking /api/configuration 404 from the third-party viewer was observed.
 
+## Handoff update — 2026-11-22 (main merged)
+
+- PR [#5](https://github.com/Hawkar-usls/Janus-Portal/pull/5) **merged** to `main`; squash SHA `85fa0b28034fb4e8602e9dda65b13c737ae51b4b`.
+- Main CI [45007885399](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45007885399) **PASS** (14/14 unit tests).
+- First GitHub Pages run [45007885426](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45007885426) **FAIL** precisely at `actions/configure-pages@v5`: repository's Pages site not enabled. Enabling Pages via `Settings → Pages → Source: GitHub Actions` or separate authorized Pages API token is required. The normal `GITHUB_TOKEN` cannot perform automatic enablement.
+- The external Yaksa remote PC became intermittently unresponsive during the second-jump live re-test. The browser success for the **first** panoramic visit remains supported; second after the spatial fix is **not** verified. Issue [#6](https://github.com/Hawkar-usls/Janus-Portal/issues/6) tracks it.
+- Website tab and J Coins **NOT deployed**; issues [#1](https://github.com/Hawkar-usls/Janus-Portal/issues/1) and [#2](https://github.com/Hawkar-usls/Janus-Portal/issues/2) retain full integration requirements.
+
 ## Mandatory next actions
 
 1. **Experimental MVP merge vs production gate:** GitHub Actions and first real Panoramax browser view were verified; an experimental merge to `main` is acceptable with the explicit `BROWSER_E2E_PENDING` label. **Before claiming production readiness**, close [issue #6](https://github.com/Hawkar-usls/Janus-Portal/issues/6) with 2+ actual automatic jumps, rotation, pause and resume. Confirm the merged `main` SHA and Pages deployment.
