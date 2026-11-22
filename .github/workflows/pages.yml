@@ -2,6 +2,13 @@ name: Publish static Portal to GitHub Pages
 on:
   push:
     branches: [main]
+    paths:
+      - 'index.html'
+      - 'favicon.svg'
+      - 'src/**'
+      - 'package.json'
+      - 'tests/**'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
   contents: read
