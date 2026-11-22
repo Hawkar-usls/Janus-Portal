@@ -151,13 +151,13 @@ export class PanoramaxProvider {
     }
     return found;
   }
-  async show(candidate, container) {
+  async show(candidate, container, options={}) {
     this.stopRotation();
     this.view?.destroy?.();
     // Standard R5 path renders open equirectangular imagery directly, with
     // mandatory photographer/license/source credit, no third-party script CDN.
     if(candidate.previewUrl){
-      const viewer=await NativePanorama.open(candidate,container);
+      const viewer=await NativePanorama.open(candidate,container,options);
       this.view=viewer;
       this.photo=viewer;
       return;
