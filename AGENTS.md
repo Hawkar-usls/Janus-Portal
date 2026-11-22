@@ -25,6 +25,8 @@
 ## Architecture
 
 - `src/navigation.js`: deterministic geodesic jump selection, expansion strategy.
+- `src/tours.js` and `src/tour-runner.js`: R3 curated tourist routes (including Cairo), bounded landmark-local searches, no fake photos or JC rewards.
+- `src/discovery.js` and `src/fullscreen.js`: tabs, catalogue filters and accessible panorama fullscreen/ESC/mobile fallback.
 - `src/gaze.js`: R2 natural gaze choreography with eased turns, focus, squint, returns, variable dwell, pause/resume/stop; no API calls.
 - `src/attention.js`: Panoramax-only local contrast saliency and optional MediaPipe object/person inference; **never** process Google photos.
 - `src/providers.js`: external API adapters. Watch for changed Panoramax web-viewer version and Google API behavior.
@@ -38,4 +40,4 @@
 
 Use labels: `UNIT_PASS`, `LIVE_PROVIDER_PASS`, `BROWSER_E2E_PASS`, `PAGES_DEPLOYED`, `SITE_TAB_LIVE`, `WALLET_BACKEND_PASS`. Never promote a missing gate. Prefer links to concrete run IDs and PRs.
 
-**First read** `docs/CONTINUATION.md` plus `docs/HUMAN_GAZE_R2.md`; check PR #8 and its verification gates. For browser regression run `tools/browser-gaze-check.mjs` with live Panoramax/Playwright when possible. Never mark actual person identification: only tentative category detections with confidence. The map and J Coins remain separately gated.
+**First read** `docs/CONTINUATION.md`, `docs/DISCOVERY_TOURS_R3.md` and `docs/HUMAN_GAZE_R2.md`; check PR #8 and its verification gates. For browser regression run `tools/browser-gaze-check.mjs` with live Panoramax/Playwright when possible. Never mark actual person identification: only tentative category detections with confidence. The map and J Coins remain separately gated.
