@@ -18,7 +18,21 @@ function loadScript(url, timeoutMs = 20000) {
 }
 
 async function ensurePanoramaxViewer() {
-  panoramaxLoad ||= loadScript(PANORAMAX_VIEWER).then(() => customElements.whenDefined('pnx-photo-viewer'));
+  panoramaxLoad ||= (async () => {
+    // The official v5.2.0 CommonJS browser bundle references a global
+    // CommonJS 'exports' symbol during initialization. Supply it only while
+    // the script loads, then restore the embedding site's previous state.
+    const hadExports = Object.prototype.hasOwnProperty.call(window, 'exports');
+    const previousExports = window.exports;
+    window.exports = {};
+    try {
+      await loadScript(PANORAMAX_VIEWER);
+      await customElements.whenDefined('pnx-photo-viewer');
+    } finally {
+      if (hadExports) window.exports = previousExports;
+      else delete window.exports;
+    }
+  })();
   return panoramaxLoad;
 }
 
