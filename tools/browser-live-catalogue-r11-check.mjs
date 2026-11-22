@@ -118,7 +118,7 @@ try{
 
  const phone=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
  phone.on('pageerror',e=>errors.push('phone: '+e.message));
- await phone.route(/https:\/\/api\.panoramax\.xyz\/api\/search(?:\?|$)/route=>
+ await phone.route(/https:\/\/api\.panoramax\.xyz\/api\/search(?:\?|$)/,route=>
   route.fulfill({status:200,contentType:'application/geo+json',
    body:JSON.stringify({type:'FeatureCollection',features:[]})}));
  await phone.goto(url,{waitUntil:'domcontentloaded',timeout:25000});
