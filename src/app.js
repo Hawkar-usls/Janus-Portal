@@ -15,7 +15,7 @@ const CITY = {
 const state = {
   history: readHistory(), running: false, paused: false, busy: false,
   turbo: false, provider: null, current: null, origin: null,
-  abort: null, timer: null, generation: 0, map: null, mapLayer: null
+  abort: null, timer: null, generation: 0, map: null, mapLayer: null, leaflet: null
 };
 
 function setStatus(message, kind = '') {
@@ -202,13 +202,15 @@ function skip() {
   travel();
 }
 function updateMap() {
-  if (!window.L) {
+  const leaflet = state.leaflet || window.L;
+  if (!leaflet?.map || !leaflet?.polyline) {
     $('map').textContent = 'Карта временно недоступна (библиотека не загрузилась). История доступна ниже.';
     return;
   }
+  state.leaflet = leaflet; // capture before another viewer changes a global symbol
   if (!state.map) {
-    state.map = L.map('map', {worldCopyJump: true}).setView([30, 12], 2);
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    state.map = leaflet.map('map', {worldCopyJump: true}).setView([30, 12], 2);
+    leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(state.map);
   }
@@ -217,9 +219,9 @@ function updateMap() {
   const entries = state.history.filter(e => e.provider === 'panoramax').slice(-300);
   if (!entries.length) return;
   const points = entries.map(e => [e.lat, e.lng]);
-  state.mapLayer.push(L.polyline(points, {color: '#4cbed8', weight: 2, opacity: 0.7}).addTo(state.map));
+  state.mapLayer.push(leaflet.polyline(points, {color: '#4cbed8', weight: 2, opacity: 0.7}).addTo(state.map));
   entries.forEach((e, i) => {
-    const marker = L.circleMarker([e.lat, e.lng], {radius: i === entries.length - 1 ? 7 : 4,
+    const marker = leaflet.circleMarker([e.lat, e.lng], {radius: i === entries.length - 1 ? 7 : 4,
       color: '#99ffea', fillColor: i === entries.length - 1 ? '#60e9bc' : '#327b9b', fillOpacity: 0.85,
       weight: 1}).addTo(state.map);
     state.mapLayer.push(marker);
@@ -227,7 +229,7 @@ function updateMap() {
       '</strong><br>№ ' + (state.history.length - entries.length + i + 1) +
       '<br>' + e.lat.toFixed(5) + ', ' + e.lng.toFixed(5));
   });
-  state.map.fitBounds(L.latLngBounds(points).pad(0.35), {maxZoom: 12});
+  state.map.fitBounds(leaflet.latLngBounds(points).pad(0.35), {maxZoom: 12});
 }
 function renderAchievements() {
   const n = state.history.length;
