@@ -1,6 +1,6 @@
 import {findNext, distanceKm, visitKey} from './navigation.js';
 import {Merged360Provider, probeMerged360} from './providers.js';
-import {readHistory, addVisit, getStats, STORAGE_KEY} from './storage.js';
+import {readHistory, addVisit, getStats, getPassport, STORAGE_KEY} from './storage.js';
 import {GazeDirector, buildGazePlan} from './gaze.js';
 import {analyzeInterest} from './attention.js';
 
@@ -69,8 +69,40 @@ const state = {
   turbo: false, provider: null, current: null, origin: null,
   abort: null, timer: null, gaze: null, interest: null, planBaseSeconds: 16,
   generation: 0, map: null, mapLayer: null, leaflet: null, limitedCoverage: false,
-  manualMode: false, startCandidate: null, selectedSourceKey: null
+  manualMode: false, startCandidate: null, selectedSourceKey: null,
+  afk: false, afkExhausted: new Set(), afkSwitches: 0
 };
+
+// Local-only Passport attribution: geotags close to an audited geographic
+// anchor. Do not claim accurate geopolitical boundaries from image metadata.
+const PASSPORT_COUNTRY_GROUPS = [
+  {code:'FR',name:'Франция',flag:'🇫🇷',keys:['paris','rennes','lyon']},
+  {code:'UA',name:'Украина',flag:'🇺🇦',keys:['kyiv']},
+  {code:'JP',name:'Япония',flag:'🇯🇵',keys:['tokyo']},
+  {code:'US',name:'США',flag:'🇺🇸',keys:['newyork','sandiego']},
+  {code:'BR',name:'Бразилия',flag:'🇧🇷',keys:['rio']},
+  {code:'IN',name:'Индия',flag:'🇮🇳',keys:['pune']},
+  {code:'NP',name:'Непал',flag:'🇳🇵',keys:['kathmandu']},
+  {code:'MA',name:'Марокко',flag:'🇲🇦',keys:['fes','merzouga']},
+  {code:'PH',name:'Филиппины',flag:'🇵🇭',keys:['cebu','busay']},
+  {code:'MY',name:'Малайзия',flag:'🇲🇾',keys:['georgetown','balikpulau','bayanlepas']},
+  {code:'EC',name:'Эквадор',flag:'🇪🇨',keys:['cuenca','sayaussi','ricaurte','banoscuenca','elvalle']},
+  {code:'KP',name:'Северная Корея',flag:'🇰🇵',keys:['pyongyang','kaesong','wonsan']},
+  {code:'EG',name:'Египет',flag:'🇪🇬',keys:['cairo','giza','saqqara','alexandria','luxor']},
+  {code:'KE',name:'Кения',flag:'🇰🇪',keys:['nairobi']},
+  {code:'TZ',name:'Танзания',flag:'🇹🇿',keys:['zanzibar']},
+  {code:'UG',name:'Уганда',flag:'🇺🇬',keys:['kampala']},
+  {code:'ET',name:'Эфиопия',flag:'🇪🇹',keys:['addis']},
+  {code:'SN',name:'Сенегал',flag:'🇸🇳',keys:['dakar']},
+  {code:'NG',name:'Нигерия',flag:'🇳🇬',keys:['lagos']},
+  {code:'NA',name:'Намибия',flag:'🇳🇦',keys:['windhoek']},
+  {code:'ZA',name:'ЮАР',flag:'🇿🇦',keys:['capetown']},
+  {code:'ZW',name:'Зимбабве',flag:'🇿🇼',keys:['victoriafalls']}
+];
+const PASSPORT_ANCHORS=PASSPORT_COUNTRY_GROUPS.flatMap(group=>
+  group.keys.filter(key=>CITY[key]).map(key=>({...CITY[key],
+    code:group.code,name:group.name,flag:group.flag})));
+const passport=()=>getPassport(state.history,PASSPORT_ANCHORS);
 
 // R11: a source-backed list, never the old static/unverified selector.
 // No storage of results: every session queries current Panoramax 360° data.
@@ -228,6 +260,10 @@ function refreshControls(){
   $('refreshCoverageBtn').disabled=state.running;
   $('googleKey').disabled=state.running;
   $('googleConsent').disabled=state.running;
+  $('afkBtn').disabled = !state.afk && !state.running && liveCoverage.size===0;
+  $('afkBtn').setAttribute('aria-pressed',String(state.afk));
+  $('afkBtn').textContent=state.afk?'■ Завершить AFK':'🌙 Начать AFK-экспедицию';
+  $('afkIndicator').hidden=!state.afk;
 }
 function updateRadius(radius, note) {
   $('activeRadius').textContent = Number(radius).toLocaleString('ru-RU') + ' км';
