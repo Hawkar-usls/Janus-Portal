@@ -19,7 +19,8 @@
     "local_attention": "Panoramax client-side heuristic contrast and opt-in MediaPipe 1.2.3 object/person detector; no image pixels from Google.",
     "person_model": "Edge loaded MediaPipe 1.2.3 and model; a Panoramax Paris test photo produced one tentative person category score 0.5021. This is NOT independently validated accuracy.",
     "browser_proof": "Edge Panoramax x 247.97 to 320.10 over 1.7s; pause exact freeze, resume movement, zoom max 50/100, second automatic jump unique 1 to 2, JS errors none.",
-    "local_model": "MediaPipe v1.2.3 bundle/WASM/model HTTP 200; photo 0c5a2b1b-62dc-4a37-a744-bdf0bab67002 gave tentative person confidence 0.5021, not benchmarked."
+    "local_model": "MediaPipe v1.2.3 bundle/WASM/model HTTP 200; photo 0c5a2b1b-62dc-4a37-a744-bdf0bab67002 gave tentative person confidence 0.5021, not benchmarked.",
+    "deployment": "https://hawkar-usls.github.io/Janus-Portal/ — Pages workflow run 45012393984 success; all needed R2 JS assets returned HTTP 200."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
@@ -27,7 +28,7 @@
     "real_browser_panoramax_rotation": "PASS_EDGE_NATURAL_GAZE_ZOOM_PAUSE_RESUME",
     "real_browser_google_key_restricted": "PENDING",
     "github_actions_ci": "PASS_MAIN_RUN_45012146536",
-    "github_pages_publish": "PAGES_ENABLED_DEPLOY_RETRY_REQUIRED__RUN_45012146539_ARTIFACT_LOOKUP_RACE",
+    "github_pages_publish": "PASS_PAGES_WORKFLOW_45012393984__HTTPS_EDGE_PANORAMAX_GAZE_SMOKE",
     "main_site_tab": "BLOCKED_SITE_EDITOR_ACCESS",
     "main_site_account_auth": "BLOCKED_SITE_SOURCE",
     "server_authoritative_J_coins": "BLOCKED_WALLET_API_AND_RULE_APPROVAL",
@@ -38,7 +39,8 @@
     "semantic_gaze_calibration": "OPEN_IMAGE_HEADING_AND_DETECTION_BENCHMARK",
     "google_semantic_detection": "DISABLED_GOOGLE_PIXEL_ACCESS_PROHIBITED_IN_CURRENT_IMPLEMENTATION",
     "google_gaze_api": "PENDING_RESTRICTED_KEY_LIVE_TEST",
-    "semantic_heading_accuracy": "OPEN_ISSUE_9"
+    "semantic_heading_accuracy": "OPEN_ISSUE_9",
+    "live_https_gaze": "PASS_PRODUCTION_EDGE_PANORAMAX_PAN_AND_PAUSE"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -55,7 +57,7 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "R2 in main. GitHub Pages enabled; fix deployment artifact lookup, verify URL; calibrate semantic object heading/precision issue #9; Google with restricted key, site tab and JC gates remain.",
+  "next": "R2 deployed to standalone Pages site and verified in Edge. NEXT: integrate «Портал» into real JANUS main site (#1); real account/JC backend (#2), competition (#3); verify Google restricted-key mode (#4); calibrate semantic focus (#9). Do not award JC from local history.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
@@ -64,5 +66,7 @@
   "default_branch": "main",
   "release_commit": "0c2b6cfd38c2714cc4b578098d4a8a7a82568dd0",
   "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/5",
-  "deployment_blocker": "Pages site created via GitHub API with build_type=workflow; URL https://hawkar-usls.github.io/Janus-Portal/. Rerun attempt 2 45012146539 uploaded artifact 14750765114 successfully but deploy-pages reported zero artifacts immediately after upload (API metadata not yet visible). Need new workflow attempt and verify URL."
+  "deployment_blocker": null,
+  "release_url": "https://hawkar-usls.github.io/Janus-Portal/",
+  "known_nonblocking": "Panoramax viewer requests /api/configuration and receives HTTP 404; panorama and local gaze still work. Verify upstream API compatibility later."
 }
