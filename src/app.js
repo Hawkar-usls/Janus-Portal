@@ -272,7 +272,7 @@ async function travel() {
       if (noPoints && state.limitedCoverage) {
         message('Для выбранного региона в проверенных выборках Panoramax не нашлось новых 360° снимков поблизости (радиус до ' +
           Math.max(MAX_LIMITED_SEARCH_KM, Number($('radius').value)) +
-          ' км). Не подменяем их фотографиями другой страны. Ниже есть ссылки на внешние 360° экскурсии по Северной Корее и Египту. Для встроенного просмотра выбери Фес или район Мерзуги.', true);
+          ' км). Не подменяем их фотографиями другой страны. Выбери другое место в нашем поиске или официальный источник в настройках.', true);
         setStatus('360° рядом не найдены', 'warn');
         // Make the next choice one click: the original engine's stopped state
         // remains unchanged for normal/verified locations.
@@ -429,113 +429,6 @@ function renderStats() {
   renderHistory();
   try {updateMap();} catch (err) {console.error('Local map unavailable:', err);}
 }
-// R8 gateway: source routing INSIDE the original R2 module.
-// Do not add imports, external scripts, iframes or unlicensed imagery.
-// Providers declare a capability, not a claim of global 360° coverage.
-const GATEWAY_PANORAMAX_VERIFIED = new Set([
-  'paris','fes','merzouga','pune','kathmandu',
-  'cebu','georgetown','cuenca'
-]);
-const GATEWAY_EXTERNAL_TOURS = Object.freeze({
-  pyongyang:[['DPRK Panorama','360° фотографии Пхеньяна и других мест КНДР',
-    'https://www.north-korea-travel.com/dprk-panorama.html']],
-  kaesong:[['DPRK Panorama','Кэсон и другие места — на сайте авторов',
-    'https://www.north-korea-travel.com/dprk-panorama.html']],
-  wonsan:[['DPRK Panorama','Фототуры по КНДР; наличие снимка Вонсана проверяй у источника',
-    'https://www.north-korea-travel.com/dprk-panorama.html']],
-  cairo:[
-    ['Digital Giza · Гарвард','3D-реконструкция Гизы рядом с Каиром (не 360° фото Каира)',
-      'https://giza.fas.harvard.edu/giza3d/'],
-    ['Минтуризма Египта','Официальная медиатека 360° достопримечательностей',
-      'https://egymonuments.gov.eg/en/media-hub/']
-  ],
-  giza:[
-    ['Digital Giza · Гарвард','Виртуальная археологическая 3D-экскурсия',
-      'https://giza.fas.harvard.edu/giza3d/'],
-    ['Минтуризма Египта','Официальная медиатека и 360°',
-      'https://egymonuments.gov.eg/en/media-hub/']
-  ],
-  saqqara:[['Минтуризма Египта','Доступные медиа и экскурсии; конкретный объект уточняется у источника',
-    'https://egymonuments.gov.eg/en/media-hub/']],
-  alexandria:[['Минтуризма Египта','Медиатека Египта, наличие 360° конкретного объекта уточняется у источника',
-    'https://egymonuments.gov.eg/en/media-hub/']],
-  luxor:[['Минтуризма Египта','Медиатека и 360° египетских памятников',
-    'https://egymonuments.gov.eg/en/media-hub/']]
-});
-function gatewayNode(tag,className,content) {
-  const el=document.createElement(tag);
-  if(className)el.className=className;
-  if(content!==undefined)el.textContent=content;
-  return el;
-}
-function gatewaySourceCard(title,status,description,{label,onClick,url}={}){
-  const card=gatewayNode('article','gateway-card');
-  const heading=gatewayNode('h3','',title);
-  const badge=gatewayNode('span','gateway-source-status',status);
-  const copy=gatewayNode('p','',description);
-  card.append(heading,badge,copy);
-  if(url){
-    // All URLs are literal trusted references in this source file, never
-    // arbitrary user-provided URLs or scraped thumbnail destinations.
-    const a=gatewayNode('a','gateway-action',label||'Смотреть у источника ↗');
-    a.href=url;a.target='_blank';a.rel='noopener noreferrer';
-    card.append(a);
-  }else if(onClick){
-    const button=gatewayNode('button','gateway-action',label||'Открыть в Портале');
-    button.type='button';button.addEventListener('click',onClick);
-    card.append(button);
-  }
-  return card;
-}
-function gatewayStart(origin,provider){
-  if(!CITY[origin])throw new Error('Неизвестная точка шлюза');
-  if(provider==='google'&&!$('googleKey').value.trim()){
-    $('provider').value='google';
-    $('googleKeyWrap').hidden=false;
-    $('gatewayStatus').textContent='Для встроенного Google Street View нужен ограниченный браузерный ключ. Укажи его в настройках выше, затем нажми запуск.';
-    $('googleKey').focus();
-    return;
-  }
-  if(state.running)stop();
-  $('originChoice').value=origin;
-  $('customOrigin').hidden=true;
-  $('provider').value=provider;
-  $('googleKeyWrap').hidden=provider!=='google';
-  run();
-  document.querySelector('.viewer-panel')?.scrollIntoView?.({
-    behavior:'smooth',block:'start'
-  });
-}
-function renderGateway() {
-  const origin=$('gatewayPlace').value;
-  const name=$('gatewayPlace').selectedOptions[0]?.textContent||origin;
-  const verified=GATEWAY_PANORAMAX_VERIFIED.has(origin);
-  const external=GATEWAY_EXTERNAL_TOURS[origin]||[];
-  const mount=$('gatewaySources');
-  if(!CITY[origin]){mount.replaceChildren();return;}
-  $('gatewayStatus').textContent=(verified
-    ? 'Panoramax 360° подтверждён в районе этой точки. '
-    : 'Panoramax 360° здесь пока не подтверждён. Ближайший поиск ограничен, чтобы не подставлять другую страну. ')+
-    (external.length
-      ? 'Специальные экскурсии доступны на сайтах источников.'
-      : 'При желании можно проверить Google Street View со своим ключом.');
-  const cards=[
-    gatewaySourceCard('◉ Panoramax 360°',verified?'ПРОВЕРЕНО РАНЕЕ':'ПОКРЫТИЕ НЕ ПОДТВЕРЖДЕНО',
-      verified
-        ? 'Открывается прямо в JANUS: исходный просмотрщик R2, естественное движение камеры и учёт только реально загруженных фото.'
-        : 'Попробовать найти настоящую панораму рядом с '+name+'. Если данных нет — остановимся без ложного посещения.',
-      {label:verified?'▶ Открыть в JANUS':'⌕ Проверить район',onClick:()=>gatewayStart(origin,'panoramax')}),
-    gatewaySourceCard('◈ Google Street View','НУЖЕН API-КЛЮЧ',
-      'Официальный просмотрщик Google внутри JANUS. Покрытие зависит от региона, лицензии и настроек проекта Google Cloud.',
-      {label:'Использовать Google API',onClick:()=>gatewayStart(origin,'google')})
-  ];
-  for(const [title,description,url] of external){
-    cards.push(gatewaySourceCard('↗ '+title,'НА САЙТЕ ИСТОЧНИКА',
-      description+' Контент остаётся на сайте владельца, без копирования в JANUS.',
-      {label:'Открыть экскурсию ↗',url}));
-  }
-  mount.replaceChildren(...cards);
-}
 function downloadHistory() {
   const payload = {schema: 'janus-portal-history-v1', exportedAt: new Date().toISOString(),
     authority: 'local-only-not-valid-for-rewards', visits: state.history};
@@ -595,7 +488,5 @@ $('resetBtn').addEventListener('click', () => {
   $('coords').textContent = '—';
   $('mapLink').hidden = true;
 });
-$('gatewayPlace').addEventListener('change',renderGateway);
 refreshControls();
 renderStats();
-renderGateway();
