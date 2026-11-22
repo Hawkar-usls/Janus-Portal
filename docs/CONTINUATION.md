@@ -19,7 +19,7 @@ On 2026-11-22 GitHub Actions PR run [45007676303](https://github.com/Hawkar-usls
 
 ## Mandatory next actions
 
-1. **Close the MVP PR safely:** Inspect open PR; run GitHub Actions, fix any failures; smoke test via real browser (load one 360 panorama, rotate, jump, pause, resumed timer); only then merge. Confirm `main` and Pages deployment.
+1. **Experimental MVP merge vs production gate:** GitHub Actions and first real Panoramax browser view were verified; an experimental merge to `main` is acceptable with the explicit `BROWSER_E2E_PENDING` label. **Before claiming production readiness**, close [issue #6](https://github.com/Hawkar-usls/Janus-Portal/issues/6) with 2+ actual automatic jumps, rotation, pause and resume. Confirm the merged `main` SHA and Pages deployment.
 2. **Deploy:** In GitHub Settings → Pages, choose Source `GitHub Actions` if necessary. Confirm actual run success and published URL. Don't assert deployed without evidence.
 3. **Provider robustness:** Test Panoramax metadata paging, transient errors, partial coverage and antimeridian; test real Google display with a properly restricted project-specific API key, quota and attribution (not chat-shared key in logs). Add capped search budget and replay tests.
 4. **User site integration:** Discover actual source or editor of `tg-pomoyka.hawkarlol.chatgpt.site`, route and authenticated account/wallet API. Wire `Портал` navigation. If editor unavailable, keep this as an issue.
