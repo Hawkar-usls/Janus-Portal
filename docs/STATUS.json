@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": null,
-  "engineering_status": "R13_RELEASED__CI_MAIN_55_OF_55__PAGES_GREEN__PUBLIC_EDGE_MIXED_3_OPEN_SOURCES_REAL_WEBGL_AND_FULLSCREEN_PASS",
+  "branch_under_review": "feat/r14-afk-wanderer-passport-world-conquest",
+  "engineering_status": "R14_AFk_PASSPORT_WORLD_CONQUEST_IMPLEMENTED__UNIT_CI_PASS_PRE_PR__BROWSER_AND_PAGES_PENDING",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -64,7 +64,10 @@
     "r13_webgl": "Dependency-free in-file WebGL renderer with drag/zoom/gaze, correct UNPACK_FLIP_Y_WEBGL=false verified by screenshots, and pause-safe stopRotation (dispose only when changing image); original Panoramax R2 official viewer unchanged.",
     "r13_google_mapillary": "Google paid source manual only with owner restricted key and explicit consent, max 4 metadata requests per manual journey, never mass scan. Mapillary unconnected until owner app token and independent browser test.",
     "r13_release": "PR #25 squash merged as 74f5c86ae360498a142492e6f28f8bd607ddc12b. Main CI 45033878317 SUCCESS 55/55 and Pages 45033878318 SUCCESS. HTTPS HTML, JS and CSS HTTP 200 with identical 40-character build SHA on JS/CSS.",
-    "r13_public_browser": "On production HTTPS in Yaksa Edge: automatic combined Panoramax/KartaView/Commons returned 20 unique known locations (Panoramax19/KartaView7/Commons1 overlap), no visible source chooser. Real SPHERE360 KartaView Fes and Wikimedia 2:1 San Diego loaded in same JANUS WebGL window, photo orientation and source credits verified. Original Fes Start and fullscreen PASS. Zero browser JS exceptions."
+    "r13_public_browser": "On production HTTPS in Yaksa Edge: automatic combined Panoramax/KartaView/Commons returned 20 unique known locations (Panoramax19/KartaView7/Commons1 overlap), no visible source chooser. Real SPHERE360 KartaView Fes and Wikimedia 2:1 San Diego loaded in same JANUS WebGL window, photo orientation and source credits verified. Original Fes Start and fullscreen PASS. Zero browser JS exceptions.",
+    "r14_game": "User-approved R14 AFK Wanderer + Passport + World Conquest. AFK auto-watches and when regional source exhausted selects nearest other source-verified unvisited panorama; no random city menu, no paid Google or infinite retry. Passport saves open-source IDs/coords/time, derives local XP, approximate region stamps, country map focus and achievement badges; real wallet and global competition untouched.",
+    "r14_storage": "Panoramax, KartaView and Commons visits now persist in localStorage; Google remains session-only. Passport groups visits <=25km from 39 known geographic anchors. Geotags not independently verified.",
+    "r14_game_browser_test": "Deterministic Playwright source mocks planned in .github/workflows/browser-r14.yml: Fes then Kathmandu AFK journey, stops when no verified new photo, 2 countries and 70 local XP, browser reload persistence, reset and no J Coins; pending actual workflow results."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
@@ -138,7 +141,13 @@
     "r13_pages": "PASS_R13_PAGES_RUN_45033878318_SHA_COHERENT_ASSETS",
     "r13_owner_browser": "PENDING_OWNER_CONFIRMATION",
     "r13_google_paid": "MANUAL_CONSENT_ONLY_NO_AUTOMATIC_PAID_QUERIES",
-    "r13_mapillary": "BLOCKED_OWNER_DEVELOPER_TOKEN_AND_LICENSE_E2E"
+    "r13_mapillary": "BLOCKED_OWNER_DEVELOPER_TOKEN_AND_LICENSE_E2E",
+    "r14_unit_tests": "BRANCH_CI_SUCCESS_PRIOR_TO_DOC_UPDATE",
+    "r14_browser_e2e": "PENDING_R14_PR_CHROMIUM_ACTIONS",
+    "r14_live_provider": "PENDING_NEW_RELEASE_LIVE_PANORAMAX_SMOKE",
+    "r14_pages": "PENDING_PR_MERGE_PAGES",
+    "r14_owner_browser": "PENDING_USER_DEVICE",
+    "r14_wallet": "NOT_CONNECTED_NO_JC_REWARDS"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -155,7 +164,7 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "R13 deployed; owner to test main link, one location selector and single Refresh; original Fes panorama and fullscreen, KartaView/Commons 360 photo and attribution. 39 known centres only, not universal geographic index; provider coverage fluctuates. Google paid official key only manual opt-in with 4 calls max per journey; Mapillary token missing. Do not reactivate chooser or R3-R5 loaders.",
+  "next": "Review R14 PR CI and PR Playwright browser workflow; fix any failures, merge, green GitHub Pages and real public HTTPS single-player AFK smoke, then owner confirms. Never claim online leaderboard, backend JCoins or full-world country geography from local XP.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
