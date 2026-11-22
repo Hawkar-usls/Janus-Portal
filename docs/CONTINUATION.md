@@ -15,7 +15,7 @@ This file exists so the next authorized ChatGPT agent can continue **without nee
 
 `index.html` + responsive CSS, Panoramax/Google provider adapters, automatic traversal/pause/turbo, deduped visit history, export, OpenStreetMap + Leaflet map (Panoramax only), achievements, unit tests, CI workflow and Pages workflow.
 
-On 2026-11-22, Windows Yaksa Node v24 ran `npm run verify` with 11/11 tests passing before additional Google-session privacy changes. **Retest after the latest change.** Live Panoramax API returned 360° photo metadata in Paris, Rennes and Lyon. A static Panoramax viewer CDN resource responded HTTP 200. This does NOT yet equal full browser success.
+On 2026-11-22 GitHub Actions PR run [45007676303](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45007676303) ran **14/14 tests PASS** including provider spatial deduplication. Edge on Yaksa rendered a real Paris 360° panorama with visible source credits; first visit, Leaflet map, pause/resume worked. A later auto-second-jump test exhausted sampled candidates because the provider filled its result budget with near-identical photos; the provider was patched to filter by 20m *before* that cap and CI passed, but **the second automatic jump has not yet been revalidated in a browser after this fix**. Panoramax API metadata was independently fetched in Paris, Rennes and Lyon. A nonblocking /api/configuration 404 from the third-party viewer was observed.
 
 ## Mandatory next actions
 
