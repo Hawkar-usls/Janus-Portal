@@ -174,7 +174,7 @@ export class GoogleProvider {
     this.service ||= new maps.StreetViewService();
     return maps;
   }
-  async searchAtRadius({origin, radiusKm, visited, random, signal}) {
+  async searchAtRadius({origin, radiusKm, visited, visitedPoints = [], minSeparationKm = 0.02, random = Math.random, signal}) {
     await this.ready();
     const found = [];
     // Bound paid service lookups; the engine handles expanding to wider radii.
