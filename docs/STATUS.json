@@ -3,9 +3,9 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": "feat/r14-afk-wanderer-passport-world-conquest",
-  "engineering_status": "R14_AFk_PASSPORT_WORLD_CONQUEST_IMPLEMENTED__UNIT_CI_PASS_PRE_PR__BROWSER_AND_PAGES_PENDING",
-  "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
+  "branch_under_review": null,
+  "engineering_status": "R14_RELEASED__MAIN_62_OF_62__MOCK_AFk_CHROMIUM_PASS__PUBLIC_REAL_360_PASSPORT_FULLSCREEN_PASS",
+  "science_or_economy_status": "NO_PRODUCTION_REWARDS__LOCAL_XP_NOT_JC__NO_GLOBAL_ACCOUNT_RANKING",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
     "navigation": "default 5 km, then doubling until 20000 km, nearest random unvisited geodesic sample, 20m spatial exclusion",
@@ -67,15 +67,19 @@
     "r13_public_browser": "On production HTTPS in Yaksa Edge: automatic combined Panoramax/KartaView/Commons returned 20 unique known locations (Panoramax19/KartaView7/Commons1 overlap), no visible source chooser. Real SPHERE360 KartaView Fes and Wikimedia 2:1 San Diego loaded in same JANUS WebGL window, photo orientation and source credits verified. Original Fes Start and fullscreen PASS. Zero browser JS exceptions.",
     "r14_game": "User-approved R14 AFK Wanderer + Passport + World Conquest. AFK auto-watches and when regional source exhausted selects nearest other source-verified unvisited panorama; no random city menu, no paid Google or infinite retry. Passport saves open-source IDs/coords/time, derives local XP, approximate region stamps, country map focus and achievement badges; real wallet and global competition untouched.",
     "r14_storage": "Panoramax, KartaView and Commons visits now persist in localStorage; Google remains session-only. Passport groups visits <=25km from 39 known geographic anchors. Geotags not independently verified.",
-    "r14_game_browser_test": "Deterministic Playwright source mocks planned in .github/workflows/browser-r14.yml: Fes then Kathmandu AFK journey, stops when no verified new photo, 2 countries and 70 local XP, browser reload persistence, reset and no J Coins; pending actual workflow results."
+    "r14_game_browser_test": "Deterministic Playwright source mocks planned in .github/workflows/browser-r14.yml: Fes then Kathmandu AFK journey, stops when no verified new photo, 2 countries and 70 local XP, browser reload persistence, reset and no J Coins; pending actual workflow results.",
+    "r14_release": "PR #26 squash merged into main 6d582e48aef0999f0c9d2374dafc3be222180984; main CI 45049189852 SUCCESS 62/62; initial R14 Pages 45049189755 SUCCESS. Current deployed-check Pages d27b972fecfb3cf0b6a29eeda318809b2b0c77fa run 45049380800 SUCCESS.",
+    "r14_mock_browser": "GH Actions workflow 45049050520 SUCCESS on final PR head d63ef3108f58b452ac31004eaae6e17d8180a004: actual Chromium with deterministic mocked 360 sources Fes then Kathmandu, AFK stops at source-backed exhaustion, 2 unique views, 2 countries, 70 local XP, persistence after reload, reset and 0 J Coins.",
+    "r14_public_browser": "GH Actions workflow 45049465466 SUCCESS on deployed Pages d27b972fecfb3cf0b6a29eeda318809b2b0c77fa: public real API catalogue 20 unique known regions (Panoramax 19/KartaView 7/Commons 1, overlapping); real Fes Panoramax 360 loaded; Passport unique 1, country 1, local XP 35; fullscreen/exit PASS, 0 JS page errors; source HTML/CSS/JS same 40-digit deployed SHA.",
+    "r14_game_features": "AFK button uses original R2 gaze and cross-region hop only when no local source-backed unvisited candidates, safely ends on current-source exhaustion. Passport persists Panoramax/KartaView/Commons public source metadata, Google volatile; local XP, levels, approximate country stamps and interactive existing OSM map plus achievements. No global leaderboard or authoritative J Coins."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
     "live_panoramax_metadata": "PASS_METADATA_ONLY",
     "real_browser_panoramax_rotation": "PASS_EDGE_NATURAL_GAZE_ZOOM_PAUSE_RESUME",
     "real_browser_google_key_restricted": "PENDING",
-    "github_actions_ci": "PASS_R13_MAIN_45033878317_55_OF_55",
-    "github_pages_publish": "PASS_R13_PAGES_45033878318",
+    "github_actions_ci": "PASS_R14_MAIN_RUN_45049189852_62_OF_62",
+    "github_pages_publish": "PASS_R14_PUBLIC_PAGES_45049380800",
     "main_site_tab": "BLOCKED_SITE_EDITOR_ACCESS",
     "main_site_account_auth": "BLOCKED_SITE_SOURCE",
     "server_authoritative_J_coins": "BLOCKED_WALLET_API_AND_RULE_APPROVAL",
@@ -142,12 +146,12 @@
     "r13_owner_browser": "PENDING_OWNER_CONFIRMATION",
     "r13_google_paid": "MANUAL_CONSENT_ONLY_NO_AUTOMATIC_PAID_QUERIES",
     "r13_mapillary": "BLOCKED_OWNER_DEVELOPER_TOKEN_AND_LICENSE_E2E",
-    "r14_unit_tests": "BRANCH_CI_SUCCESS_PRIOR_TO_DOC_UPDATE",
-    "r14_browser_e2e": "PENDING_R14_PR_CHROMIUM_ACTIONS",
-    "r14_live_provider": "PENDING_NEW_RELEASE_LIVE_PANORAMAX_SMOKE",
-    "r14_pages": "PENDING_PR_MERGE_PAGES",
-    "r14_owner_browser": "PENDING_USER_DEVICE",
-    "r14_wallet": "NOT_CONNECTED_NO_JC_REWARDS"
+    "r14_unit_tests": "PASS_MAIN_62_OF_62_RUN_45049189852",
+    "r14_browser_e2e": "PASS_MOCKED_CHROMIUM_TWO_REGIONS_70XP_RELOAD_RESET_RUN_45049050520",
+    "r14_live_provider": "PASS_PUBLIC_HTTPS_REAL_FES_PANORAMAX_360_PASSPORT_35XP_FULLSCREEN_RUN_45049465466",
+    "r14_pages": "PASS_PAGES_RUN_45049380800",
+    "r14_owner_browser": "PENDING_OWNER_DEVICE_CONFIRMATION",
+    "r14_wallet": "BLOCKED_NO_AUTHORITATIVE_JC_BACKEND"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -164,17 +168,17 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "Review R14 PR CI and PR Playwright browser workflow; fix any failures, merge, green GitHub Pages and real public HTTPS single-player AFK smoke, then owner confirms. Never claim online leaderboard, backend JCoins or full-world country geography from local XP.",
+  "next": "R14 game released and independently browser tested on public HTTPS. Owner should verify AFK Wanderer toggle, two-region gameplay and local Passport in their own browser. Account integration and actual cross-user competitive ranking: existing issues #1 and #3; server-validated J Coins: issue #2. Avoid claiming country tags are audited geopolitical truth; they are within 25km of known anchors. Browser background tab cannot guarantee ongoing animation. Preserve 5 R2 module files and R13 all-open-source mixer.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
     "Changed provider to filter visited/nearby positions before filling candidate budget; added 2 provider tests, all 14 CI tests pass. Real second jump after fix awaits repeat browser run."
   ],
   "default_branch": "main",
-  "release_commit": "74f5c86ae360498a142492e6f28f8bd607ddc12b",
-  "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/25",
+  "release_commit": "6d582e48aef0999f0c9d2374dafc3be222180984",
+  "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/26",
   "deployment_blocker": null,
-  "release_url": "https://hawkar-usls.github.io/Janus-Portal/?mix=r13-74f5c86",
+  "release_url": "https://hawkar-usls.github.io/Janus-Portal/?afk=r14-6d582e4",
   "known_nonblocking": "Panoramax viewer requests /api/configuration and receives HTTP 404; panorama and local gaze still work. Verify upstream API compatibility later.",
   "rollback": {
     "source": "1b34bff74e2239d34cbdc09c1753df1041d63dc2",
