@@ -1,0 +1,38 @@
+name: R14 AFK game browser acceptance
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'index.html'
+      - 'tools/browser-afk-game-r14-check.mjs'
+      - '.github/workflows/browser-r14.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  simulated-afk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify entire Portal test suite
+        run: npm run verify
+      - name: Install isolated Playwright Chromium
+        run: |
+          npm install --no-save --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium
+      - name: Start local Portal and simulate complete AFK journey
+        run: |
+          PORT=4173 node tools/dev-server.mjs > /tmp/janus-r14-server.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
+            sleep 1
+          done
+          PORTAL_URL=http://127.0.0.1:4173/ node tools/browser-afk-game-r14-check.mjs
