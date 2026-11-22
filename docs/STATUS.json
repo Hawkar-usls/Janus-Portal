@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": "feat/r10-fullscreen-original-viewer",
-  "engineering_status": "R10_FULLSCREEN_ORIGINAL_R2_VIEWER_LOCAL_EDGE_NATIVE_AND_MOBILE_PASS__RELEASE_PENDING",
+  "branch_under_review": null,
+  "engineering_status": "R10_FULLSCREEN_RELEASED__MAIN_CI_39_OF_39__PAGES_PUBLIC_HTTPS_EDGE_NATIVE_AND_MOBILE_PASS",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -43,7 +43,9 @@
     "r9_original_R2": "Original ./src/app.js bootstrap with five imports unchanged, existing native source/viewer flow and R7 no-fake-panorama 40km cap intact.",
     "r9_local_browser": "Yaksa Edge original R2 single-search DOM only, mocked Cairo empty provider 16 requests 0 visits and Start enabled, live Fes 360 34.06167,-4.97711 natural gaze, mobile 390px selection, 0 page JS exceptions.",
     "r10_fullscreen": "One #fullscreenBtn above existing .viewer-panel expands SAME Panoramax/Google view using Fullscreen API; 'Свернуть' exits. CSS viewport fallback for iOS/restricted browsers; Esc exits fallback; automatic heading and original search unaffected.",
-    "r10_local_browser": "Yaksa Edge/Playwright: real Fes Panoramax 360 within native fullscreen 1366x840 (viewer image 644px), button exits without losing panorama; fullscreen API blocked fallback and Escape PASS; mobile viewport 390x844 fallback image area 703px; 0 page JS errors."
+    "r10_local_browser": "Yaksa Edge/Playwright: real Fes Panoramax 360 within native fullscreen 1366x840 (viewer image 644px), button exits without losing panorama; fullscreen API blocked fallback and Escape PASS; mobile viewport 390x844 fallback image area 703px; 0 page JS errors.",
+    "r10_release": "PR #21 merged as 15625c506e034d538d1e4cc67700992b841e2107. Main CI 45027354737 SUCCESS 39/39, GitHub Pages 45027354747 SUCCESS. Public HTML and app.js HTTP 200 with original five imports.",
+    "r10_public_browser": "Edge browser on live HTTPS: original R2 real Fes panorama + gaze, true native fullscreen with 644px photo area at 1366x840, exit button preserved 360 viewer. Browser Fullscreen API disabled CSS fallback with Escape and button exit PASS; mobile 390x844 fill viewport with 703px photo area. Additional R9 single search, mocked Cairo no false visits, real Fes, mobile pass. No page JS exceptions."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
@@ -51,7 +53,7 @@
     "real_browser_panoramax_rotation": "PASS_EDGE_NATURAL_GAZE_ZOOM_PAUSE_RESUME",
     "real_browser_google_key_restricted": "PENDING",
     "github_actions_ci": "PASS_R7_MAIN_45024553613__30_OF_30",
-    "github_pages_publish": "PASS_R8_PAGES_45025652089",
+    "github_pages_publish": "PASS_R10_PAGES_RUN_45027354747",
     "main_site_tab": "BLOCKED_SITE_EDITOR_ACCESS",
     "main_site_account_auth": "BLOCKED_SITE_SOURCE",
     "server_authoritative_J_coins": "BLOCKED_WALLET_API_AND_RULE_APPROVAL",
@@ -92,13 +94,13 @@
     "r9_unit_tests": "PASS_LOCAL_36_OF_36",
     "r9_browser": "PASS_LOCAL_EDGE_REAL_FES_360_AND_MOCK_CAIRO_NO_FALSE_VISITS_AND_MOBILE",
     "r9_r2_imports": "PASS_ORIGINAL_SRC_APP_JS_FIVE_IMPORTS",
-    "r9_public_pages": "PENDING_CI_MERGE_DEPLOY",
+    "r9_public_pages": "PASS_PUBLIC_HTTPS_SINGLE_SEARCH_WITH_R10",
     "r9_user_browser": "PENDING_OWNER_CONFIRMATION",
-    "r10_unit_tests": "PASS_LOCAL_39_OF_39",
-    "r10_browser": "PASS_LOCAL_EDGE_REAL_FES_360_NATIVE_FULLSCREEN_EXIT",
-    "r10_mobile": "PASS_LOCAL_EDGE_MOBILE_390X844_FALLBACK_ESCAPE",
-    "r10_r2_bootstrap": "PASS_UNCHANGED_SRC_APP_JS_FIVE_IMPORTS",
-    "r10_pages": "PENDING_PR_CI_MERGE_PAGES",
+    "r10_unit_tests": "PASS_MAIN_39_OF_39_RUN_45027354737",
+    "r10_browser": "PASS_PUBLIC_HTTPS_EDGE_NATIVE_FULLSCREEN_REAL_FES_PANORAMAX_AND_EXIT",
+    "r10_mobile": "PASS_PUBLIC_HTTPS_EDGE_FALLBACK_MOBILE_390x844_ESCAPE",
+    "r10_r2_bootstrap": "PASS_PUBLIC_HTTPS_SRC_APP_JS_FIVE_IMPORTS",
+    "r10_pages": "PASS_PAGES_RUN_45027354747",
     "r10_user_browser": "PENDING_OWNER_CONFIRMATION"
   },
   "reward_policy": {
@@ -116,17 +118,17 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "R10 fullscreen locally validated, PR CI/merge/Pages and public HTTPS browser test required, then owner verifies fullscreen toggle alongside original R2 Start. No extra modules, no external provider Gateway, no fake Cairo/DPRK panorama.",
+  "next": "R10 fullscreen released. Owner should verify public URL, classic R2 Start and fullscreen/exit on their browser. iOS fallback fills browser viewport but may leave browser UI visible. No additional modules or tourist portals, missing DPRK/Cairo source coverage remains open.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
     "Changed provider to filter visited/nearby positions before filling candidate budget; added 2 provider tests, all 14 CI tests pass. Real second jump after fix awaits repeat browser run."
   ],
   "default_branch": "main",
-  "release_commit": "4c13009d0fb766ad1d6d48c24edf7712379164bf",
-  "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/18",
+  "release_commit": "15625c506e034d538d1e4cc67700992b841e2107",
+  "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/21",
   "deployment_blocker": null,
-  "release_url": "https://hawkar-usls.github.io/Janus-Portal/?gateway=r8-4c13009d",
+  "release_url": "https://hawkar-usls.github.io/Janus-Portal/?fullscreen=r10-15625c5",
   "known_nonblocking": "Panoramax viewer requests /api/configuration and receives HTTP 404; panorama and local gaze still work. Verify upstream API compatibility later.",
   "rollback": {
     "source": "1b34bff74e2239d34cbdc09c1753df1041d63dc2",
