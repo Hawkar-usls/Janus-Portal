@@ -1,4 +1,4 @@
-import {TOURS,DESTINATIONS,TOUR_CATEGORIES,DESTINATION_CATEGORIES} from './tours.js';
+import {TOURS,DESTINATIONS,TOUR_CATEGORIES,DESTINATION_CATEGORIES,EXTREME_REGIONS,extremeRegionFor} from './tours.js';
 
 // Original JANUS discovery interface inspired by guided sightseeing modes.
 // These cards represent search locations, not confirmed camera panoramas.
@@ -11,7 +11,7 @@ export function installDiscovery({
     destinations:document.getElementById('tabDestinations')
   };
   const panel=document.getElementById('discoveryContent');
-  let active='explore',filter='all',query='';
+  let active='explore',filter='all',region='all',query='';
   const make=(tag,cls,text)=>{
     const node=document.createElement(tag);
     if(cls)node.className=cls;
@@ -34,7 +34,7 @@ export function installDiscovery({
     copy.append(make('h2','',isTours?'🧭 Экскурсионные маршруты':'🗺️ Каталог направлений'));
     copy.append(make('p','',isTours
       ? 'Как в режиме обзорных полётов: маршрут из знаменитых мест, автоматический осмотр и прыжки между найденными панорамами.'
-      : 'Выбери город или регион для свободного исследования. Наличие 360° панорам проверяется при запуске.'));
+      : 'Выбери город, село или удалённый район для свободного исследования. Экстремальный туризм означает необычный рельеф и удалённость, а не характеристику жителей. Наличие 360° панорам проверяется при запуске.'));
     heading.append(copy,make('span','mini',isTours?TOURS.length+' тематических экскурсий':DESTINATIONS.length+' направлений'));
     const filters=make('div','discovery-filters');
     const cats=isTours?TOUR_CATEGORIES:DESTINATION_CATEGORIES;
@@ -42,8 +42,21 @@ export function installDiscovery({
       const button=make('button','discovery-filter'+(filter===cat.id?' active':''),cat.label);
       button.type='button';button.dataset.category=cat.id;
       button.setAttribute('aria-pressed',String(filter===cat.id));
-      button.addEventListener('click',()=>{filter=cat.id;render()});
+      button.addEventListener('click',()=>{filter=cat.id;region='all';render()});
       filters.append(button);
+    }
+    if(filter==='extreme'){
+      const regions=make('div','extreme-region-filters');
+      regions.setAttribute('aria-label','Регионы экстремального туризма');
+      for(const item of EXTREME_REGIONS){
+        const button=make('button','discovery-filter'+(region===item.id?' active':''),item.label);
+        button.type='button';
+        button.dataset.region=item.id;
+        button.setAttribute('aria-pressed',String(region===item.id));
+        button.addEventListener('click',()=>{region=item.id;render()});
+        regions.append(button);
+      }
+      filters.append(regions);
     }
     const input=make('input','discovery-search');input.type='search';
     input.placeholder=isTours?'Найти экскурсию…':'Город или страна…';
@@ -60,7 +73,8 @@ export function installDiscovery({
       grid.replaceChildren();
       const source=isTours?TOURS:DESTINATIONS;
       const values=source.filter(item=>(filter==='all'||item.category===filter) &&
-        [item.title,item.subtitle,item.name,item.country,...(item.stops||[]).map(s=>s.name)]
+        (region==='all'||extremeRegionFor(item)===region) &&
+        [item.title,item.subtitle,item.name,item.country,item.tag,...(item.stops||[]).map(s=>s.name)]
           .filter(Boolean).join(' ').toLocaleLowerCase('ru').includes(query.trim().toLocaleLowerCase('ru')));
       for(const item of values){
         const card=make('button','discovery-card');
@@ -70,7 +84,7 @@ export function installDiscovery({
         card.append(make('strong','',isTours?item.title:item.name));
         card.append(make('span','card-meta',isTours
           ?item.subtitle+' · '+item.stops.length+' остановок'
-          :item.country));
+          :item.country+(item.tag?' · '+item.tag:'')));
         if(isTours)card.append(make('span','card-route',
           item.stops.slice(0,3).map(s=>s.name).join(' · ')+(item.stops.length>3?' · …':'')));
         card.append(make('span','card-action',isTours?'▶ Начать экскурсию':'↪ Исследовать'));
@@ -80,12 +94,12 @@ export function installDiscovery({
       if(!values.length)grid.append(make('p','discovery-empty','По этому запросу пока нет маршрутов.'));
     };
     drawGrid();
-    const note=make('small','discovery-note','Экскурсия показывает только реально найденные 360° панорамы рядом с каждой достопримечательностью. Если данных нет, остановка пропускается. Panoramax и Google имеют разное покрытие.');
+    const note=make('small','discovery-note','Маршруты показывают только реально найденные 360° панорамы. Если данных нет, остановка пропускается. Сложный рельеф и удалённость не являются оценкой безопасности или жизни местных жителей. Panoramax и Google имеют разное покрытие.');
     panel.append(heading,filters,grid,note);
   };
   const selectTab=(id)=>{
     if(!(id in navs))return;
-    active=id;filter='all';query='';
+    active=id;filter='all';region='all';query='';
     render();
     if(id==='explore')onFree();
   };

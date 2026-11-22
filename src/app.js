@@ -3,7 +3,7 @@ import {PanoramaxProvider, GoogleProvider} from './providers.js';
 import {readHistory, addVisit, getStats, STORAGE_KEY} from './storage.js';
 import {GazeDirector, buildGazePlan} from './gaze.js';
 import {analyzeInterest} from './attention.js';
-import {DESTINATIONS,destinationById} from './tours.js';
+import {DESTINATIONS,destinationById,pickRandomDestination} from './tours.js';
 import {findTourCandidate} from './tour-runner.js';
 import {installDiscovery} from './discovery.js';
 import {installFullscreen} from './fullscreen.js';
@@ -49,8 +49,14 @@ function updateRadius(radius, note) {
 }
 function getOrigin() {
   const key=$('originChoice').value;
-  if(key==='random'){
-    const choice=DESTINATIONS[Math.floor(Math.random()*DESTINATIONS.length)];
+  const randomModes={
+    'random':{category:'all'},
+    'random-extreme':{category:'extreme'},
+    'random-india':{category:'extreme',region:'india'},
+    'random-africa':{category:'extreme',region:'africa'}
+  };
+  if(randomModes[key]){
+    const choice=pickRandomDestination(randomModes[key]);
     return {lat:choice.lat,lng:choice.lng};
   }
   if(key==='custom'){
@@ -467,7 +473,7 @@ for(const place of DESTINATIONS){
   option.value=place.id;option.textContent=place.emoji+' '+place.name+', '+place.country;
   select.append(option);
 }
-for(const [id,label] of [['random','🎲 Случайное место'],['custom','📍 Свои координаты']]){
+for(const [id,label] of [['random','🎲 Случайное место (весь мир)'],['random-extreme','🏕️ Случайный экстрим (весь мир)'],['random-india','🇮🇳 Случайная Индия: сёла и горы'],['random-africa','🌍 Случайная Африка: удалённые места'],['custom','📍 Свои координаты']]){
   const option=document.createElement('option');option.value=id;option.textContent=label;select.append(option);
 }
 select.value='paris';

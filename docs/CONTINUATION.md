@@ -1,3 +1,14 @@
+## R4 «Экстремальный туризм» / удалённые сёла — 2026-11-22
+
+- Feature branch: feat/extreme-rural-expeditions-r4. User asked for extreme-tourism places in free random Portal AND a new excursion category, especially rural India and Africa. Interpret extreme as remoteness/terrain, NOT a judgement of residents or national income.
+- src/tours.js: 37→70 starting places, 12→19 tours; 33 remote destinations, 7 extreme excursions; four subfilters (India, Africa, other Asia, world) and region-aware random picker.
+- src/app.js: global random includes remote; separate remote-world, random India and random Africa starts. Preserved free radius 5→10→20… and tour nearby checks 2–4km; no new J Coin payouts.
+- Edge on Yaksa: 33/33 local tests PASS. tools/browser-discovery-check.mjs PASS with 19 tours, 70 places, regional filters, Cairo & Spiti mocked empty-panorama source → 0 fake visits/JC, and mobile fullscreen ESC.
+- Genuine Edge/Playwright Panoramax Reine, Norway photo opened at 67.92775, 13.07143, 1 unique visit and natural gaze. tools/browser-extreme-live-check.mjs reproduces; imagery may change.
+- Panoramax first-page samples: Chitkul 0 images, Mhamid 5 images but 0 360, Opuwo 0, Bunyonyi 0, Reine 26 images and 1 360. Do not claim exhaustive coverage.
+- Documentation: docs/EXTREME_RURAL_R4.md. PR/CI/Pages gate pending; inspect Actions before promoting a status.
+- Main-site tab, auth, server J Coins, leaderboard and Google restricted browser key remain blocked.
+
 ## R3 merge and live deployment verified — 2026-11-22
 
 - [PR #10](https://github.com/Hawkar-usls/Janus-Portal/pull/10) **merged**: `24f6e737413c31ddb7ba55c251536a2791cae290`.

@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   DESTINATIONS, TOURS, TOUR_CATEGORIES, destinationById, tourById,
-  hasCoordinates, getTourStop
+  hasCoordinates, getTourStop, pickRandomDestination, DESTINATION_CATEGORIES,
+  extremeRegionFor, EXTREME_REGIONS
 } from '../src/tours.js';
 import {findTourCandidate} from '../src/tour-runner.js';
 import {distanceKm} from '../src/navigation.js';
@@ -113,4 +114,76 @@ test('native fullscreen can enter/exit without leaving fallback styles',async()=
  await api.exit();
  assert.equal(api.active(),false);
  api.destroy();
+});
+
+
+test('extreme tourism is a dedicated category in both excursions and destinations',()=>{
+  assert.ok(TOUR_CATEGORIES.some(c=>c.id==='extreme'&&c.label.includes('Экстремаль')));
+  assert.ok(DESTINATION_CATEGORIES.some(c=>c.id==='extreme'&&c.label.includes('Экстремаль')));
+  const rural=DESTINATIONS.filter(d=>d.category==='extreme');
+  const tours=TOURS.filter(t=>t.category==='extreme');
+  assert.ok(rural.length>=30);
+  assert.ok(tours.length>=7);
+  const countries=new Set(rural.map(d=>d.country));
+  for(const name of ['Индия','Непал','Марокко','Намибия','Танзания','Уганда','Кения','Боливия','Норвегия'])
+    assert.ok(countries.has(name),'missing country: '+name);
+  assert.ok(countries.size>=12);
+  for(const d of rural){
+    assert.ok(d.tag&&hasCoordinates(d),d.id);
+    assert.ok(!/опасные люди|бедность|третий мир/i.test(d.tag));
+  }
+});
+test('general Portal random pool includes rural, and extreme random only picks extreme',()=>{
+  const all=pickRandomDestination({category:'all',random:()=>.999999});
+  assert.equal(all.category,'extreme');
+  const first=pickRandomDestination({category:'extreme',random:()=>0});
+  const last=pickRandomDestination({category:'extreme',random:()=>.99999});
+  assert.equal(first.category,'extreme');
+  assert.equal(last.category,'extreme');
+  assert.equal(first.id,'chitkul');
+  assert.equal(last.id,'gasadalur');
+  assert.throws(()=>pickRandomDestination({category:'invalid',random:()=>0}),RangeError);
+  assert.ok(DESTINATIONS.some(d=>d.id==='paris'&&d.category==='cities'));
+});
+test('extreme trips have provider-sampled named rural stops and do not invent visits',async()=>{
+  const route=TOURS.find(t=>t.id==='spiti-villages');
+  assert.ok(route.stops.some(s=>/Читкул/.test(s.name)));
+  const visited=[];
+  const result=await findTourCandidate({
+    tour:route,visited:new Set(),visitedPoints:[],
+    searchAtRadius:async params=>{
+      visited.push(params);
+      if(params.origin.lat>32.2)return [{
+        provider:'panoramax',id:'sample-real-view',
+        lat:params.origin.lat+.001,lng:params.origin.lng+.001
+      }];
+      return [];
+    }
+  });
+  assert.ok(result.index>0);
+  assert.equal(result.skipped,result.index);
+  assert.ok(result.candidate.distanceKm<=4);
+  assert.ok(visited.every(x=>x.radiusKm<=4&&x.probeCount===2));
+  const noCoverage=await findTourCandidate({tour:TOURS.find(t=>t.id==='east-african-roads'),
+    searchAtRadius:async()=>[]});
+  assert.equal(noCoverage.candidate,null);
+  assert.equal(noCoverage.skipped,5);
+});
+
+test('regional filters cover India, Africa, Asia and far-flung non-poor places',()=>{
+  const regions=EXTREME_REGIONS.map(x=>x.id);
+  assert.deepEqual(regions,['all','india','africa','asia','world']);
+  assert.equal(extremeRegionFor(destinationById('kibber')),'india');
+  assert.equal(extremeRegionFor(destinationById('opuwo')),'africa');
+  assert.equal(extremeRegionFor(destinationById('namche')),'asia');
+  assert.equal(extremeRegionFor(destinationById('reine')),'world');
+  assert.equal(extremeRegionFor(destinationById('paris')),null);
+  assert.equal(extremeRegionFor(tourById('sahara-atlas')),'africa');
+  for(const region of regions.filter(x=>x!=='all')){
+    assert.ok(TOURS.some(t=>t.category==='extreme'&&extremeRegionFor(t)===region),region);
+    assert.ok(DESTINATIONS.some(d=>d.category==='extreme'&&extremeRegionFor(d)===region),region);
+    const picked=pickRandomDestination({category:'extreme',region,random:()=>.33});
+    assert.equal(extremeRegionFor(picked),region);
+  }
+  assert.throws(()=>pickRandomDestination({category:'cities',region:'africa'}),RangeError);
 });

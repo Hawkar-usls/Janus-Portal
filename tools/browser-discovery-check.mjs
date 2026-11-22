@@ -17,11 +17,30 @@ try {
   page.on('pageerror',e=>errors.push(e.message));
   await page.goto(origin,{waitUntil:'domcontentloaded',timeout:25000});
   await page.locator('#tabTours').click();
-  assert.equal(await page.locator('.discovery-card').count(),12);
+  assert.equal(await page.locator('.discovery-card').count(),19);
+  await page.locator('[data-category="extreme"]').click();
+  assert.equal(await page.locator('.discovery-card').count(),7);
+  await page.locator('[data-region="africa"]').click();
+  assert.equal(await page.locator('.discovery-card').count(),3);
+  await page.locator('[data-region="india"]').click();
+  assert.equal(await page.locator('.discovery-card').count(),2);
+  await page.locator('[data-category="all"]').click();
   await page.locator('.discovery-search').fill('Каир');
   assert.equal(await page.locator('.discovery-card').count(),1);
   await page.locator('#tabDestinations').click();
-  assert.equal(await page.locator('.discovery-card').count(),37);
+  assert.equal(await page.locator('.discovery-card').count(),70);
+  await page.locator('[data-category="extreme"]').click();
+  assert.equal(await page.locator('.discovery-card').count(),33);
+  await page.locator('[data-region="africa"]').click();
+  assert.equal(await page.locator('.discovery-card').count(),12);
+  await page.locator('[data-region="india"]').click();
+  assert.equal(await page.locator('.discovery-card').count(),8);
+  await page.locator('.discovery-search').fill('село');
+  assert.ok(await page.locator('.discovery-card').count()>=3);
+  await page.locator('#tabExplore').click();
+  assert.equal(await page.locator('#originChoice option[value="random-extreme"]').count(),1);
+  assert.equal(await page.locator('#originChoice option[value="random-india"]').count(),1);
+  assert.equal(await page.locator('#originChoice option[value="random-africa"]').count(),1);
   await page.locator('#fullscreenBtn').click();
   assert.equal(await page.locator('#fullscreenBtn').getAttribute('aria-pressed'),'true');
   await page.locator('#fullscreenBtn').click();
@@ -43,6 +62,13 @@ try {
   assert.match(progress,/пропущено 7/);
   assert.equal(await mock.locator('#statUnique').innerText(),'0');
   assert.equal(await mock.locator('#statCoins').innerText(),'—');
+  await mock.locator('#tabTours').click();
+  await mock.locator('.discovery-search').fill('Высокогорные сёла Индии');
+  await mock.locator('.discovery-card').first().click();
+  await mock.waitForFunction(()=>document.querySelector('#runStatus')?.textContent.includes('Экскурсия завершена'),null,{timeout:25000});
+  assert.match(await mock.locator('#tourProgress').innerText(),/пропущено 6/);
+  assert.equal(await mock.locator('#statUnique').innerText(),'0');
+  assert.equal(await mock.locator('#statCoins').innerText(),'—');
   await mock.close();
 
   const mobile=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
@@ -59,7 +85,7 @@ try {
   await mobile.close();
 
   assert.deepEqual(errors,[]);
-  console.log('JANUS PORTAL discovery browser smoke PASS: 12 tours / 37 places / fullscreen / Cairo zero-coverage safety / mobile ESC');
+  console.log('JANUS PORTAL discovery browser smoke PASS: 19 tours / 70 places / extreme India-Africa filters / fullscreen / Cairo+Spiti zero-coverage safety / mobile ESC');
 } catch(error) {
   console.error('Discovery browser smoke FAIL:',error.message);
   if(errors.length) console.error('Page errors:',errors);
