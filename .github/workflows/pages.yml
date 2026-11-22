@@ -8,6 +8,7 @@ on:
       - 'src/**'
       - 'package.json'
       - 'tests/**'
+      - 'tools/build-pages.mjs'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
@@ -30,14 +31,17 @@ jobs:
         with:
           node-version: '24'
       - run: npm run verify
-      - name: Assemble public files only
+      - name: Assemble versioned public files
+        run: node tools/build-pages.mjs
+      - name: Check build artifact entrypoints
         run: |
-          mkdir -p dist/src
-          cp index.html favicon.svg dist/
-          cp src/*.js src/styles.css dist/src/
-          test -s dist/src/gaze.js
-          test -s dist/src/attention.js
-          touch dist/.nojekyll
+          test -s dist/index.html
+          test -s dist/favicon.svg
+          grep -q "janus-build" dist/index.html
+          test -s "dist/assets/${GITHUB_SHA:0:12}/app.js"
+          test -s "dist/assets/${GITHUB_SHA:0:12}/tours.js"
+          test -s "dist/assets/${GITHUB_SHA:0:12}/gaze.js"
+          test -s "dist/assets/${GITHUB_SHA:0:12}/attention.js"
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
