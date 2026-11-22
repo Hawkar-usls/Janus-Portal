@@ -1,3 +1,12 @@
+## R14 AFK Wanderer · Passport · World Conquest — implementation branch
+
+- User explicitly approved AFK game plan (WANDERER+PASSPORT+WORLD CONQUEST) after R13 mixed-source Portal. Branch `feat/r14-afk-wanderer-passport-world-conquest`, no extra app/player/import path.
+- `src/navigation.js` adds pure `chooseAfkRegion`: new source-backed local panoramas only, reject Google paid, visited IDs, spatial duplicates, exhausted regions; nearest qualifying verified region. Original R2 gaze timer triggers local continuous jumps; on exhausted source the AFK-only route picks a different verified region or ends instead of claiming entire world was visited.
+- Existing `src/app.js` implements one AFK button and indicator, 650ms cancellable region-switch delay, Passport and World Conquest local XP/stamps/sources/achievements, clickable country stamps focusing original Leaflet OSM map; includes KartaView/Commons visits in OSM, not Google. R2 one viewer, R9 one search, R10 fullscreen, R12 SHA asset cache and R13 three-source live catalogue retained with **five import paths**.
+- `src/storage.js` now stores only open-source Panoramax, KartaView and Commons photo IDs/coords/timestamps; Google metadata session-only; country attribution within 25km of known anchors, not verified geopolitical country; XP=10 × unique view +25 × approximate country, cannot be minted into JC. JSON export includes Passport as local-only snapshot.
+- `tests/afk-passport-r14.test.mjs` covers dedup, XP, open-source persistence vs volatile Google, source-only nearest AFK fallback/exhaustion. `tools/browser-afk-game-r14-check.mjs` plus `.github/workflows/browser-r14.yml`: deterministic Chromium UI mock with Fes→Kathmandu, two source photos, 70 XP, browser reload/reset and no J Coins. At handoff PR browser test **not yet run**; previous unit CI successes not equal a real source LIVE PASS.
+- Follow `docs/AFK_WANDERER_R14.md`. Next: PR, unit CI + Chromium workflow, merge if green, Pages and real HTTPS source check, user-browser check. No global leaderboard/account login/server wallet integrations (not in standalone repo).
+
 ## R13 LIVE on public HTTPS — one automatic three-source location mixer (2026-11-22)
 
 - [PR #25](https://github.com/Hawkar-usls/Janus-Portal/pull/25) squash merged main as `74f5c86ae360498a142492e6f28f8bd607ddc12b`; [main CI run 45033878317](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45033878317) **55/55 PASS**; [Pages 45033878318](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45033878318) **SUCCESS**.
