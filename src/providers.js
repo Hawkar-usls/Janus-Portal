@@ -317,7 +317,7 @@ const isHttpsHost=(value,hosts)=>{
   try{const url=new URL(value);return url.protocol==='https:'&&hosts.some(h=>url.hostname===h||url.hostname.endsWith('.'+h))}
   catch{return false}
 };
-const kvImageHost=['cdn.kartaview.org'];
+const kvImageHost=['cdn.kartaview.org','openstreetcam.org','kartaview.org'];
 const commonsImageHost=['upload.wikimedia.org','thumb.wikimedia.org'];
 const safeExternalLink=(url,host)=>isHttpsHost(url,[host])?url:null;
 export async function probeKartaView360(origin,{signal,timeoutMs=7000}={}){
@@ -328,7 +328,8 @@ export async function probeKartaView360(origin,{signal,timeoutMs=7000}={}){
   const out=[];
   for(const row of photos){
     const lat=Number(row.lat),lng=Number(row.lng);
-    const image=row.imageProcUrl;
+    // KartaView API field names vary by endpoint/version; accept only source-hosted HTTPS images.
+    const image=row.imageProcUrl||row.fileurlProc||row.fileurl;
     if(!row.id||row.projection!=='SPHERE'||Number(row.fieldOfView)<300||
       !Number.isFinite(lat)||!Number.isFinite(lng)||
       !isHttpsHost(image,kvImageHost)||distanceKm(origin,{lat,lng})>5)
@@ -388,7 +389,7 @@ export async function probeCommons360(origin,{signal,timeoutMs=7000}={}){
 class SphericalImageProvider {
   constructor(){this.camera={heading:0,pitch:0,zoom:0};this.drawPending=0;this.cleanup=null;}
   async show(candidate,container){
-    this.stopRotation();
+    this.destroy();
     if(!candidate?.imageUrl||!isHttpsHost(candidate.imageUrl,
       candidate.provider==='commons'?commonsImageHost:kvImageHost))
       throw new Error('Источник не предоставил разрешённый URL панорамы');
@@ -516,14 +517,86 @@ class SphericalImageProvider {
   getPose(){return {...this.camera};}
   setPose(p){this.camera={heading:p.heading,pitch:p.pitch,zoom:p.zoom};this.render?.();}
   getFrontHeading(){return this.camera.heading;}
-  stopRotation(){if(this.cleanup){this.cleanup();this.cleanup=null;}if(this.drawPending)cancelAnimationFrame(this.drawPending);this.drawPending=0;}
+  stopRotation(){} // Pause must not tear down the still-visible WebGL panorama.
+  destroy(){if(this.cleanup){this.cleanup();this.cleanup=null;}if(this.drawPending)cancelAnimationFrame(this.drawPending);this.drawPending=0;}
 }
-export async function probeMerged360(origin,{signal,includeCommons=true,includeKartaView=true}={}){
+
+// Mapillary uses its own official viewer and a user-issued client token.
+// No default/borrowed token; never persist it or mix its metadata into the OSM map.
+const MAPILLARY_API='https://graph.mapillary.com/images';
+const MAPILLARY_SCRIPT='https://unpkg.com/mapillary-js@4.1.2/dist/mapillary.js';
+const MAPILLARY_CSS='https://unpkg.com/mapillary-js@4.1.2/dist/mapillary.css';
+let mapillaryLoad;
+async function ensureMapillary(){
+  mapillaryLoad ||= (async()=>{
+    if(!document.querySelector('link[data-janus-mapillary]')){
+      const link=document.createElement('link');
+      link.rel='stylesheet';link.href=MAPILLARY_CSS;
+      link.dataset.janusMapillary='true';document.head.append(link);
+    }
+    await loadScript(MAPILLARY_SCRIPT);
+    if(!window.mapillary?.Viewer)throw new Error('Официальный MapillaryJS не загрузился');
+    return window.mapillary;
+  })();
+  try{return await mapillaryLoad}
+  catch(e){mapillaryLoad=null;throw e}
+}
+export async function probeMapillary360(origin,{token,signal,timeoutMs=7000}={}){
+  if(!token)return [];
+  const params=new URLSearchParams({
+    access_token:token,fields:'id,geometry,is_pano,compass_angle',
+    bbox:bboxAround(origin,1.2).join(','),limit:'100'
+  });
+  // The token belongs to the developer using the Portal; sent only to Mapillary.
+  const data=await sourceTimeout(MAPILLARY_API+'?'+params,{signal,timeoutMs});
+  const out=[];
+  for(const photo of data.data||[]){
+    const coords=photo.geometry?.coordinates||[];
+    const lng=Number(coords[0]),lat=Number(coords[1]);
+    if(!photo.id||photo.is_pano!==true||!Number.isFinite(lat)||
+      !Number.isFinite(lng)||distanceKm(origin,{lat,lng})>5)continue;
+    out.push({provider:'mapillary',id:String(photo.id),lat,lng,
+      frontHeading:Number(photo.compass_angle)||0,sourceName:'Mapillary'});
+    if(out.length===5)break;
+  }
+  return out;
+}
+class MapillaryProvider {
+  constructor(token){this.token=token;this.view=null;this.pose={heading:0,pitch:0,zoom:0};this.frontHeading=0;}
+  async show(candidate,container){
+    const {Viewer}=await ensureMapillary();
+    this.view?.remove();
+    container.replaceChildren();
+    this.view=new Viewer({accessToken:this.token,container});
+    // A successful Graph metadata response alone must never count as a visit.
+    try{await loadedWithin(this.view.moveTo(candidate.id),18000);}
+    catch(error){this.view?.remove();this.view=null;throw error;}
+    this.frontHeading=candidate.frontHeading||0;
+    this.pose={heading:0,pitch:0,zoom:0};
+    this.setPose(this.pose);
+  }
+  getPose(){return {...this.pose};}
+  setPose(p){
+    this.pose={heading:Number(p.heading)||0,pitch:Number(p.pitch)||0,zoom:Number(p.zoom)||0};
+    if(!this.view)return;
+    // MapillaryJS v4 supports normalized spherical image coordinates and FOV.
+    const x=((this.pose.heading/360)%1+1)%1;
+    const y=Math.max(.05,Math.min(.95,.5-this.pose.pitch/180));
+    this.view.setCenter([x,y]);
+    this.view.setFieldOfView(Math.max(35,Math.min(90,90-this.pose.zoom*.45)));
+  }
+  getFrontHeading(){return this.frontHeading;}
+  stopRotation(){}
+  destroy(){this.view?.remove();this.view=null;}
+}
+
+export async function probeMerged360(origin,{signal,includeCommons=true,includeKartaView=true,mapillaryToken=''}={}){
   const queries=[
     probePanoramaxCoverage(origin,{signal}).then(x=>x.candidate?[x.candidate]:[])
   ];
   if(includeKartaView)queries.push(probeKartaView360(origin,{signal}));
   if(includeCommons)queries.push(probeCommons360(origin,{signal}));
+  if(mapillaryToken)queries.push(probeMapillary360(origin,{token:mapillaryToken,signal}));
   const result=await Promise.allSettled(queries);
   const errors=result.filter(x=>x.status==='rejected');
   const photos=result.flatMap(x=>x.status==='fulfilled'?x.value:[]);
@@ -535,9 +608,10 @@ export async function probeMerged360(origin,{signal,includeCommons=true,includeK
   return {candidates:distinct,failed:errors.length,checked:queries.length};
 }
 export class Merged360Provider {
-  constructor({googleKey='',includeGoogle=false}={}){
+  constructor({googleKey='',includeGoogle=false,mapillaryToken=''}={}){
     this.providers={panoramax:new PanoramaxProvider(),
       kartaview:new SphericalImageProvider(),commons:new SphericalImageProvider(),
+      ...(mapillaryToken?{mapillary:new MapillaryProvider(mapillaryToken)}:{}),
       ...(includeGoogle&&googleKey?{google:new GoogleProvider(googleKey)}:{})};
     this.current=null;
   }
@@ -545,6 +619,7 @@ export class Merged360Provider {
     const searches=[this.providers.panoramax.searchAtRadius(opts),
       probeKartaView360(opts.origin,{signal:opts.signal}),
       probeCommons360(opts.origin,{signal:opts.signal})];
+    if(this.providers.mapillary)searches.push(probeMapillary360(opts.origin,{token:this.providers.mapillary.token,signal:opts.signal}));
     // A paid Google search is never initiated by a passive catalogue refresh.
     // It is only allowed after an explicitly entered key and manual journey.
     if(this.providers.google)searches.push(this.providers.google.searchAtRadius(opts));
@@ -563,6 +638,7 @@ export class Merged360Provider {
   async show(candidate,container){
     const adapter=this.providers[candidate.provider];
     if(!adapter)throw new Error('Неизвестный провайдер панорамы '+candidate.provider);
+    if(this.current!==adapter)this.current?.destroy?.();
     this.current?.stopRotation();
     this.current=adapter;
     this.currentProviderId=candidate.provider;
