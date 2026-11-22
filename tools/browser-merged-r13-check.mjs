@@ -35,6 +35,7 @@ try{
   const canvas=document.querySelector('#viewer canvas');
   const pixels=canvas?.getContext('webgl')?.readPixels;
   player.setPose({heading:46,pitch:13,zoom:26});
+  player.stopRotation(); // Pause should not destroy the WebGL canvas.
   return {id:photos[0].id,provider:photos[0].provider,
    canvas:!!canvas,width:canvas?.width,height:canvas?.height,
    heading:player.getPose().heading,
@@ -46,6 +47,9 @@ try{
  assert.ok(karta.canvas&&karta.webgl&&karta.width>200);
  assert.equal(karta.heading,46);
  assert.match(karta.attribution,/KartaView/);
+ await page.waitForFunction(()=>document.querySelector('#viewer canvas')?.width>700,
+   null,{timeout:5000});
+ await page.locator('#viewer canvas').screenshot({path:'r13-kartaview.png'});
  evidence.push({case:'real spherical KartaView photo in JANUS',...karta});
  // Commons geotagged 360 photo on Wikimedia Wikimedia's own origin.
  const commons=await page.evaluate(async()=>{
@@ -65,6 +69,9 @@ try{
  });
  assert.ok(commons.canvas&&commons.heading===110);
  assert.match(commons.attribution,/Wikimedia Commons/);
+ await page.waitForFunction(()=>document.querySelector('#viewer canvas')?.width>700,
+   null,{timeout:5000});
+ await page.locator('#viewer canvas').screenshot({path:'r13-commons.png'});
  evidence.push({case:'actual Commons equirectangular JPEG in JANUS',...commons});
  // Restore real app usage by choosing city from its source-confirmed list.
  await page.locator('#originChoice').selectOption('fes');
