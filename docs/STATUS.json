@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": "feat/extreme-rural-expeditions-r4",
-  "engineering_status": "R4_EXTREME_RURAL_UNIT_33_33_PASS__BROWSER_FILTERS_PASS__REAL_REINE_360_PASS__CI_MERGE_PENDING",
+  "branch_under_review": null,
+  "engineering_status": "R4_MERGED__CI_33_33_PASS__PAGES_R4_LIVE__EDGE_EXTREME_FILTERS_AND_REAL_REINE_360_PASS",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -34,15 +34,18 @@
     "extreme_tours": "19 total guided tours, 7 extreme; names tied to geographic stop centres, real sampled panorama required and skipped when absent.",
     "extreme_browser": "Yaksa Edge real browser UI: 19 tours/70 destinations; regional India/Africa filter counts and category cards correct; mocked Cairo+Spiti tour zero-coverage cases skipped, fullscreen and mobile Escape passed.",
     "extreme_live_panorama": "Yaksa Edge/Playwright loaded actual Reine Norway Panoramax 360 at 67.92775, 13.07143; one unique visit and natural gaze started, no page JS errors.",
-    "extreme_api_sampling": "Panoramax first-page bounding-box samples: Chitkul India 0 images, Mhamid Morocco 5 images (0 360), Opuwo Namibia 0, Lake Bunyonyi Uganda 0, Reine Norway 26 images (1 360). This is neither comprehensive coverage nor a Google audit."
+    "extreme_api_sampling": "Panoramax first-page bounding-box samples: Chitkul India 0 images, Mhamid Morocco 5 images (0 360), Opuwo Namibia 0, Lake Bunyonyi Uganda 0, Reine Norway 26 images (1 360). This is neither comprehensive coverage nor a Google audit.",
+    "extreme_r4_release": "PR #11 squash merged into main as 99d9ffbc34c95a5a612d830a4e8c4c5beed9deb1. CI main 45015425907 SUCCESS (33/33), Pages 45015425891 SUCCESS.",
+    "extreme_r4_https_browser": "Edge/Playwright on deployed HTTPS: 19 tours and 70 places including 7 extreme tours and 33 extreme locations, India/Africa regional filters, fullscreen and simulated mobile ESC PASS; mocked Cairo+Spiti zero coverage caused no fake visits/JC; no uncaught JavaScript errors.",
+    "extreme_r4_https_photo": "Deployed HTTPS version opened a genuine Panoramax 360 image at Reine Norway (67.92775, 13.07143), recorded one local unique visit and started gaze; optional live smoke exited 0."
   },
   "gates": {
-    "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
+    "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_33_OF_33_RUN_45015425907",
     "live_panoramax_metadata": "PASS_METADATA_ONLY",
     "real_browser_panoramax_rotation": "PASS_EDGE_NATURAL_GAZE_ZOOM_PAUSE_RESUME",
     "real_browser_google_key_restricted": "PENDING",
-    "github_actions_ci": "R4_BRANCH_PENDING_CHECK",
-    "github_pages_publish": "R3_LIVE__R4_PENDING_MERGE",
+    "github_actions_ci": "PASS_MAIN_RUN_45015425907",
+    "github_pages_publish": "PASS_R4_PAGES_RUN_45015425891",
     "main_site_tab": "BLOCKED_SITE_EDITOR_ACCESS",
     "main_site_account_auth": "BLOCKED_SITE_SOURCE",
     "server_authoritative_J_coins": "BLOCKED_WALLET_API_AND_RULE_APPROVAL",
@@ -55,16 +58,16 @@
     "google_gaze_api": "PENDING_RESTRICTED_KEY_LIVE_TEST",
     "semantic_heading_accuracy": "OPEN_ISSUE_9",
     "live_https_gaze": "PASS_PRODUCTION_EDGE_PANORAMAX_PAN_AND_PAUSE",
-    "discovery_unit_tests": "PASS_LOCAL_R4_33_OF_33",
+    "discovery_unit_tests": "PASS_MAIN_R4_33_OF_33",
     "tour_fullscreen_browser": "PASS_HTTPS_EDGE_NATIVE_OPEN_CLOSE__LOCAL_MOBILE_FALLBACK_ESC",
     "tour_live_paris": "PASS_PUBLISHED_HTTPS_EDGE_PANORAMAX_EIFFEL_WITHIN_1_2KM",
     "tour_zero_coverage": "PASS_HTTPS_MOCK_CAIRO_7_SKIPPED_0_VISITS_0_JC",
     "cairo_actual_panorama": "NOT_VERIFIED_PANORAMAX_SAMPLED_BOUNDING_BOX_FIRST_PAGE_0_GOOGLE_NOT_TESTED",
     "tour_map": "PASS_LOCAL_EDGE_5_STOP_MARKERS_AND_POLYLINE",
-    "extreme_regional_filters": "PASS_EDGE_LOCAL_19_TOURS_70_LOCATIONS_33_EXTREME_INDIA_8_AFRICA_12",
-    "extreme_no_false_visits": "PASS_EDGE_MOCKED_CAIRO_AND_SPITI_ZERO_COVERAGE_0_JC",
-    "extreme_live_360": "PASS_EDGE_LOCAL_PANORAMAX_REINE_67_92775_13_07143",
-    "extreme_all_locs_360": "OPEN_INCOMPLETE_SOURCE_COVERAGE"
+    "extreme_regional_filters": "PASS_DEPLOYED_HTTPS_EDGE_19_TOURS_70_DESTINATIONS_7_EXTREME_TOURS_33_EXTREME_DESTINATIONS_INDIA_8_AFRICA_12",
+    "extreme_no_false_visits": "PASS_DEPLOYED_HTTPS_EDGE_MOCKED_CAIRO_AND_SPITI_EMPTY_PANORAMAX_0_VISITS_0_JC",
+    "extreme_live_360": "PASS_DEPLOYED_HTTPS_EDGE_PANORAMAX_REINE_67_92775_13_07143",
+    "extreme_all_locs_360": "OPEN_ISSUE_12_SOURCE_COVERAGE_UNVERIFIED_INDIA_AFRICA"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -81,15 +84,15 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "R4 branch ready for PR, CI and Pages. Once deployed verify India/Africa filters and Reine panorama on live HTTPS. Future: more 360 coverage via permitted providers, account/wallet and site tab (#1-4); no user rewards for unsupported scenes.",
+  "next": "R4 publicly deployed. Next: Issue #12 live source coverage audit for remote India/Africa and possible official provider expansion; preserve permissions. Also site tab (#1), server J Coins (#2), global ranking (#3), Google restricted key (#4), semantic gaze (#9) still pending.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
     "Changed provider to filter visited/nearby positions before filling candidate budget; added 2 provider tests, all 14 CI tests pass. Real second jump after fix awaits repeat browser run."
   ],
   "default_branch": "main",
-  "release_commit": "24f6e737413c31ddb7ba55c251536a2791cae290",
-  "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/10",
+  "release_commit": "99d9ffbc34c95a5a612d830a4e8c4c5beed9deb1",
+  "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/11",
   "deployment_blocker": null,
   "release_url": "https://hawkar-usls.github.io/Janus-Portal/",
   "known_nonblocking": "Panoramax viewer requests /api/configuration and receives HTTP 404; panorama and local gaze still work. Verify upstream API compatibility later."
