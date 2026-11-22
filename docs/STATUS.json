@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": null,
-  "engineering_status": "R3_MERGED__CI_29_OF_29_PASS__PAGES_R3_LIVE__EDGE_TOURS_AND_FULLSCREEN_PASS",
+  "branch_under_review": "feat/extreme-rural-expeditions-r4",
+  "engineering_status": "R4_EXTREME_RURAL_UNIT_33_33_PASS__BROWSER_FILTERS_PASS__REAL_REINE_360_PASS__CI_MERGE_PENDING",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -29,15 +29,20 @@
     "r3_release": "PR #10 squash merged to main, Pages deploy run 45014029614 SUCCESS, public HTTPS new R3 modules returned HTTP 200.",
     "r3_live_browser": "Edge over public HTTPS: 37 destination options, 12 tours, search Cairo and Giza, Paris real 360 photo 1.2km from Eiffel, native fullscreen entered 980px and exited, 0 page JS errors.",
     "r3_mobile": "Edge simulated 390x844 fallback: immersive height 844 and ESC correctly restored normal page. No JS errors. Planned Paris route painted as 5 markers+polyline.",
-    "r3_no_coverage": "Mocked Cairo tour provider with zero images: 7 stops skipped, zero visits, J Coins dash. Actual Panoramax sampled Giza/Cairo museum/Karnak first page: zero records in each, not exhaustive."
+    "r3_no_coverage": "Mocked Cairo tour provider with zero images: 7 stops skipped, zero visits, J Coins dash. Actual Panoramax sampled Giza/Cairo museum/Karnak first page: zero records in each, not exhaustive.",
+    "extreme_rural_catalogue": "70 total destinations, 33 tagged remote/extreme across India, Africa, Nepal, Vietnam, Philippines, South America, Norway and Faroe Islands; region filters and free random modes.",
+    "extreme_tours": "19 total guided tours, 7 extreme; names tied to geographic stop centres, real sampled panorama required and skipped when absent.",
+    "extreme_browser": "Yaksa Edge real browser UI: 19 tours/70 destinations; regional India/Africa filter counts and category cards correct; mocked Cairo+Spiti tour zero-coverage cases skipped, fullscreen and mobile Escape passed.",
+    "extreme_live_panorama": "Yaksa Edge/Playwright loaded actual Reine Norway Panoramax 360 at 67.92775, 13.07143; one unique visit and natural gaze started, no page JS errors.",
+    "extreme_api_sampling": "Panoramax first-page bounding-box samples: Chitkul India 0 images, Mhamid Morocco 5 images (0 360), Opuwo Namibia 0, Lake Bunyonyi Uganda 0, Reine Norway 26 images (1 360). This is neither comprehensive coverage nor a Google audit."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
     "live_panoramax_metadata": "PASS_METADATA_ONLY",
     "real_browser_panoramax_rotation": "PASS_EDGE_NATURAL_GAZE_ZOOM_PAUSE_RESUME",
     "real_browser_google_key_restricted": "PENDING",
-    "github_actions_ci": "PASS_MAIN_R3_RUN_45014029643__29_OF_29",
-    "github_pages_publish": "PASS_R3_PAGES_RUN_45014029614__ALL_NEW_JS_ASSETS_HTTP200",
+    "github_actions_ci": "R4_BRANCH_PENDING_CHECK",
+    "github_pages_publish": "R3_LIVE__R4_PENDING_MERGE",
     "main_site_tab": "BLOCKED_SITE_EDITOR_ACCESS",
     "main_site_account_auth": "BLOCKED_SITE_SOURCE",
     "server_authoritative_J_coins": "BLOCKED_WALLET_API_AND_RULE_APPROVAL",
@@ -50,12 +55,16 @@
     "google_gaze_api": "PENDING_RESTRICTED_KEY_LIVE_TEST",
     "semantic_heading_accuracy": "OPEN_ISSUE_9",
     "live_https_gaze": "PASS_PRODUCTION_EDGE_PANORAMAX_PAN_AND_PAUSE",
-    "discovery_unit_tests": "PASS_LOCAL_29_OF_29",
+    "discovery_unit_tests": "PASS_LOCAL_R4_33_OF_33",
     "tour_fullscreen_browser": "PASS_HTTPS_EDGE_NATIVE_OPEN_CLOSE__LOCAL_MOBILE_FALLBACK_ESC",
     "tour_live_paris": "PASS_PUBLISHED_HTTPS_EDGE_PANORAMAX_EIFFEL_WITHIN_1_2KM",
     "tour_zero_coverage": "PASS_HTTPS_MOCK_CAIRO_7_SKIPPED_0_VISITS_0_JC",
     "cairo_actual_panorama": "NOT_VERIFIED_PANORAMAX_SAMPLED_BOUNDING_BOX_FIRST_PAGE_0_GOOGLE_NOT_TESTED",
-    "tour_map": "PASS_LOCAL_EDGE_5_STOP_MARKERS_AND_POLYLINE"
+    "tour_map": "PASS_LOCAL_EDGE_5_STOP_MARKERS_AND_POLYLINE",
+    "extreme_regional_filters": "PASS_EDGE_LOCAL_19_TOURS_70_LOCATIONS_33_EXTREME_INDIA_8_AFRICA_12",
+    "extreme_no_false_visits": "PASS_EDGE_MOCKED_CAIRO_AND_SPITI_ZERO_COVERAGE_0_JC",
+    "extreme_live_360": "PASS_EDGE_LOCAL_PANORAMAX_REINE_67_92775_13_07143",
+    "extreme_all_locs_360": "OPEN_INCOMPLETE_SOURCE_COVERAGE"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -72,7 +81,7 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "R3 published. Next: main JANUS site «Портал» tab (#1), authenticated J Coins (#2), leaderboard (#3), Google restricted key/coverage for Cairo (#4), semantic heading calibration (#9). Improve image-source coverage and optional narrations; do not fake coverage or rewards.",
+  "next": "R4 branch ready for PR, CI and Pages. Once deployed verify India/Africa filters and Reine panorama on live HTTPS. Future: more 360 coverage via permitted providers, account/wallet and site tab (#1-4); no user rewards for unsupported scenes.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
