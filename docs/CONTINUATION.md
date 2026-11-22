@@ -1,3 +1,12 @@
+## R10 production fullscreen verified — 2026-11-22
+
+- [PR #21](https://github.com/Hawkar-usls/Janus-Portal/pull/21) merged to main as `15625c506e034d538d1e4cc67700992b841e2107`; [Main CI 45027354737](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45027354737) **39/39 PASS**, [GitHub Pages 45027354747](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45027354747) **SUCCESS**.
+- Live URL: https://hawkar-usls.github.io/Janus-Portal/?fullscreen=r10-15625c5 . Public HTML, `./src/app.js` return HTTP 200, original **five R2 imports** unchanged.
+- Public HTTPS **real Edge desktop**: Fes Panoramax 360 loaded with natural gaze; native fullscreen filled 1366×840 viewport (photo 644px), `⛶ Свернуть` returned without destroying the photo. API-disabled CSS fullscreen fallback + keyboard Esc + button exit PASS. **Edge mobile 390×844** fallback filled viewport, 703px photo area, visible exit; no page JS errors.
+- Additional public HTTPS `tools/browser-single-search-check.mjs`: one original search, empty simulated Cairo 0 fake visits and Start restored, real Fes 360 and gaze, mobile layout PASS.
+- Full technical spec [FULLSCREEN_R10.md](FULLSCREEN_R10.md) and repeatable `tools/browser-fullscreen-r10-check.mjs`. This replaces historical R3–R5 fullscreen; those old runtime modules stay archived.
+- **User's own browser not re-tested yet**. Ask owner to verify old Start + new fullscreen and exit; mobile CSS fallback may leave browser chrome visible. Do not claim unsupported OS-level fullscreen on iOS. Missing DPRK/Cairo genuine 360 coverage still open.
+
 ## R10 fullscreen on original JANUS viewer — 2026-11-22
 
 - Owner's new request: **«нам так же необходим режим на весь экран»** while preserving R9's one-search/one-window requirement. No separate tourist portal/external page.
