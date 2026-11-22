@@ -13,14 +13,14 @@ test('Pages stamps BOTH assets with the exact deployment SHA to avoid stale R10 
  assert.ok(html.includes('<script type="module" src="./src/app.js"></script>'),
   'R2 source must remain original: Pages stamps the deployed copy only');
 });
-test('catalogue has a finite 18-second deadline and a visible error when provider is unreachable',()=>{
- assert.match(app,/LIVE_MAX_SCAN_MS=18000/);
+test('catalogue has a finite 30-second multi-source deadline and a visible error when provider is unreachable',()=>{
+ assert.match(app,/LIVE_MAX_SCAN_MS=30000/);
  assert.match(app,/const deadline=setTimeout/);
  assert.match(app,/liveTimedOut=true/);
  assert.match(app,/controller\.abort\(\)/);
  assert.match(app,/clearTimeout\(deadline\)/);
- assert.match(app,/Проверь подключение к api\.panoramax\.xyz/);
- assert.match(app,/Достигнут предел 18 секунд/);
+ assert.match(app,/Проверь интернет/);
+ assert.match(app,/лимиту 30 секунд/);
  assert.match(app,/Нажми «Обновить»/);
  assert.match(app,/status\.dataset\.state=/);
 });
@@ -36,7 +36,7 @@ test('refresh is clickable while checking and cancels stale in-flight requests',
 test('Google key is user-issued; demo key cannot enable Street View and no key is embedded',()=>{
  assert.ok(html.includes('https://developers.google.com/maps/documentation/javascript/get-api-key'));
  assert.match(html,/Бесплатный Google Maps Demo Key/);
- assert.match(html,/не предоставляет встроенный Street View/);
+ assert.match(html,/не поддерживает Street View/);
  assert.match(html,/id="googleKey"/);
  assert.ok(!html.includes('key=AIza'));
  assert.ok(!app.includes('key=AIza'));
