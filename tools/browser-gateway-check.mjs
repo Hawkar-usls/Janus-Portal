@@ -63,6 +63,22 @@ try{
  assert.equal(errors.length,0,errors.join(';'));
  console.log('PASS_PYONGYANG_BOUNDED_NO_FAKE_PANORAMA',JSON.stringify({errors}));
  await page.screenshot({path:'gateway-smoke.png',fullPage:true});
+ const phone=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+ const phoneErrors=[];phone.on('pageerror',error=>phoneErrors.push(error.message));
+ try{
+   await phone.goto(sourceURL,{waitUntil:'domcontentloaded'});
+   assert.equal(await phone.locator('#sourceGateway').count(),1);
+   await phone.locator('#gatewayPlace').selectOption('cairo');
+   assert.equal(await phone.locator('#gatewaySources .gateway-card').count(),4);
+   const narrow=await phone.evaluate(()=>({
+     viewport:document.documentElement.clientWidth,
+     card:document.querySelector('.gateway-card')?.getBoundingClientRect().width,
+     section:document.querySelector('#sourceGateway')?.getBoundingClientRect().width
+   }));
+   assert.ok(narrow.card>100&&narrow.card<narrow.section,narrow.card+' '+narrow.section);
+   assert.equal(phoneErrors.length,0,phoneErrors.join(';'));
+   console.log('PASS_MOBILE_GATEWAY',JSON.stringify(narrow));
+ }finally{await phone.close()}
 }catch(error){
  console.error('FAIL_GATEWAY',error.message,'notice',await page.locator('#notice').innerText().catch(()=>''),errors);
  process.exitCode=1;
