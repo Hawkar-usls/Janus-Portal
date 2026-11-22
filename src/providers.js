@@ -1,7 +1,7 @@
 import {bboxAround, distanceKm, randomProbe} from './navigation.js';
 
 const PANORAMAX_ENDPOINT = 'https://api.panoramax.xyz/api';
-const PANORAMAX_VIEWER = 'https://cdn.jsdelivr.net/npm/@panoramax/web-viewer@5.2.0/build/cjs/index.js';
+const PANORAMAX_VIEWER = 'https://cdn.jsdelivr.net/npm/@panoramax/web-viewer@5.2.0/build/cjs/index_photoviewer.js';
 let panoramaxLoad;
 let googleLoad;
 
@@ -57,9 +57,10 @@ function loadedWithin(promise, timeoutMs = 18000) {
 function featureToCandidate(feature) {
   const [lng, lat] = feature?.geometry?.coordinates || [];
   const fieldOfView = Number(feature?.properties?.['pers:interior_orientation']?.field_of_view || 0);
+  const equirectangular = feature?.properties?.['pano:projection_type'] === 'equirectangular';
   if (!feature?.id || !feature?.collection || !Number.isFinite(lat) || !Number.isFinite(lng)) return null;
   // Full 360 photo only; flat photos cannot be rotated around.
-  if (fieldOfView < 300) return null;
+  if (!equirectangular && fieldOfView < 300) return null;
   return {provider: 'panoramax', id: feature.id, collection: feature.collection, lat, lng};
 }
 
@@ -70,12 +71,20 @@ export class PanoramaxProvider {
   }
   async searchAtRadius({origin, radiusKm, visited, random, signal}) {
     const found = [];
-    const attempts = 4;
-    // Search several small geographic windows, rather than trusting the first
-    // (often flat-photo-heavy) page of a huge bounding box.
-    for (let i = 0; i < attempts && found.length < 8; i++) {
-      if (signal?.aborted) break;
-      const point = i === 0 ? origin : randomProbe(origin, radiusKm * 0.85, random);
+    // Seeded points offer a reliable escape from empty regions (oceans, deserts)
+    // once the expanding radius can geographically reach real coverage.
+    const coverage = [
+      {lat: 48.86473, lng: 2.34041}, // Paris
+      {lat: 48.11617, lng: -1.68669}, // Rennes
+      {lat: 45.76561, lng: 4.84002}  // Lyon
+    ].filter(p => distanceKm(origin, p) <= radiusKm)
+      .sort((a, b) => distanceKm(origin, a) - distanceKm(origin, b));
+    const points = [origin, ...coverage.slice(0, 2)];
+    while (points.length < 4) points.push(randomProbe(origin, radiusKm * 0.85, random));
+    // Search small windows. Full-world bbox queries can be biased by the first
+    // page of results and most images in the service are flat rather than 360.
+    for (const point of points) {
+      if (signal?.aborted || found.length >= 8) break;
       const box = bboxAround(point, Math.min(radiusKm / 3, 1.2));
       const url = PANORAMAX_ENDPOINT + '/search?bbox=' + box.join(',') + '&limit=80';
       const response = await fetch(url, {signal, headers: {Accept: 'application/geo+json'}});
@@ -98,7 +107,7 @@ export class PanoramaxProvider {
     viewer.setAttribute('endpoint', PANORAMAX_ENDPOINT);
     viewer.setAttribute('sequence', candidate.collection);
     viewer.setAttribute('picture', candidate.id);
-    viewer.setAttribute('widgets', 'false');
+    viewer.setAttribute('widgets', 'true'); // preserve attribution and image credits
     viewer.setAttribute('url-parameters', 'false');
     viewer.style.width = '100%';
     viewer.style.height = '100%';
@@ -189,7 +198,7 @@ export class GoogleProvider {
         if (status === 'OK') {
           listener.remove();
           resolve();
-        } else if (status && status !== 'UNKNOWN_ERROR' && status !== 'ZERO_RESULTS' && status !== 'OK') {
+        } else if (status && status !== 'OK') {
           listener.remove();
           reject(new Error('Google Street View: ' + status));
         }
