@@ -29,7 +29,27 @@ const CITY = {
   sayaussi: {lat: -2.881178218, lng: -79.061575868},
   ricaurte: {lat: -2.879045158, lng: -78.981027349},
   banoscuenca: {lat: -2.906943576, lng: -79.033273236},
-  elvalle: {lat: -2.915168508, lng: -78.985071091}
+  elvalle: {lat: -2.915168508, lng: -78.985071091},
+  // R7 geographic search-only centres: do NOT claim verified Panoramax 360.
+  // This mode is explicitly distance-bounded to prevent a Pyongyang/Cairo
+  // selection from silently opening photos in another country.
+  pyongyang: {lat: 39.0194, lng: 125.7381},
+  kaesong: {lat: 37.9723, lng: 126.5544},
+  wonsan: {lat: 39.1528, lng: 127.4436},
+  cairo: {lat: 30.0444, lng: 31.2357},
+  giza: {lat: 29.9792, lng: 31.1342},
+  saqqara: {lat: 29.8710, lng: 31.2150},
+  alexandria: {lat: 31.2001, lng: 29.9187},
+  luxor: {lat: 25.6872, lng: 32.6396},
+  nairobi: {lat: -1.2921, lng: 36.8219},
+  zanzibar: {lat: -6.1659, lng: 39.2026},
+  kampala: {lat: 0.3476, lng: 32.5825},
+  addis: {lat: 9.0300, lng: 38.7400},
+  dakar: {lat: 14.7167, lng: -17.4677},
+  lagos: {lat: 6.5244, lng: 3.3792},
+  windhoek: {lat: -22.5609, lng: 17.0658},
+  capetown: {lat: -33.9249, lng: 18.4241},
+  victoriafalls: {lat: -17.9243, lng: 25.8572}
 };
 // Keep this optional source pool isolated from the original R2 modes.
 // These names designate sampled 360° coverage, not guaranteed future views.
@@ -38,11 +58,21 @@ const VERIFIED_REGION_KEYS = Object.freeze([
   'georgetown','balikpulau','bayanlepas',
   'cuenca','sayaussi','ricaurte','banoscuenca','elvalle'
 ]);
+// These places are browseable geographic targets but have no verified Panoramax
+// 360° coverage in our bounded 2026-11-22 search. Never mix them into random
+// verified starts or drift to an unrelated distant location.
+const LIMITED_COVERAGE_KEYS = new Set([
+  'pyongyang','kaesong','wonsan',
+  'cairo','giza','saqqara','alexandria','luxor',
+  'nairobi','zanzibar','kampala','addis','dakar','lagos',
+  'windhoek','capetown','victoriafalls'
+]);
+const MAX_LIMITED_SEARCH_KM = 40;
 const state = {
   history: readHistory(), running: false, paused: false, busy: false,
   turbo: false, provider: null, current: null, origin: null,
   abort: null, timer: null, gaze: null, interest: null, planBaseSeconds: 16,
-  generation: 0, map: null, mapLayer: null, leaflet: null
+  generation: 0, map: null, mapLayer: null, leaflet: null, limitedCoverage: false
 };
 
 function setStatus(message, kind = '') {
@@ -77,7 +107,10 @@ function updateRadius(radius, note) {
 }
 function getOrigin() {
   const key = $('originChoice').value;
-  if (key === 'random') return {...CITY[Object.keys(CITY)[Math.floor(Math.random() * Object.keys(CITY).length)]]};
+  if (key === 'random') {
+    const keys = Object.keys(CITY).filter(id => !LIMITED_COVERAGE_KEYS.has(id));
+    return {...CITY[keys[Math.floor(Math.random() * keys.length)]]};
+  }
   if (key === 'random-verified') {
     const next = VERIFIED_REGION_KEYS[Math.floor(Math.random() * VERIFIED_REGION_KEYS.length)];
     return {...CITY[next]};
@@ -196,6 +229,11 @@ async function travel() {
     const candidate = await findNext({
       origin,
       baseRadiusKm: Number($('radius').value),
+      // Preserve the classic 5→10→20→...→20000km explorer for working modes.
+      // Only unverified selected coordinates stop locally (5→10→20→40km)
+      // rather than faking Pyongyang/Cairo using distant panoramas.
+      maxRadiusKm: state.limitedCoverage
+        ? Math.max(MAX_LIMITED_SEARCH_KM, Number($('radius').value)) : 20000,
       visited,
       visitedPoints: state.history,
       minSeparationKm: 0.02,
@@ -231,11 +269,22 @@ async function travel() {
   } catch (error) {
     if (error?.name !== 'AbortError' && state.running && generation === state.generation) {
       const noPoints = error?.name === 'NoLocationsError';
-      message(noPoints
-        ? 'Поиск по доступным выборкам завершён без новых 360° панорам. Можно выбрать другой город или источник. Это не доказывает, что все места посещены.'
-        : 'Ошибка: ' + (error?.message || String(error)), true);
-      setStatus(noPoints ? 'Места не найдены' : 'Ошибка', 'warn');
-      state.paused = true; // avoid infinite chargeable requests and tight retry loops
+      if (noPoints && state.limitedCoverage) {
+        message('Для выбранного региона в проверенных выборках Panoramax не нашлось новых 360° снимков поблизости (радиус до ' +
+          Math.max(MAX_LIMITED_SEARCH_KM, Number($('radius').value)) +
+          ' км). Не подменяем их фотографиями другой страны. Ниже есть ссылки на внешние 360° экскурсии по Северной Корее и Египту. Для встроенного просмотра выбери Фес или район Мерзуги.', true);
+        setStatus('360° рядом не найдены', 'warn');
+        // Make the next choice one click: the original engine's stopped state
+        // remains unchanged for normal/verified locations.
+        state.running = false;
+        state.paused = false;
+      } else {
+        message(noPoints
+          ? 'Поиск по доступным выборкам завершён без новых 360° панорам. Можно выбрать другой город или источник. Это не доказывает, что все места посещены.'
+          : 'Ошибка: ' + (error?.message || String(error)), true);
+        setStatus(noPoints ? 'Места не найдены' : 'Ошибка', 'warn');
+        state.paused = true; // avoid infinite chargeable requests and tight retry loops
+      }
     }
   } finally {
     if (generation === state.generation) {
@@ -251,6 +300,7 @@ function run() {
   try {
     state.origin = getOrigin();
     state.provider = chooseProvider();
+    state.limitedCoverage = LIMITED_COVERAGE_KEYS.has($('originChoice').value);
   } catch (e) {
     message(e.message, true);
     return;
