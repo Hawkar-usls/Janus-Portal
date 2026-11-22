@@ -5,7 +5,7 @@
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 const wrap = v => ((v % 360) + 360) % 360;
 const MODEL = 'https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet_lite0/float16/1/efficientdet_lite0.tflite';
-const PACKAGE = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22';
+const PACKAGE = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.3';
 let detectorPromise;
 
 const labels = new Map([
