@@ -1,3 +1,13 @@
+## R4 merge & public HTTPS validation — 2026-11-22
+
+- [PR #11](https://github.com/Hawkar-usls/Janus-Portal/pull/11) **merged** to main (squash SHA: 99d9ffbc34c95a5a612d830a4e8c4c5beed9deb1).
+- [Main CI 45015425907](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45015425907): **PASS 33/33**.
+- [Pages 45015425891](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45015425891): **SUCCESS**. Live URL: https://hawkar-usls.github.io/Janus-Portal/.
+- **Edge/Playwright on live HTTPS:** 70 destinations / 19 tours, 33 extreme / 7 extreme, India/Africa regional filters, fullscreen/mobile fallback ESC, mocked empty Cairo and Spiti sources -> 0 fictitious visits or J Coins, all PASS, no JS exceptions.
+- **Actual live Panoramax 360** at Reine/Norway (67.92775, 13.07143) opened on public HTTPS; local visit=1, gaze started. Reproduce with tools/browser-extreme-live-check.mjs and tools/browser-discovery-check.mjs, PORTAL_URL set to public Pages URL, Playwright installed, BROWSER_PATH set for Edge or Chrome.
+- **OPEN:** remote India/Africa 360 coverage remains sparse/unknown. Panoramax first-page samples (Chitkul, Opuwo, Lake Bunyonyi) had no 360 and Mhamid 5 flat images. [Issue #12](https://github.com/Hawkar-usls/Janus-Portal/issues/12) tracks independent provider coverage auditing, permitted expansion and no false photo/place pairing. Do not claim these locations are explorable in 360 until verified.
+- Main JANUS site tab (#1), real server-side J Coin wallet (#2), leaderboard (#3), Google API restricted key (#4) and semantic calibration (#9) still unresolved.
+
 ## R4 «Экстремальный туризм» / удалённые сёла — 2026-11-22
 
 - Feature branch: feat/extreme-rural-expeditions-r4. User asked for extreme-tourism places in free random Portal AND a new excursion category, especially rural India and Africa. Interpret extreme as remoteness/terrain, NOT a judgement of residents or national income.
