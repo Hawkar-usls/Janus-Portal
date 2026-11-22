@@ -1,4 +1,4 @@
-import {TOURS,DESTINATIONS,TOUR_CATEGORIES,DESTINATION_CATEGORIES} from './tours.js';
+import {TOURS,DESTINATIONS,TOUR_CATEGORIES,DESTINATION_CATEGORIES,EXTREME_REGIONS,extremeRegionFor} from './tours.js';
 
 // Original JANUS discovery interface inspired by guided sightseeing modes.
 // These cards represent search locations, not confirmed camera panoramas.
@@ -11,7 +11,7 @@ export function installDiscovery({
     destinations:document.getElementById('tabDestinations')
   };
   const panel=document.getElementById('discoveryContent');
-  let active='explore',filter='all',query='';
+  let active='explore',filter='all',region='all',query='';
   const make=(tag,cls,text)=>{
     const node=document.createElement(tag);
     if(cls)node.className=cls;
@@ -42,8 +42,21 @@ export function installDiscovery({
       const button=make('button','discovery-filter'+(filter===cat.id?' active':''),cat.label);
       button.type='button';button.dataset.category=cat.id;
       button.setAttribute('aria-pressed',String(filter===cat.id));
-      button.addEventListener('click',()=>{filter=cat.id;render()});
+      button.addEventListener('click',()=>{filter=cat.id;region='all';render()});
       filters.append(button);
+    }
+    if(filter==='extreme'){
+      const regions=make('div','extreme-region-filters');
+      regions.setAttribute('aria-label','Регионы экстремального туризма');
+      for(const item of EXTREME_REGIONS){
+        const button=make('button','discovery-filter'+(region===item.id?' active':''),item.label);
+        button.type='button';
+        button.dataset.region=item.id;
+        button.setAttribute('aria-pressed',String(region===item.id));
+        button.addEventListener('click',()=>{region=item.id;render()});
+        regions.append(button);
+      }
+      filters.append(regions);
     }
     const input=make('input','discovery-search');input.type='search';
     input.placeholder=isTours?'Найти экскурсию…':'Город или страна…';
@@ -60,6 +73,7 @@ export function installDiscovery({
       grid.replaceChildren();
       const source=isTours?TOURS:DESTINATIONS;
       const values=source.filter(item=>(filter==='all'||item.category===filter) &&
+        (region==='all'||extremeRegionFor(item)===region) &&
         [item.title,item.subtitle,item.name,item.country,item.tag,...(item.stops||[]).map(s=>s.name)]
           .filter(Boolean).join(' ').toLocaleLowerCase('ru').includes(query.trim().toLocaleLowerCase('ru')));
       for(const item of values){
@@ -85,7 +99,7 @@ export function installDiscovery({
   };
   const selectTab=(id)=>{
     if(!(id in navs))return;
-    active=id;filter='all';query='';
+    active=id;filter='all';region='all';query='';
     render();
     if(id==='explore')onFree();
   };
