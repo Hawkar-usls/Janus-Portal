@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": "feat/r8-unified-source-gateway-r2-safe",
-  "engineering_status": "R8_GATEWAY_LOCAL_EDGE_MOBILE_AND_NODE_PASS__PR_CI_AND_PAGES_PENDING",
+  "branch_under_review": null,
+  "engineering_status": "R8_GATEWAY_RELEASED__CI_36_OF_36__PAGES_HTTPS_EDGE_AND_MOBILE_PASS",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -36,7 +36,9 @@
     "r7_public_browser": "Public deployed HTTPS in Yaksa Edge: original R2 ./src/app.js (5 imports) HTTP 200, North Korea/Cairo options present; mocked no-coverage 16 requests and 0 visits per origin with retry Start; real Fes/Morocco Panoramax 360 + natural gaze PASS; 0 JS page errors.",
     "r8_gateway": "Unified in-page UI catalog (19 countries/places) routes Panoramax 360 within original R2 viewer, existing Google official API adapter with user-provided restricted key, and explicitly source-owned external DPRK Panorama/Harvard Giza/Egypt Ministry tours by ordinary links. No new JS imports/iframes/copyright copying.",
     "r8_google_bugfix": "Fixed originally undefined visitedPoints and minSeparationKm in existing GoogleProvider.searchAtRadius; mocked service only, live Google key gate remains pending.",
-    "r8_browser": "Yaksa Edge desktop on local R2: Pyongyang/Giza source cards & links PASS; Google without key shows field without API call; Fes real Panoramax 360 & gaze PASS; simulated no-photo Pyongyang correctly stops with zero fake increment; mobile 390px cards fit; 0 uncaught JS errors."
+    "r8_browser": "Yaksa Edge desktop on local R2: Pyongyang/Giza source cards & links PASS; Google without key shows field without API call; Fes real Panoramax 360 & gaze PASS; simulated no-photo Pyongyang correctly stops with zero fake increment; mobile 390px cards fit; 0 uncaught JS errors.",
+    "r8_release": "PR #18 merged as 4c13009d0fb766ad1d6d48c24edf7712379164bf; Pages 45025652089 SUCCESS; CI 36/36 PASS.",
+    "r8_public_browser": "Public HTTPS Edge: R8 source cards Pyongyang/Giza PASS, Google no-key safe, real Fes Panoramax 360 + natural gaze PASS, simulated no-photo Pyongyang does not add visits, mobile 390px PASS, 0 uncaught JS errors."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
@@ -44,7 +46,7 @@
     "real_browser_panoramax_rotation": "PASS_EDGE_NATURAL_GAZE_ZOOM_PAUSE_RESUME",
     "real_browser_google_key_restricted": "PENDING",
     "github_actions_ci": "PASS_R7_MAIN_45024553613__30_OF_30",
-    "github_pages_publish": "PASS_R7_PAGES_RUN_45024553601",
+    "github_pages_publish": "PASS_R8_PAGES_45025652089",
     "main_site_tab": "BLOCKED_SITE_EDITOR_ACCESS",
     "main_site_account_auth": "BLOCKED_SITE_SOURCE",
     "server_authoritative_J_coins": "BLOCKED_WALLET_API_AND_RULE_APPROVAL",
@@ -73,14 +75,15 @@
     "r7_ci": "PASS_MAIN_45024553613",
     "r7_pages": "PASS_PUBLIC_45024553601",
     "r7_user_browser": "PENDING_OWNER_CONFIRMATION__R2_ENTRYPOINT_PRESERVED",
-    "r8_unit_tests": "PASS_LOCAL_36_OF_36",
-    "r8_browser": "PASS_LOCAL_EDGE_REAL_FES_PANORAMAX_AND_FAKE_PYONGYANG_GUARD",
-    "r8_mobile": "PASS_LOCAL_EDGE_VIEWPORT_390_GATEWAY_CARDS_NO_PAGE_ERRORS",
+    "r8_unit_tests": "PASS_36_OF_36",
+    "r8_browser": "PASS_PUBLIC_HTTPS_EDGE_REAL_FES_PANORAMAX_GAZE_AND_DPRK_NO_FAKE_COVERAGE",
+    "r8_mobile": "PASS_PUBLIC_HTTPS_EDGE_MOBILE_390PX",
     "r8_entrypoint": "PASS_UNCHANGED_R2_SRC_APP_JS_FIVE_IMPORTS",
     "r8_external_embed": "NOT_AUTHORIZED_EXTERNAL_LINK_ONLY",
-    "r8_google_live": "PENDING_RESTRICTED_GOOGLE_BROWSER_KEY",
-    "r8_pages": "PENDING_PR_MERGE",
-    "r8_user_browser": "PENDING_OWNER_CONFIRMATION"
+    "r8_google_live": "PENDING_RESTRICTED_KEY",
+    "r8_pages": "PASS_R8_PAGES_45025652089",
+    "r8_user_browser": "PENDING_OWNER_CONFIRMATION_R2_STILL_WORKS",
+    "r8_external_embeds": "NOT_AUTHORIZED_EXTERNAL_SOURCE_LINKS_ONLY"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -97,17 +100,17 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "R8 gateway local validated. PR CI -> merge -> Pages HTTPS browser test using tools/browser-gateway-check.mjs. Owner confirm original R2 Start and new gateway. Do not embed DPRK/Giza media without permitted embed/API rights, do not award visits for external source links; no new modules.",
+  "next": "Ask owner to test R8 gateway and original R2 Start in their browser. Next: official license-cleared APIs/embeds to bring more foreign VR inside, not copying/scraping others. No user J Coins/external rewards; R3-R5 remain archived.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
     "Changed provider to filter visited/nearby positions before filling candidate budget; added 2 provider tests, all 14 CI tests pass. Real second jump after fix awaits repeat browser run."
   ],
   "default_branch": "main",
-  "release_commit": "c1fd6498acc1b354eb7a6d59c3b64e629f6365f2",
-  "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/17",
+  "release_commit": "4c13009d0fb766ad1d6d48c24edf7712379164bf",
+  "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/18",
   "deployment_blocker": null,
-  "release_url": "https://hawkar-usls.github.io/Janus-Portal/?r7=c1fd6498",
+  "release_url": "https://hawkar-usls.github.io/Janus-Portal/?gateway=r8-4c13009d",
   "known_nonblocking": "Panoramax viewer requests /api/configuration and receives HTTP 404; panorama and local gaze still work. Verify upstream API compatibility later.",
   "rollback": {
     "source": "1b34bff74e2239d34cbdc09c1753df1041d63dc2",
