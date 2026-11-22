@@ -38,7 +38,7 @@ function createRenderer(canvas,img){
     'void main(){vec2 screen=uv*2.-1.;vec3 d=normalize(vec3(screen.x*aspect*fov,-screen.y*fov,1.));'+
     'float cp=cos(pitch),sp=sin(pitch);d=vec3(d.x,d.y*cp+d.z*sp,-d.y*sp+d.z*cp);'+
     'float cy=cos(yaw),sy=sin(yaw);d=vec3(d.x*cy+d.z*sy,d.y,-d.x*sy+d.z*cy);'+
-    'vec2 tc=vec2(fract(atan(d.x,d.z)/(2.*PI)+.5),.5+asin(clamp(d.y,-1.,1.))/PI);'+
+    'vec2 tc=vec2(fract(atan(d.x,d.z)/(2.*PI)+.5),.5-asin(clamp(d.y,-1.,1.))/PI);'+
     'gl_FragColor=texture2D(image,tc);}');
   const prog=gl.createProgram();gl.attachShader(prog,v);gl.attachShader(prog,f);
   gl.linkProgram(prog);
@@ -114,6 +114,7 @@ export class NativePanorama {
     }catch(error){
       this.renderer=null;canvas.remove();
       const preview=el('img');
+      preview.className='panorama-static-preview';
       preview.alt='Предпросмотр панорамы без 3D';
       preview.src=this.image.src;
       preview.style.cssText='width:100%;height:100%;object-fit:cover';
