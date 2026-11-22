@@ -1,0 +1,43 @@
+name: R14 deployed HTTPS panorama and Passport smoke
+
+on:
+  workflow_run:
+    workflows: ["Publish static Portal to GitHub Pages"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  public-browser:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DEPLOY_SHA: ${{ github.event.workflow_run.head_sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium
+        run: |
+          npm install --no-save --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium
+      - name: Confirm Pages published THIS coherent HTML/JS/CSS revision
+        run: |
+          for attempt in $(seq 1 50); do
+            if curl --fail --silent --max-time 15 "https://hawkar-usls.github.io/Janus-Portal/?r14-test=${DEPLOY_SHA}-${attempt}" | grep -Fq "./src/app.js?build=${DEPLOY_SHA}"; then
+              echo "PUBLIC_ASSETS_CURRENT_SHA=${DEPLOY_SHA}"
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "Pages did not serve the source revision" >&2
+          exit 1
+      - name: Real Fes 360 in JANUS, Passport, fullscreen
+        run: |
+          timeout 125s env PORTAL_URL="https://hawkar-usls.github.io/Janus-Portal/?afk-live=${DEPLOY_SHA}" node tools/browser-live-r14-check.mjs
