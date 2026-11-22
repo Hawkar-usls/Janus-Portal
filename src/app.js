@@ -93,7 +93,7 @@ let liveTimedOut=false;
 let manualNext=false;
 // R13: a live geographic list made from *all* keyless usable 360° sources.
 // Each value contains the photos from different providers for that location.
-const LIVE_SOURCE_COUNT=3; // Panoramax + KartaView + Wikimedia Commons
+const liveSourceCount=()=>3+($('mapillaryToken')?.value.trim()?1:0); // optional authenticated Mapillary
 function renderLiveOptions(){
   const select=$('originChoice'),previous=select.value;
   const frag=document.createDocumentFragment();
@@ -112,7 +112,7 @@ function renderLiveOptions(){
     const placeholder=document.createElement('option');
     placeholder.value='';placeholder.disabled=true;
     placeholder.textContent=liveRefreshing?'⏳ Обновляем все 360° источники…':
-      liveTimedOut||liveFailed>=liveOptions.length*LIVE_SOURCE_COUNT
+      liveTimedOut||liveFailed>=liveOptions.length*liveSourceCount()
         ? 'Источники не ответили · нажми «Обновить»':
           'Подтверждённых 360° пока нет';
     frag.append(placeholder);
@@ -126,13 +126,13 @@ function updateCoverageStatus(){
   const count=liveCoverage.size;
   const status=$('coverageStatus');
   status.dataset.state=liveRefreshing?'checking':liveTimedOut?'timeout':
-    liveFailed>=liveOptions.length*LIVE_SOURCE_COUNT?'error':'ready';
-  const totals={panoramax:0,kartaview:0,commons:0};
+    liveFailed>=liveOptions.length*liveSourceCount()?'error':'ready';
+  const totals={panoramax:0,kartaview:0,commons:0,mapillary:0};
   for(const values of liveCoverage.values()){
     for(const p of new Set(values.map(x=>x.provider)))totals[p]++;
   }
   const bySource='Panoramax '+totals.panoramax+' · KartaView '+totals.kartaview+
-    ' · Commons '+totals.commons;
+    ' · Commons '+totals.commons+' · Mapillary '+totals.mapillary;
   if(liveRefreshing){
     status.textContent='Проверяем все источники: '+liveChecked+'/'+liveOptions.length+
       ' районов · доступны '+count+' · '+bySource;
@@ -142,15 +142,15 @@ function updateCoverageStatus(){
       status.textContent='Проверка завершена по лимиту 30 секунд: '+liveChecked+
         '/'+liveOptions.length+' районов · доступны '+count+' · '+bySource+
         '. Нажми «Обновить» для новой общей проверки.';
-    }else if(liveFailed>=liveOptions.length*LIVE_SOURCE_COUNT){
-      status.textContent='Все три источника недоступны. Проверь интернет и нажми «Обновить».';
+    }else if(liveFailed>=liveOptions.length*liveSourceCount()){
+      status.textContent='Подключённые источники недоступны. Проверь интернет и нажми «Обновить».';
     }else{
       status.textContent='Обновлено в '+time+' · доступно '+count+' районов · '+
         bySource+(liveFailed?' · ошибок провайдеров: '+liveFailed:'')+
         '. Метки и снимки проверяются при открытии.';
     }
   }else{
-    status.textContent='Проверяем Panoramax, KartaView и Wikimedia Commons одновременно…';
+    status.textContent='Проверяем Panoramax, KartaView, Commons'+($('mapillaryToken').value.trim()?', Mapillary':'')+' одновременно…';
   }
 }
 async function refreshLiveCoverage(){
@@ -172,13 +172,13 @@ async function refreshLiveCoverage(){
     while(index<liveOptions.length&&!controller.signal.aborted){
       const entry=liveOptions[index++];
       try{
-        const result=await probeMerged360(entry.origin,{signal:controller.signal});
+        const result=await probeMerged360(entry.origin,{signal:controller.signal,mapillaryToken:$('mapillaryToken').value.trim()});
         if(generation!==liveGeneration||controller.signal.aborted)return;
         if(result.candidates.length)liveCoverage.set(entry.key,result.candidates);
         liveFailed+=result.failed;
       }catch{
         if(controller.signal.aborted)return;
-        liveFailed+=LIVE_SOURCE_COUNT;
+        liveFailed+=liveSourceCount();
       }
       if(generation!==liveGeneration||controller.signal.aborted)return;
       liveChecked++;
@@ -228,6 +228,7 @@ function refreshControls(){
   $('refreshCoverageBtn').disabled=state.running;
   $('googleKey').disabled=state.running;
   $('googleConsent').disabled=state.running;
+  $('mapillaryToken').disabled=state.running;
 }
 function updateRadius(radius, note) {
   $('activeRadius').textContent = Number(radius).toLocaleString('ru-RU') + ' км';
@@ -250,7 +251,7 @@ function chooseProvider(manual=false) {
   const key=$('googleKey').value.trim();
   if(wantsGoogle&&!key)
     throw new Error('Для Google Street View введи свой браузерный API-ключ, либо отключи платный поиск.');
-  return new Merged360Provider({googleKey:key,includeGoogle:wantsGoogle});
+  return new Merged360Provider({googleKey:key,includeGoogle:wantsGoogle,mapillaryToken:$('mapillaryToken').value.trim()});
 }
 function selectMixedStart(key,entries){
   // Provider-balancing avoids always preferring the original source. No random
@@ -368,7 +369,7 @@ function showLocation(candidate) {
   $('coords').textContent = candidate.lat.toFixed(5) + ', ' + candidate.lng.toFixed(5);
   $('placeLabel').textContent=({
     google:'Google Street View',panoramax:'Panoramax 360°',
-    kartaview:'KartaView 360°',commons:'Wikimedia Commons 360°'
+    kartaview:'KartaView 360°',commons:'Wikimedia Commons 360°',mapillary:'Mapillary 360°'
   })[candidate.provider]||'360°';
   $('mapLink').href = candidate.provider === 'google'
     ? 'https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=' + candidate.lat + ',' + candidate.lng
@@ -391,7 +392,7 @@ async function travel() {
     const visited = new Set(state.history.map(visitKey));
     const pinned=state.startCandidate;
     state.startCandidate=null;
-    const pinAllowed=pinned&&['panoramax','kartaview','commons'].includes(pinned.provider) &&
+    const pinAllowed=pinned&&['panoramax','kartaview','commons','mapillary'].includes(pinned.provider) &&
       !visited.has(visitKey(pinned)) &&
       !state.history.some(point=>distanceKm(point,pinned)<0.02) &&
       distanceKm(origin,pinned)<=Number($('radius').value)+0.005;
@@ -457,7 +458,7 @@ async function travel() {
     if (error?.name !== 'AbortError' && state.running && generation === state.generation) {
       const noPoints = error?.name === 'NoLocationsError';
       if (noPoints && state.limitedCoverage) {
-        message('Для выбранного региона в проверенных выборках Panoramax не нашлось новых 360° снимков поблизости (радиус до ' +
+        message('Для выбранного региона в проверенных выборках источников не нашлось новых 360° снимков поблизости (радиус до ' +
           Math.max(MAX_LIMITED_SEARCH_KM, Number($('radius').value)) +
           ' км). Не подменяем их фотографиями другой страны. Выбери другое место в нашем поиске или официальный источник в настройках.', true);
         setStatus('360° рядом не найдены', 'warn');
@@ -719,6 +720,7 @@ document.addEventListener('keydown',event=>{
   }
 });
 // Source selection is automatic. Google is opt-in only through paid-key consent.
+$('mapillaryToken').addEventListener('change',()=>{if(!state.running)void refreshLiveCoverage();});
 $('refreshCoverageBtn').addEventListener('click',()=>{
   // Every click is a real retry: abort the previous generation immediately.
   // Ignoring rapid clicks made the button appear broken to users.
