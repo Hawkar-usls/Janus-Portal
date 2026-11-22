@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": "feat/human-gaze-r2",
-  "engineering_status": "R2_GAZE_UNIT_PASS_23_OF_23__PANORAMAX_BROWSER_GAZE_ZOOM_SECOND_JUMP_PASS__GOOGLE_E2E_PENDING",
+  "branch_under_review": null,
+  "engineering_status": "R2_MERGED__CI_UNIT_23_OF_23_PASS__REAL_PANORAMAX_GAZE_AND_SECOND_JUMP_PASS__LIVE_SITE_AND_WALLET_PENDING",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -12,28 +12,33 @@
     "providers": "Panoramax STAC 360-only metadata and official viewer; Google StreetViewService and StreetViewPanorama optional",
     "local_storage": "Panoramax persistent in browser; Google coordinates session-only",
     "statistics": "local count, distance, Panoramax map, achievements, JSON export; no user-wide accounts",
-    "tests": "Yaksa Node v24: 23/23 PASS including R2 gaze, attention and provider camera adapters; GitHub Actions PR CI also required.",
+    "tests": "23/23 PASS on Yaksa, GitHub Actions main 45012146536 success.",
     "validation": "Edge real Panoramax pose changed 247.97°->320.10°, pause pose remained identical, resume moved. Real second jump unique count 1→2, zoom max 50/100, no JS page exceptions.",
     "merged": "PR #5 squash-merged into main, experimental MVP only",
-    "human_gaze": "Natural eased head turns with random glances/repeat fixation, squint zoom, attention-dependent dwell, pause/resume, turbo and reduced-motion preference; Playwright verified with real Panoramax.",
+    "human_gaze": "PR #8 merged to main; smooth head turns, look-backs, eye fixations, zoom/squint, variable dwell and turbo. Optional local person/object analysis for Panoramax.",
     "local_attention": "Panoramax client-side heuristic contrast and opt-in MediaPipe 1.2.3 object/person detector; no image pixels from Google.",
-    "person_model": "Edge loaded MediaPipe 1.2.3 and model; a Panoramax Paris test photo produced one tentative person category score 0.5021. This is NOT independently validated accuracy."
+    "person_model": "Edge loaded MediaPipe 1.2.3 and model; a Panoramax Paris test photo produced one tentative person category score 0.5021. This is NOT independently validated accuracy.",
+    "browser_proof": "Edge Panoramax x 247.97 to 320.10 over 1.7s; pause exact freeze, resume movement, zoom max 50/100, second automatic jump unique 1 to 2, JS errors none.",
+    "local_model": "MediaPipe v1.2.3 bundle/WASM/model HTTP 200; photo 0c5a2b1b-62dc-4a37-a744-bdf0bab67002 gave tentative person confidence 0.5021, not benchmarked."
   },
   "gates": {
-    "unit_tests": "PASS_LOCAL_23_OF_23__CI_LATEST_REQUIRED",
+    "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
     "live_panoramax_metadata": "PASS_METADATA_ONLY",
-    "real_browser_panoramax_rotation": "PASS_EDGE_GAZE_POSE_PAUSE_RESUME_ZOOM_AND_TWO_VISITS",
+    "real_browser_panoramax_rotation": "PASS_EDGE_NATURAL_GAZE_ZOOM_PAUSE_RESUME",
     "real_browser_google_key_restricted": "PENDING",
-    "github_actions_ci": "PASS_MAIN_RUN_45007885399__14_OF_14",
-    "github_pages_publish": "BLOCKED_PAGES_NOT_ENABLED__RUN_45007885426__CONFIGURE_PAGES_404",
+    "github_actions_ci": "PASS_MAIN_RUN_45012146536",
+    "github_pages_publish": "PAGES_ENABLED_DEPLOY_RETRY_REQUIRED__RUN_45012146539_ARTIFACT_LOOKUP_RACE",
     "main_site_tab": "BLOCKED_SITE_EDITOR_ACCESS",
     "main_site_account_auth": "BLOCKED_SITE_SOURCE",
     "server_authoritative_J_coins": "BLOCKED_WALLET_API_AND_RULE_APPROVAL",
     "competitive_global_leaderboard": "BLOCKED_SERVER_BACKEND",
     "compliance_review_google": "PENDING",
-    "real_browser_panoramax_second_jump": "PASS_EDGE_ONCE_1_TO_2_AFTER_GAZE",
-    "local_object_detection": "PASS_MODEL_LOAD_AND_TENTATIVE_PERSON_CLASS_PREDICTION__FALSE_POSITIVE_RISK",
-    "semantic_gaze_calibration": "OPEN_IMAGE_HEADING_AND_DETECTION_BENCHMARK"
+    "real_browser_panoramax_second_jump": "PASS_EDGE_TWO_UNIQUE_VISITS",
+    "local_object_detection": "PASS_LOCAL_MODEL_INFERENCE_PERSON_PREDICTION_SCORE_0_5021__UNVERIFIED_ACCURACY",
+    "semantic_gaze_calibration": "OPEN_IMAGE_HEADING_AND_DETECTION_BENCHMARK",
+    "google_semantic_detection": "DISABLED_GOOGLE_PIXEL_ACCESS_PROHIBITED_IN_CURRENT_IMPLEMENTATION",
+    "google_gaze_api": "PENDING_RESTRICTED_KEY_LIVE_TEST",
+    "semantic_heading_accuracy": "OPEN_ISSUE_9"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -50,14 +55,14 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "R2 PR #8 awaiting final CI and merge. After merge test in site deployed via Pages (blocked until configured), calibrate person/object headings and Google mode with a restricted browser key; main site and JC still blocked.",
+  "next": "R2 in main. GitHub Pages enabled; fix deployment artifact lookup, verify URL; calibrate semantic object heading/precision issue #9; Google with restricted key, site tab and JC gates remain.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
     "Changed provider to filter visited/nearby positions before filling candidate budget; added 2 provider tests, all 14 CI tests pass. Real second jump after fix awaits repeat browser run."
   ],
   "default_branch": "main",
-  "release_commit": "85fa0b28034fb4e8602e9dda65b13c737ae51b4b",
+  "release_commit": "0c2b6cfd38c2714cc4b578098d4a8a7a82568dd0",
   "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/5",
-  "deployment_blocker": "GitHub Pages not yet enabled for repo. Failed Pages workflow run 45007885426 at actions/configure-pages@v5: Get Pages site failed Not Found. Set Settings > Pages > Build and deployment > Source: GitHub Actions. GITHUB_TOKEN cannot enable Pages automatically; action.yml requires non-GITHUB_TOKEN token for enablement=true."
+  "deployment_blocker": "Pages site created via GitHub API with build_type=workflow; URL https://hawkar-usls.github.io/Janus-Portal/. Rerun attempt 2 45012146539 uploaded artifact 14750765114 successfully but deploy-pages reported zero artifacts immediately after upload (API metadata not yet visible). Need new workflow attempt and verify URL."
 }
