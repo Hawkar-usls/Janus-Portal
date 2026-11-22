@@ -18,7 +18,7 @@ export function readHistory(storage = localStorage) {
     if (!Array.isArray(raw)) return [];
     const seen = new Set();
     return raw.filter((entry) => {
-      if (!valid(entry)) return false;
+      if (!valid(entry) || entry.provider !== 'panoramax') return false;
       const key = visitKey(entry);
       if (seen.has(key)) return false;
       seen.add(key);
@@ -31,7 +31,8 @@ export function readHistory(storage = localStorage) {
 
 export function saveHistory(entries, storage = localStorage) {
   try {
-    storage.setItem(STORAGE_KEY, JSON.stringify(entries.slice(-MAX_VISITS)));
+    // Google-derived coordinates are session-only pending a legal storage review.
+    storage.setItem(STORAGE_KEY, JSON.stringify(entries.filter(e => e.provider === 'panoramax').slice(-MAX_VISITS)));
     return true;
   } catch {
     return false;
@@ -49,7 +50,8 @@ export function addVisit(entries, candidate, storage = localStorage) {
     visitedAt: new Date().toISOString()
   };
   const next = [...entries, entry].slice(-MAX_VISITS);
-  return {entries: next, added: saveHistory(next, storage)};
+  const persisted = candidate.provider === 'panoramax' ? saveHistory(next, storage) : false;
+  return {entries: next, added: true, persisted};
 }
 
 export function getStats(entries) {
