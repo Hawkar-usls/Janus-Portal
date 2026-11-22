@@ -90,7 +90,8 @@ test('broken storage does not crash the game', () => {
   const m={getItem:()=>'{bad json',setItem:()=>{throw new Error('quota')}};
   assert.deepEqual(readHistory(m),[]);
   const r=addVisit([],near,m);
-  assert.equal(r.added,false);
+  assert.equal(r.added,true);
+  assert.equal(r.persisted,false);
   assert.equal(r.entries.length,1);
 });
 test('storage never invents coins from visitor history', () => {
@@ -101,4 +102,13 @@ test('storage never invents coins from visitor history', () => {
   assert.equal(stats.unique,2);
   assert.ok(stats.km>150);
   assert.equal('coins' in stats,false);
+});
+
+test('Google coordinates are only in volatile session state', () => {
+  const m=memory();
+  const google={provider:'google',id:'g-session',lat:48.4,lng:2.1,visitedAt:'2026-11-22T09:00:00.000Z'};
+  const r=addVisit([],google,m);
+  assert.equal(r.added,true);
+  assert.equal(r.persisted,false);
+  assert.deepEqual(readHistory(m),[]);
 });
