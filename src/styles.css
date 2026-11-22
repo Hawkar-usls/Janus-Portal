@@ -8,30 +8,11 @@
 .settings #motionStyle,.settings #interestMode{white-space:normal;line-height:1.2}
 @media(prefers-reduced-motion:reduce){.primary,.secondary,.tertiary{transition:none}}
 
-/* R7 optional source-owned virtual tours: static links, no runtime script. */
-.external-panorama-links{border:1px solid #31516a;border-radius:12px;padding:12px 13px;margin:12px 0 16px;background:rgba(19,44,64,.55)}
-.external-panorama-links strong{font-size:12px;color:#bfeee9}
-.external-panorama-links p{font-size:12px;line-height:1.5;margin:9px 0}
-.external-panorama-links a{color:#78dfd5;text-decoration:underline;text-underline-offset:3px}
-.external-panorama-links a:hover{color:#d5fffb}
-.external-panorama-links small{display:block;font-size:11px;line-height:1.45;color:#99b3c7}
-
-/* R8 unified source gateway: feature-contained styling; no dependency changes. */
-.source-gateway{padding:25px 27px;margin:18px 0;overflow:visible}
-.gateway-header{display:flex;justify-content:space-between;align-items:center;gap:16px}
-.gateway-header h2{font-size:clamp(21px,2.6vw,29px);letter-spacing:-.6px;margin:8px 0 7px;color:#edfaff}
-.gateway-header p{font-size:13px;line-height:1.6;color:#94b3c5;margin:0;max-width:710px}
-.gateway-symbol{font-size:44px;filter:drop-shadow(0 0 20px #318baa66)}
-.gateway-controls{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:21px 0 12px}
-.gateway-controls label{font-size:12px;font-weight:700;color:#c2e8e9}
-.gateway-controls select{width:min(430px,100%);min-height:42px;max-width:100%;padding:9px 12px;border:1px solid #3b687a;background:#0b2133;border-radius:10px;color:#e9f9ff}
-.gateway-status{font-size:12px;color:#b9dae6;line-height:1.6;margin:0 0 14px}
-.gateway-sources{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.gateway-card{padding:15px;border:1px solid #2c4860;border-radius:12px;background:linear-gradient(155deg,#102438,#0b1728);display:flex;flex-direction:column;align-items:flex-start;gap:10px;min-width:0}
-.gateway-card h3{font-size:15px;margin:0;color:#e6f8fc}
-.gateway-source-status{font-size:10px;letter-spacing:.6px;color:#79d4c8;font-weight:750}
-.gateway-card p{font-size:12px;line-height:1.55;color:#acc4d5;flex:1;margin:0}
-.gateway-action{border:1px solid #457a85;background:#123a49;color:#b2f6eb;border-radius:9px;font-size:12px;font-weight:700;padding:10px 12px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;min-height:40px;max-width:100%;white-space:normal;text-align:center}
-.gateway-action:hover{background:#194f62;text-decoration:none}
-.gateway-disclaimer{font-size:11px;line-height:1.6;color:#91a6ba;margin:17px 0 0}
-@media(max-width:650px){.source-gateway{padding:18px 14px}.gateway-symbol{font-size:27px}.gateway-controls{align-items:stretch;flex-direction:column}.gateway-controls select{width:100%}.gateway-sources{grid-template-columns:1fr}}
+/* R9: source-search progress and unavailable states occupy the SAME viewer. */
+.view-feedback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px;text-align:center;padding:28px;background:rgba(4,16,28,.83);color:#e4faff;z-index:4;pointer-events:none}
+.view-feedback-icon{font-size:54px;color:#6cdeca;line-height:1}
+.view-feedback-text{font-size:clamp(15px,2.1vw,22px);max-width:460px;line-height:1.6;overflow-wrap:break-word}
+.view-feedback[data-kind="missing"]{background:rgba(6,21,36,.91)}
+.view-feedback[data-kind="missing"] .view-feedback-icon{color:#ffc875}
+@media(prefers-reduced-motion:no-preference){.view-feedback[data-kind="searching"] .view-feedback-icon{animation:janus-search-spin 2.5s linear infinite}}
+@keyframes janus-search-spin{to{transform:rotate(360deg)}}

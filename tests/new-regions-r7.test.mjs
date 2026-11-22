@@ -28,14 +28,15 @@ test('unverified search is bounded locally and cannot contaminate existing rando
   assert.match(app,/state\.running = false/);
   assert.match(app,/Не подменяем их фотографиями другой страны/);
 });
-test('link to real source-owned 360 tours rather than displaying foreign images as local',()=>{
-  for(const url of [
-    'https://www.north-korea-travel.com/dprk-panorama.html',
-    'https://giza.fas.harvard.edu/giza3d/',
-    'https://egymonuments.gov.eg/en/media-hub/'
-  ])assert.ok(html.includes('href="'+url+'"'));
-  assert.match(html,/target="_blank" rel="noopener noreferrer"/);
-  assert.ok(html.includes('Внешние туры не начисляют посещения JANUS'));
+test('every R7 region is handled by one internal search without external links',()=>{
+  assert.match(html,/<select id="originChoice">/);
+  assert.match(html,/<button id="startBtn" class="primary">▶ Запустить<\/button>/);
+  assert.ok(html.includes('выбранный источник'));
+  assert.equal(html.includes('external-panorama-links'),false);
+  assert.equal(html.includes('sourceGateway'),false);
+  assert.equal(html.includes('north-korea-travel.com'),false);
+  assert.equal(html.includes('giza.fas.harvard.edu'),false);
+  assert.equal(html.includes('egymonuments.gov.eg'),false);
 });
 test('preserve owner-confirmed R2 entrypoint, exact five imports, old starts and radius',()=>{
   assert.ok(html.includes('<script type="module" src="./src/app.js"></script>'));
