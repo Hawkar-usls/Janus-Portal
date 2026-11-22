@@ -1,4 +1,4 @@
-import {findNext, distanceKm, visitKey} from './navigation.js';
+import {findNext, distanceKm, visitKey, chooseAfkRegion} from './navigation.js';
 import {Merged360Provider, probeMerged360} from './providers.js';
 import {readHistory, addVisit, getStats, getPassport, STORAGE_KEY} from './storage.js';
 import {GazeDirector, buildGazePlan} from './gaze.js';
@@ -329,22 +329,12 @@ function viewerFeedback(text, kind='searching') {
 // different currently verified start with an unvisited, spatially distinct
 // panorama. Deterministic near-first order, no random origin menu or paid Google.
 function nextAfkRegion() {
-  const visited=new Set(state.history.map(visitKey));
-  const from=state.current||state.origin;
-  const choices=[];
-  for(const [key,photos] of liveCoverage){
-    if(state.afkExhausted.has(key)||!CITY[key])continue;
-    for(const photo of photos){
-      if(!['panoramax','kartaview','commons'].includes(photo.provider))continue;
-      if(visited.has(visitKey(photo)))continue;
-      if(state.history.some(point=>distanceKm(point,photo)<0.02))continue;
-      if(distanceKm(CITY[key],photo)>Number($('radius').value)+.005)continue;
-      choices.push({key,photo,km:distanceKm(from,CITY[key])});
-    }
-  }
-  choices.sort((a,b)=>a.km-b.km||a.key.localeCompare(b.key)||
-    a.photo.provider.localeCompare(b.photo.provider));
-  return choices[0]||null;
+  return chooseAfkRegion({
+    coverage:liveCoverage,centers:CITY,history:state.history,
+    exhausted:state.afkExhausted,
+    from:state.current||state.origin,
+    maxPhotoDistanceKm:Number($('radius').value)
+  });
 }
 function setAfkMode(value) {
   state.afk=Boolean(value);
