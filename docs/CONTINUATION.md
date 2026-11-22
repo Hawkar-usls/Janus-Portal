@@ -1,3 +1,12 @@
+## R3 excursion/fullscreen update — 2026-11-22
+
+- Feature branch `feat/immersive-discovery-tours-r3`, new feature PR pending. Explicit user requirement: immersive/fullscreen panorama that can be collapsed, many more starting locations, dedicated Cairo / landmark tourist excursion tabs in the spirit of Microsoft Flight Simulator Discovery Flights.
+- Created `src/tours.js`: 37 curated starting locations, 12 themed routes, notably Cairo/Giza/Luxor and world wonders; `src/tour-runner.js` searches the actual panorama provider within **2 then 4 km** of each planned stop (max 2 probes/radius). Absent or previously viewed images are skipped, not replaced by a different city's photo. Ordinary autonomous radius stays **5→10→20→…20,000 km**.
+- Added `src/discovery.js` accessible tabs, search/category filters and stop summaries; `src/fullscreen.js` native Fullscreen API with button/ESC exit and CSS fallback. Routes display planned markers on the interactive map.
+- Yaksa local Node v24 `npm run verify`: **29/29 PASS**. Edge real browser: 12 tours, 37 destinations, Cairo/Giza search present, Paris landmark tour opened an actual Panoramax photo **0.8 km from Eiffel Tower**, native fullscreen `#viewerPanel` entered at **980px** then collapsed; uncaught JavaScript errors **0**. Simulated Panoramax with zero features in Cairo route: **7 stops skipped, 0 visits, J Coins remain —**, no JS errors.
+- A direct Panoramax first-page query for sampled Giza, Egyptian Museum Cairo, and Karnak bounding boxes returned 0 photos in each on 2026-11-22. This is **not exhaustive** and **not proof that the sites lack all 360 imagery**. Google mode still needs a properly limited browser key, API+quota, and live verification.
+- See `docs/DISCOVERY_TOURS_R3.md` for implementation and exact gates. Pending merge/deploy on a successful PR + Pages; check Actions and deployed URL before claiming it live.
+
 # JANUS PORTAL — Resumption / next agent checklist (2026-11-22)
 
 This file exists so the next authorized ChatGPT agent can continue **without needing the original chat**.
