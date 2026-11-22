@@ -52,3 +52,7 @@ body.portal-immersive-fallback{overflow:hidden}
  .viewer-panel:fullscreen .viewer-toolbar,.viewer-panel.is-immersive .viewer-toolbar{padding:10px 12px;min-height:54px}
  .viewer-panel:fullscreen .view-foot,.viewer-panel.is-immersive .view-foot{padding:8px 12px}
  .viewer-panel:fullscreen .notice,.viewer-panel.is-immersive .notice{padding:7px 12px}}
+
+/* Avoid a tall empty panorama card when the settings sidebar is longer. */
+.viewer-panel{align-self:start}
+.discovery-card .card-route{font-size:10px;color:#8ec3d1;line-height:1.5;opacity:.85}
