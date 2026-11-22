@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": "fix/r12-live-catalogue-refresh-cache-and-google-key-help",
-  "engineering_status": "R12_CACHE_COHERENT_PAGES_BUILD__LOCAL_50_50__EDGE_API_ERROR_RETRY_TIMEOUT_PASS__CI_DEPLOY_PENDING",
+  "branch_under_review": null,
+  "engineering_status": "R12_DEPLOYED__MAIN_CI_50_OF_50__PUBLIC_SHA_MATCHED_ASSETS__EDGE_LIVE_FES_AND_REFRESH_TIMEOUT_PASS",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -56,15 +56,17 @@
     "r12_cache_fix": "Pages dist build injects same GITHUB_SHA version query into app.js and styles.css HTML references while source original R2 script path and 5 imports remain untouched.",
     "r12_refresh_fix": "18-second overall Panoramax scan timeout, clear HTTP failure/timeout status, refresh enabled during in-flight scan and every click cancels prior generation; 1.5s silent click throttling discovered in local browser regression and removed.",
     "r12_google": "Official Maps Demo Key does not include Street View. Google official key setup link and instructions added to existing settings; no fake or shared key committed, real Google provider remains opt-in with owner-issued restricted key/billing.",
-    "r12_local_tests": "npm run verify 50/50 PASS. Real Edge mock 503->manual retry->source restored, stuck fetch 18sec timeout with usable retry, Google setup link and no JS errors. R11 real catalogue/photo & fullscreen regression in progress."
+    "r12_local_tests": "npm run verify 50/50 PASS. Real Edge mock 503->manual retry->source restored, stuck fetch 18sec timeout with usable retry, Google setup link and no JS errors. R11 real catalogue/photo & fullscreen regression in progress.",
+    "r12_release": "PR #23 squash merged main ee04ff4fef48db828159c9e20ddd5e0741f1b9a9; main CI 45030460515 SUCCESS 50/50; Pages run 45030460513 SUCCESS. Both deployed JS and CSS URL have identical 40-char build=ee04ff4... SHA; HTML, app JS and CSS HTTP 200.",
+    "r12_public_browser": "On published HTTPS Yaksa Edge: real Panoramax catalogue 19/38 known sites and real Fes 360 (34.06167,-4.97711) with fullscreen PASS; mocked Fes->Kathmandu->empty->HTTP 503 source refresh no stale list, mobile PASS. Independent R12 browser checked deployed app.js and styles.css same build SHA, computed CSS style correct, HTTP503->visible error->manual retry restored site, fully stalled Panoramax->explicit timeout after 18sec with retry button enabled, Google key guide, zero JS page errors."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
     "live_panoramax_metadata": "PASS_METADATA_ONLY",
     "real_browser_panoramax_rotation": "PASS_EDGE_NATURAL_GAZE_ZOOM_PAUSE_RESUME",
     "real_browser_google_key_restricted": "PENDING",
-    "github_actions_ci": "PASS_MAIN_R11_45028842182_45_OF_45",
-    "github_pages_publish": "PASS_R11_PAGES_45028842222",
+    "github_actions_ci": "PASS_R12_MAIN_45030460515_50_OF_50",
+    "github_pages_publish": "PASS_R12_PAGES_45030460513",
     "main_site_tab": "BLOCKED_SITE_EDITOR_ACCESS",
     "main_site_account_auth": "BLOCKED_SITE_SOURCE",
     "server_authoritative_J_coins": "BLOCKED_WALLET_API_AND_RULE_APPROVAL",
@@ -119,11 +121,11 @@
     "r11_google_no_paid_auto": "PASS_MANUAL_ONLY_NO_BILLABLE_AUTOMATIC_GOOGLE_CATALOGUE",
     "r11_public_pages": "PASS_PUBLIC_HTTPS_EDGE_AND_PAGES_45028842222",
     "r11_user_browser": "PENDING_OWNER_DEVICE_CONFIRMATION",
-    "r12_unit_tests": "PASS_LOCAL_50_OF_50",
-    "r12_browser": "PASS_LOCAL_EDGE_HTTP_503_RECOVERY_AND_STALLED_18SEC_TIMEOUT",
-    "r12_google_auth": "PENDING_OWNER_GOOGLE_API_KEY_NO_DEMO_STREETVIEW",
-    "r12_pages_versioned_assets": "PENDING_PAGES_RUN",
-    "r12_user_browser": "PENDING_OWNER_CONFIRMATION"
+    "r12_unit_tests": "PASS_MAIN_50_OF_50_45030460515",
+    "r12_browser": "PASS_PUBLIC_HTTPS_EDGE_R11_REAL_FES_360_FULLSCREEN_AND_R12_HTTP_503_RECOVERY_18SEC_TIMEOUT",
+    "r12_google_auth": "NOT_ACTIVATED_NO_AUTHORIZED_KEY_DEMO_KEY_UNSUPPORTED_STREETVIEW",
+    "r12_pages_versioned_assets": "PASS_PUBLIC_HTML_JS_AND_CSS_VERSION_MATCH_EE04FF4_SHA_HTTP_200",
+    "r12_user_browser": "PENDING_OWNER_DEVICE_CONFIRMATION"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -140,17 +142,17 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "R12: finish R11 regression, PR CI merge, Pages successful public deployment, verify public deployed JS and CSS have SAME build SHA despite GitHub Pages max-age=600, full Edge R11+R12 browser tests; user to try new URL and their Google Cloud restricted JS API key. No universal Google Maps demo key supports Street View.",
+  "next": "R12 deployed and publicly tested; owner should open fresh ?fix=r12-ee04ff4 URL and check source list/refresh. If still stuck, use Ctrl+F5 and check status (network to api.panoramax.xyz may be blocked). Google Street View requires user-issued browser key, restriction to hawkar-usls.github.io, Maps JS API, billing and quota; cannot embed Maps Demo Key for Street View. Preserve R2 five imports/R9 one search/R10 fullscreen; 38 known regions only.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
     "Changed provider to filter visited/nearby positions before filling candidate budget; added 2 provider tests, all 14 CI tests pass. Real second jump after fix awaits repeat browser run."
   ],
   "default_branch": "main",
-  "release_commit": "5b0f959d26905832fef3cb9737f3e61006ac3b6b",
-  "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/22",
+  "release_commit": "ee04ff4fef48db828159c9e20ddd5e0741f1b9a9",
+  "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/23",
   "deployment_blocker": null,
-  "release_url": "https://hawkar-usls.github.io/Janus-Portal/?catalogue=r11-5b0f959",
+  "release_url": "https://hawkar-usls.github.io/Janus-Portal/?fix=r12-ee04ff4",
   "known_nonblocking": "Panoramax viewer requests /api/configuration and receives HTTP 404; panorama and local gaze still work. Verify upstream API compatibility later.",
   "rollback": {
     "source": "1b34bff74e2239d34cbdc09c1753df1041d63dc2",
