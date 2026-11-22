@@ -6,6 +6,7 @@ on:
       - 'src/**'
       - 'index.html'
       - 'tools/browser-r13-check.mjs'
+      - 'tools/browser-r13-live-panoramax-check.mjs'
       - '.github/workflows/r13-browser.yml'
   workflow_dispatch:
 
@@ -35,3 +36,14 @@ jobs:
             sleep 1
           done
           PORTAL_URL=http://127.0.0.1:4173/ node tools/browser-r13-check.mjs
+      - name: Advisory genuine Panoramax Fes and fullscreen regression
+        continue-on-error: true
+        run: |
+          node tools/dev-server.mjs >/tmp/janus-r13-live-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for try in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          PORTAL_URL=http://127.0.0.1:4173/ node tools/browser-r13-live-panoramax-check.mjs
