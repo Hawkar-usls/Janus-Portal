@@ -23,7 +23,7 @@ test('all 14 verified Panoramax geographic search centres appear as R2 select op
   assert.ok(html.includes('<template id="originCatalog">'));
   assert.ok(!html.includes('<option value="random">'));
   assert.ok(!html.includes('<option value="random-verified">'));
-  assert.ok(app.includes('probePanoramaxCoverage'));
+  assert.ok(app.includes('probeMerged360'));
   assert.ok(app.includes('liveCoverage.has'));
 });
 test('new user-selectable places span multiple countries and three world regions',()=>{
