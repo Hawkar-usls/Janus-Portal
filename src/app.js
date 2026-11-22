@@ -133,7 +133,31 @@ function chooseProvider() {
   }
   return new PanoramaxProvider();
 }
+// R9: one in-window view. Search and availability feedback appear in the
+// SAME #viewer that receives real Panoramax/Google photos. No second page.
+function viewerFeedback(text, kind='searching') {
+  const host=$('viewer');
+  let overlay=host.querySelector('.view-feedback');
+  if (!text) {overlay?.remove();return;}
+  if (!overlay) {
+    overlay=document.createElement('div');
+    overlay.className='view-feedback';
+    overlay.setAttribute('role','status');
+    overlay.setAttribute('aria-live','polite');
+    const symbol=document.createElement('span');
+    symbol.className='view-feedback-icon';
+    symbol.setAttribute('aria-hidden','true');
+    const label=document.createElement('strong');
+    label.className='view-feedback-text';
+    overlay.append(symbol,label);
+    host.append(overlay);
+  }
+  overlay.dataset.kind=kind;
+  overlay.querySelector('.view-feedback-icon').textContent=kind==='missing'?'⌕':'◌';
+  overlay.querySelector('.view-feedback-text').textContent=text;
+}
 function stop() {
+  viewerFeedback(null);
   state.generation++;
   state.running = false;
   state.paused = false;
@@ -222,6 +246,7 @@ async function travel() {
   state.abort = controller;
   refreshControls();
   setStatus('Поиск новой точки…', 'warn');
+  viewerFeedback('Ищу доступную 360° панораму в выбранном районе…');
   const origin = state.current || state.origin;
   updateRadius(Number($('radius').value), 'Поиск ещё не посещённых панорам');
   try {
@@ -249,8 +274,10 @@ async function travel() {
     });
     if (!state.running || generation !== state.generation || controller.signal.aborted) return;
     setStatus('Загрузка панорамы…', 'warn');
+    viewerFeedback('Панорама найдена. Открываю её прямо в окне JANUS…');
     await state.provider.show(candidate, $('viewer'));
     if (!state.running || generation !== state.generation || controller.signal.aborted) return;
+    viewerFeedback(null);
     const previous = state.current || state.origin;
     const jumpDistance = distanceKm(previous, candidate);
     state.current = candidate;
@@ -274,6 +301,7 @@ async function travel() {
           Math.max(MAX_LIMITED_SEARCH_KM, Number($('radius').value)) +
           ' км). Не подменяем их фотографиями другой страны. Выбери другое место в нашем поиске или официальный источник в настройках.', true);
         setStatus('360° рядом не найдены', 'warn');
+        viewerFeedback('В этом районе пока нет доступной 360° панорамы. Выбери другое место и нажми «Запустить».','missing');
         // Make the next choice one click: the original engine's stopped state
         // remains unchanged for normal/verified locations.
         state.running = false;
@@ -283,6 +311,7 @@ async function travel() {
           ? 'Поиск по доступным выборкам завершён без новых 360° панорам. Можно выбрать другой город или источник. Это не доказывает, что все места посещены.'
           : 'Ошибка: ' + (error?.message || String(error)), true);
         setStatus(noPoints ? 'Места не найдены' : 'Ошибка', 'warn');
+        viewerFeedback(noPoints?'360° не найдены в доступных выборках. Выбери другой регион.':'Не удалось загрузить 360°. Проверь источник или выбери другое место.','missing');
         state.paused = true; // avoid infinite chargeable requests and tight retry loops
       }
     }
