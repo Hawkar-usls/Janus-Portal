@@ -279,6 +279,8 @@ function stop() {
   state.busy = false;
   setStatus('Остановлено');
   refreshControls();
+  // A long autonomous session cannot keep an old catalogue indefinitely.
+  maybeRefreshCoverage();
 }
 function stageText(text) {
   $('gazeStage').textContent = text;
@@ -427,7 +429,18 @@ async function travel() {
           : 'Ошибка: ' + (error?.message || String(error)), true);
         setStatus(noPoints ? 'Места не найдены' : 'Ошибка', 'warn');
         viewerFeedback(noPoints?'360° не найдены в доступных выборках. Выбери другой регион.':'Не удалось загрузить 360°. Проверь источник или выбери другое место.','missing');
-        state.paused = true; // avoid infinite chargeable requests and tight retry loops
+        if(!noPoints && state.selectedSourceKey && !state.current &&
+            state.provider instanceof PanoramaxProvider){
+          // Metadata is provisional. A failed real photo must disappear from
+          // the current live choices until a fresh source check succeeds.
+          liveCoverage.delete(state.selectedSourceKey);
+          state.running=false;
+          state.paused=false;
+          renderLiveOptions();
+          updateCoverageStatus();
+        }else{
+          state.paused=true; // avoid uncontrolled API retry loops
+        }
       }
     }
   } finally {
