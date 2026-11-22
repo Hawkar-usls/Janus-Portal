@@ -1,0 +1,37 @@
+name: Publish static Portal to GitHub Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: janus-portal-pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: $\u007b\u007b steps.deployment.outputs.page_url \u007d\u007d
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm run verify
+      - name: Assemble public files only
+        run: |
+          mkdir -p dist/src
+          cp index.html dist/
+          cp src/app.js src/providers.js src/navigation.js src/storage.js src/styles.css dist/src/
+          touch dist/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+      - id: deployment
+        uses: actions/deploy-pages@v4
