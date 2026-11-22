@@ -27,7 +27,9 @@ jobs:
         run: |
           mkdir -p dist/src
           cp index.html favicon.svg dist/
-          cp src/app.js src/providers.js src/navigation.js src/storage.js src/styles.css dist/src/
+          cp src/*.js src/styles.css dist/src/
+          test -s dist/src/gaze.js
+          test -s dist/src/attention.js
           touch dist/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
