@@ -289,6 +289,14 @@ export class GoogleProvider {
     if (this.rotation) clearInterval(this.rotation);
     this.rotation = null;
   }
+  destroy() {
+    this.stopRotation();
+    this.view?.setVisible(false);
+    // A different official viewer replaces the DOM of the shared #viewer.
+    // Do not reuse an old Google panorama instance attached to detached nodes.
+    this.view=null;
+    this.container=null;
+  }
 }
 
 
