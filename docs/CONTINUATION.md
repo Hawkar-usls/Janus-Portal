@@ -1,3 +1,12 @@
+## R10 fullscreen on original JANUS viewer — 2026-11-22
+
+- Owner's new request: **«нам так же необходим режим на весь экран»** while preserving R9's one-search/one-window requirement. No separate tourist portal/external page.
+- Branch `feat/r10-fullscreen-original-viewer`. Added `#fullscreenBtn` next to status in original `.viewer-panel`. Native browser `requestFullscreen/exitFullscreen`; title and aria switch to «Свернуть» on expansion. CSS fixed `100dvh` fallback for browsers without generic Fullscreen API (iOS Safari / restricted embeds); Escape exits fallback. Browser-native Escape handles true fullscreen.
+- Original 360 Panoramax `#viewer` is stretched using flexbox; existing viewer, gaze and R9 in-window search status retained. **Original `./src/app.js` + five ES imports**, no new runtime dependencies, unchanged single source/origin/Start control.
+- Yaksa Node: **39/39 PASS**. `tools/browser-fullscreen-r10-check.mjs` on Edge: actual Fes 360 opened via original Start, then true native fullscreen (1366×840; photo viewport 644px), symmetric exit without destroying photo; forced API-disabled fallback Esc & button exit PASS; mobile 390×844 fallback photo area 703px, **0 uncaught page errors**.
+- See [FULLSCREEN_R10.md](FULLSCREEN_R10.md) for design and limits. Note mobile fallback may leave address bar visible; don't claim native operating-system fullscreen on unsupported devices.
+- **Next gate:** PR CI → squash merge → Pages success → public HTTPS real Edge fullscreen smoke → ask owner to verify in their browser. Preserve archived R3–R5 disabled and do not add a second source Gateway.
+
 ## R9 — Only the original panorama search; duplicate Gateway removed (2026-11-22)
 
 - Owner supplied screenshots showing **two undesired areas**: large `JANUS GATEWAY — Один Портал — разные миры` section below main viewer and an `Альтернативные 360° туры` card in settings. Explicit instruction: **«вот это убери все должно быть через наш поиск тут»**.
