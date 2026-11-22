@@ -29,11 +29,21 @@
         </div>
         <div class="hero-orbit" aria-hidden="true">🌐</div>
       </section>
+      <section class="discovery" aria-label="Режимы путешествий">
+        <div class="discovery-nav" role="tablist" aria-label="Режим Портала">
+          <button type="button" id="tabExplore" class="discovery-tab selected" role="tab" aria-selected="true" aria-controls="discoveryContent">🌍 Свободный портал</button>
+          <button type="button" id="tabTours" class="discovery-tab" role="tab" aria-selected="false" aria-controls="discoveryContent">🏛️ Экскурсии</button>
+          <button type="button" id="tabDestinations" class="discovery-tab" role="tab" aria-selected="false" aria-controls="discoveryContent">📍 Места мира</button>
+        </div>
+        <div id="discoveryContent" class="discovery-content" role="tabpanel" aria-label="Каталог путешествий" hidden></div>
+        <div id="tourProgress" class="tour-progress" hidden aria-live="polite"></div>
+      </section>
       <div class="layout">
-        <section class="viewer-panel">
+        <section class="viewer-panel" id="viewerPanel">
           <div class="viewer-toolbar">
             <div><span class="label">ТЕКУЩАЯ ПАНОРАМА</span><h2 id="placeLabel">Ждём первого прыжка</h2></div>
-            <span class="status" id="runStatus"><span class="dot"></span> Ожидание</span>
+            <div class="viewer-actions"><span class="status" id="runStatus"><span class="dot"></span> Ожидание</span>
+              <button type="button" id="fullscreenBtn" class="secondary fullscreen-btn" aria-label="Развернуть панораму на весь экран" aria-pressed="false" title="Полный экран">⛶ На весь экран</button></div>
           </div>
           <div class="view" id="viewer">
             <div class="view-empty"><span class="planet">🌎</span><h3>Твой портал готов</h3><p>Настрой маршрут и нажми «Запустить»</p></div>
