@@ -20,7 +20,7 @@ try{
  page.on('pageerror',e=>errors.push('real: '+e.message));
  const response=await page.goto(url,{waitUntil:'domcontentloaded',timeout:25000});
  assert.equal(response.status(),200);
- assert.equal(await page.locator('script[type=module]').getAttribute('src'),'./src/app.js');
+ assert.match(await page.locator('script[type=module]').getAttribute('src'),/^\.\/src\/app\.js(?:\?build=[0-9a-f]{40})?$/);
  assert.equal(await page.locator('#originChoice option[value="random"]').count(),0);
  assert.equal(await page.locator('#originChoice option[value="random-verified"]').count(),0);
  assert.equal(await page.locator('#sourceGateway').count(),0);
