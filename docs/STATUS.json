@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": "feat/r2-verified-regional-360-sources-20261122",
-  "engineering_status": "R2_USER_CONFIRMED_WORKING__R6_14_VERIFIED_REGIONAL_STARTS__LOCAL_CI_26_OF_26_AND_EDGE_15_OF_15_PASS__PR_PENDING",
+  "branch_under_review": null,
+  "engineering_status": "R6_RELEASED__USER_CONFIRMED_R2_BASE__REGIONAL_360_14_STARTS__PUBLIC_HTTPS_EDGE_15_OF_15__UNIT_26_OF_26",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -24,15 +24,17 @@
     "r6_regional_locations": "R2 original module graph preserved; 14 source-checked Panoramax 360 start anchors in six countries (India Nepal Morocco Philippines Malaysia Ecuador), including periurban and Saharan regions. One new select option samples only these verified regions.",
     "r6_independent_metadata": "Panoramax API /api/search with longitude-latitude bbox and 360 equirectangular/FOV>=300 confirmed Pune 48, Kathmandu 10, Fes 1, Merzouga 1, Cebu 6, Cuenca and Penang 1000 records in respective capped sampled windows; overlapping regions and frames not additive.",
     "r6_browser": "Yaksa real Edge R2, existing Start button, 15/15 live panorama opens (14 added plus unchanged Paris), photographed positions <=5.02 km of audited anchors, 0 uncaught JS errors.",
-    "r6_r2_runtime_unchanged": "Only src/app.js CITY choices/getOrigin and index.html selector modified; old script path ./src/app.js and five imports preserved; no additional JS modules or third-party scripts."
+    "r6_r2_runtime_unchanged": "Only src/app.js CITY choices/getOrigin and index.html selector modified; old script path ./src/app.js and five imports preserved; no additional JS modules or third-party scripts.",
+    "r6_release": "PR #16 squash merged to main as e2fe107a7e701e280e0bdcb76d15df3d50e7d3c9; main CI run 45022969811 SUCCESS (26/26); Pages 45022969870 SUCCESS.",
+    "r6_public_real_browser": "Edge/Playwright on deployed HTTPS confirmed exact original ./src/app.js with five imports, source Panoramax 360 photo and gaze for all 14 new locations plus Paris, 15/15 within <=5km of source anchors and zero uncaught JS exceptions."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
     "live_panoramax_metadata": "PASS_METADATA_ONLY",
     "real_browser_panoramax_rotation": "PASS_EDGE_NATURAL_GAZE_ZOOM_PAUSE_RESUME",
     "real_browser_google_key_restricted": "PENDING",
-    "github_actions_ci": "PASS_MAIN_RUN_45012146536",
-    "github_pages_publish": "PASS_PRIOR_R2_ROLLBACK_RUN_45020427093__R6_PENDING_DEPLOY",
+    "github_actions_ci": "PASS_MAIN_RUN_45022969811__26_OF_26",
+    "github_pages_publish": "PASS_R6_PAGES_RUN_45022969870",
     "main_site_tab": "BLOCKED_SITE_EDITOR_ACCESS",
     "main_site_account_auth": "BLOCKED_SITE_SOURCE",
     "server_authoritative_J_coins": "BLOCKED_WALLET_API_AND_RULE_APPROVAL",
@@ -51,7 +53,9 @@
     "r6_unit_tests": "PASS_LOCAL_26_OF_26",
     "r6_real_browser": "PASS_LOCAL_EDGE_15_OF_15_PANORAMAX_360",
     "r6_r2_startup_guard": "PASS_NO_NEW_RUNTIME_IMPORTS_SAME_SCRIPT_URL",
-    "r6_main_site": "PENDING_PR_CI_PAGES_DEPLOY"
+    "r6_main_site": "BLOCKED_TARGET_CHATGPT_SITE_INTEGRATION_UNCHANGED",
+    "r6_public_https": "PASS_DEPLOYED_EDGE_15_OF_15_REAL_PANORAMAX_PHOTOS__0_JS_ERRORS",
+    "r6_user_browser": "PENDING_OWNER_CONFIRMATION_NEW_R6_OPTIONS__BASE_R2_WAS_CONFIRMED"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -68,17 +72,17 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "After R6 PR CI, merge and verify Pages actual HTTPS with original R2 script path and real live non-European 360. Obtain user's confirmation that new selector entries work on their original browser. Continue to refrain from mass R3-R5 reintroduction; other countries need independently sourced licensed imagery.",
+  "next": "R6 live standalone Pages. Ask owner to select India Pune or Morocco Merzouga in old 'Откуда начинаем', click 'Запустить', and confirm startup still works. R3-R5 archived, do not restore wholesale. Unverified African and Indian villages require other licensed providers and E2E checks; wallet and main site still blocked.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
     "Changed provider to filter visited/nearby positions before filling candidate budget; added 2 provider tests, all 14 CI tests pass. Real second jump after fix awaits repeat browser run."
   ],
   "default_branch": "main",
-  "release_commit": "0c2b6cfd38c2714cc4b578098d4a8a7a82568dd0",
-  "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/5",
+  "release_commit": "e2fe107a7e701e280e0bdcb76d15df3d50e7d3c9",
+  "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/16",
   "deployment_blocker": null,
-  "release_url": "https://hawkar-usls.github.io/Janus-Portal/",
+  "release_url": "https://hawkar-usls.github.io/Janus-Portal/?region=r6-e2fe107",
   "known_nonblocking": "Panoramax viewer requests /api/configuration and receives HTTP 404; panorama and local gaze still work. Verify upstream API compatibility later.",
   "rollback": {
     "source": "1b34bff74e2239d34cbdc09c1753df1041d63dc2",
@@ -86,6 +90,6 @@
     "archive_sha": "20fd3848927b4e93346498df95eddaaa6e88aed1",
     "reason": "R5 styled HTML present but app JS not initialized on user's device; cause not isolated",
     "local_test": "23/23 PASS; real Paris 360 and natural gaze, no page errors",
-    "user_test": "PASS_USER_CONFIRMED_ORIGINAL_R2_LAUNCH_2026_11_22"
+    "user_test": "PASS_USER_CONFIRMED_WORKING_R2_2026_11_22"
   }
 }
