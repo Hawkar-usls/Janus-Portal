@@ -12,8 +12,32 @@ const CITY = {
   kyiv: {lat: 50.4501, lng: 30.5234},
   tokyo: {lat: 35.6762, lng: 139.6503},
   newyork: {lat: 40.7128, lng: -74.0060},
-  rio: {lat: -22.9068, lng: -43.1729}
+  rio: {lat: -22.9068, lng: -43.1729},
+  // Verified live Panoramax 360° source coordinates as of 2026-11-22.
+  // Only geographical start anchors: the original provider still searches
+  // real photo IDs and credits the original uploader. No cloned imagery.
+  pune: {lat: 18.5195209, lng: 73.8412082},
+  kathmandu: {lat: 27.679029333, lng: 85.316770333},
+  fes: {lat: 34.061672694, lng: -4.977107},
+  merzouga: {lat: 31.14483, lng: -3.967989},
+  cebu: {lat: 10.3115544, lng: 123.8997359},
+  busay: {lat: 10.368785, lng: 123.8736817},
+  georgetown: {lat: 5.41156663, lng: 100.345036046},
+  balikpulau: {lat: 5.376598422, lng: 100.243871661},
+  bayanlepas: {lat: 5.282062689, lng: 100.242131159},
+  cuenca: {lat: -2.893007321, lng: -79.003228169},
+  sayaussi: {lat: -2.881178218, lng: -79.061575868},
+  ricaurte: {lat: -2.879045158, lng: -78.981027349},
+  banoscuenca: {lat: -2.906943576, lng: -79.033273236},
+  elvalle: {lat: -2.915168508, lng: -78.985071091}
 };
+// Keep this optional source pool isolated from the original R2 modes.
+// These names designate sampled 360° coverage, not guaranteed future views.
+const VERIFIED_REGION_KEYS = Object.freeze([
+  'pune','kathmandu','fes','merzouga','cebu','busay',
+  'georgetown','balikpulau','bayanlepas',
+  'cuenca','sayaussi','ricaurte','banoscuenca','elvalle'
+]);
 const state = {
   history: readHistory(), running: false, paused: false, busy: false,
   turbo: false, provider: null, current: null, origin: null,
@@ -54,7 +78,14 @@ function updateRadius(radius, note) {
 function getOrigin() {
   const key = $('originChoice').value;
   if (key === 'random') return {...CITY[Object.keys(CITY)[Math.floor(Math.random() * Object.keys(CITY).length)]]};
-  if (key !== 'custom') return {...CITY[key]};
+  if (key === 'random-verified') {
+    const next = VERIFIED_REGION_KEYS[Math.floor(Math.random() * VERIFIED_REGION_KEYS.length)];
+    return {...CITY[next]};
+  }
+  if (key !== 'custom') {
+    if (!CITY[key]) throw new Error('Неизвестная стартовая точка.');
+    return {...CITY[key]};
+  }
   const vals = $('latlng').value.split(/[,;\s]+/).filter(Boolean).map(Number);
   if (vals.length !== 2 || !vals.every(Number.isFinite) || vals[0] < -90 || vals[0] > 90 || vals[1] < -180 || vals[1] > 180) {
     throw new Error('Укажи корректные координаты: широта, долгота (например 48.8647, 2.3404).');
