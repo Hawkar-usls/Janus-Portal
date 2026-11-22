@@ -545,6 +545,7 @@ export class Merged360Provider {
       kartaview:new SphericalImageProvider(),commons:new SphericalImageProvider(),
       ...(includeGoogle&&googleKey?{google:new GoogleProvider(googleKey)}:{})};
     this.current=null;
+    this.googleBudgetSpent=false; // max 4 billable lookups per manual journey
   }
   async searchAtRadius(opts){
     const searches=[this.providers.panoramax.searchAtRadius(opts),
@@ -552,7 +553,10 @@ export class Merged360Provider {
       probeCommons360(opts.origin,{signal:opts.signal})];
     // A paid Google search is never initiated by a passive catalogue refresh.
     // It is only allowed after an explicitly entered key and manual journey.
-    if(this.providers.google)searches.push(this.providers.google.searchAtRadius(opts));
+    if(this.providers.google&&!this.googleBudgetSpent){
+      this.googleBudgetSpent=true;
+      searches.push(this.providers.google.searchAtRadius(opts));
+    }
     const all=await Promise.allSettled(searches);
     const photos=all.flatMap(x=>x.status==='fulfilled'?x.value:[]);
     const result=[];
