@@ -40,7 +40,7 @@ test('cross-provider source routing is opt-in, never a background Google query',
  assert.match(script,/gatewayStart\(origin,'google'\)/);
  assert.match(script,/if\(state\.running\)stop\(\)/);
  assert.match(script,/run\(\)/);
- assert.match(script,/no new runtime/i.test(script)?/no new runtime/i:/function renderGateway/);
+ assert.match(script,/function renderGateway\(\)/);
 });
 test('external tours remain source-owned, with no iframe/mirroring or invented JC rewards',()=>{
  const urls=[
