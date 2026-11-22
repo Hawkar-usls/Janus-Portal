@@ -59,8 +59,27 @@
           <div class="range-top"><label for="radius">Начальный радиус</label><strong id="radiusVal">5 км</strong></div>
           <input id="radius" type="range" min="1" max="50" step="1" value="5">
           <small>Если все места уже посещены: 5 → 10 → 20 → 40 км → … → 20 000 км.</small>
-          <div class="range-top"><label for="seconds">Время на осмотр</label><strong id="secondsVal">8 сек</strong></div>
-          <input id="seconds" type="range" min="2" max="30" step="1" value="8">
+          <div class="range-top"><label for="seconds">Среднее время на осмотр</label><strong id="secondsVal">16 сек</strong></div>
+          <input id="seconds" type="range" min="5" max="60" step="1" value="16">
+          <small>Каждая панорама получает разное время: заметные детали, повторные взгляды и приближения увеличивают длительность. Турбо ускоряет всё движение.</small>
+          <label for="motionStyle">Манера движений головы</label>
+          <select id="motionStyle">
+            <option value="natural">Живой взгляд · естественные повороты</option>
+            <option value="gentle">Мягкое движение · без резких разворотов</option>
+            <option value="off">Без автодвижения · только смена мест</option>
+          </select>
+          <label for="interestMode">Как выбирать точки интереса</label>
+          <select id="interestMode">
+            <option value="details">Визуальные детали и контраст · быстро</option>
+            <option value="objects">Локальное ИИ-распознавание людей и объектов</option>
+            <option value="off">Без анализа · случайные взгляды</option>
+          </select>
+          <small>Распознавание доступно только для открытых Panoramax-панорам. Модель выполняется в браузере и может ошибаться; Google-изображения не анализируются. Личные данные и снимки не отправляются на сервер JANUS.</small>
+          <div class="gaze-display" aria-live="polite">
+            <div class="gaze-display-head"><span class="label">ПОВЕДЕНИЕ ВЗГЛЯДА</span><span id="gazeTime">Ожидание</span></div>
+            <strong id="gazeStage">Готов осмотреться</strong>
+            <small id="attentionStatus">Пока нет результатов анализа</small>
+          </div>
           <button id="boost" class="secondary wide" aria-pressed="false">⚡ Турбо ×2: выключено</button>
           <div class="controls"><button id="startBtn" class="primary">▶ Запустить</button><button id="pauseBtn" class="secondary" disabled>Ⅱ Пауза</button><button id="nextBtn" class="secondary" disabled>↪ Прыжок</button></div>
           <small class="footnote">Отсутствие результата поиска не означает полного отсутствия панорам: данные источников могут быть неполными. Google требует квоты и биллинг.</small>

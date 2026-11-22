@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": null,
-  "engineering_status": "CI_UNIT_PASS_14_OF_14__BROWSER_FIRST_PANORAMA_PASS__SECOND_AUTOMATIC_JUMP_RETEST_REQUIRED",
+  "branch_under_review": "feat/human-gaze-r2",
+  "engineering_status": "R2_GAZE_UNIT_PASS_23_OF_23__PANORAMAX_BROWSER_GAZE_ZOOM_SECOND_JUMP_PASS__GOOGLE_E2E_PENDING",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -12,14 +12,17 @@
     "providers": "Panoramax STAC 360-only metadata and official viewer; Google StreetViewService and StreetViewPanorama optional",
     "local_storage": "Panoramax persistent in browser; Google coordinates session-only",
     "statistics": "local count, distance, Panoramax map, achievements, JSON export; no user-wide accounts",
-    "tests": "GitHub Actions PR run 45007676303: 14/14 PASS on 2026-11-22 (includes provider spatial sampling).",
-    "validation": "Edge headless on Yaksa rendered genuine Paris Panoramax 360 view with credits, recorded visit, displayed map, pause/resume passed; one 404 API /configuration nonblocking.",
-    "merged": "PR #5 squash-merged into main, experimental MVP only"
+    "tests": "Yaksa Node v24: 23/23 PASS including R2 gaze, attention and provider camera adapters; GitHub Actions PR CI also required.",
+    "validation": "Edge real Panoramax pose changed 247.97°->320.10°, pause pose remained identical, resume moved. Real second jump unique count 1→2, zoom max 50/100, no JS page exceptions.",
+    "merged": "PR #5 squash-merged into main, experimental MVP only",
+    "human_gaze": "Natural eased head turns with random glances/repeat fixation, squint zoom, attention-dependent dwell, pause/resume, turbo and reduced-motion preference; Playwright verified with real Panoramax.",
+    "local_attention": "Panoramax client-side heuristic contrast and opt-in MediaPipe 1.2.3 object/person detector; no image pixels from Google.",
+    "person_model": "Edge loaded MediaPipe 1.2.3 and model; a Panoramax Paris test photo produced one tentative person category score 0.5021. This is NOT independently validated accuracy."
   },
   "gates": {
-    "unit_tests": "PASS_CI_14_OF_14__RUN_45007676303",
+    "unit_tests": "PASS_LOCAL_23_OF_23__CI_LATEST_REQUIRED",
     "live_panoramax_metadata": "PASS_METADATA_ONLY",
-    "real_browser_panoramax_rotation": "PARTIAL_BROWSER_PASS_FIRST_VISIT_PAUSE_RESUME__SECOND_JUMP_PENDING",
+    "real_browser_panoramax_rotation": "PASS_EDGE_GAZE_POSE_PAUSE_RESUME_ZOOM_AND_TWO_VISITS",
     "real_browser_google_key_restricted": "PENDING",
     "github_actions_ci": "PASS_MAIN_RUN_45007885399__14_OF_14",
     "github_pages_publish": "BLOCKED_PAGES_NOT_ENABLED__RUN_45007885426__CONFIGURE_PAGES_404",
@@ -27,7 +30,10 @@
     "main_site_account_auth": "BLOCKED_SITE_SOURCE",
     "server_authoritative_J_coins": "BLOCKED_WALLET_API_AND_RULE_APPROVAL",
     "competitive_global_leaderboard": "BLOCKED_SERVER_BACKEND",
-    "compliance_review_google": "PENDING"
+    "compliance_review_google": "PENDING",
+    "real_browser_panoramax_second_jump": "PASS_EDGE_ONCE_1_TO_2_AFTER_GAZE",
+    "local_object_detection": "PASS_MODEL_LOAD_AND_TENTATIVE_PERSON_CLASS_PREDICTION__FALSE_POSITIVE_RISK",
+    "semantic_gaze_calibration": "OPEN_IMAGE_HEADING_AND_DETECTION_BENCHMARK"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -44,7 +50,7 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "PR #5 merged. Activate GitHub Pages via repository Settings and rerun workflow, then validate the published URL. Re-test 2+ automatic Panoramax jumps in browser (issue #6); integrate real site and wallet using issues #1-4. No JC awarded.",
+  "next": "R2 PR #8 awaiting final CI and merge. After merge test in site deployed via Pages (blocked until configured), calibrate person/object headings and Google mode with a restricted browser key; main site and JC still blocked.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
