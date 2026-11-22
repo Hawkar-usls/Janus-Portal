@@ -43,7 +43,8 @@ try{
   await page.locator('#originChoice').selectOption('fes');
   await page.locator('#startBtn').click();
   await page.waitForFunction(
-    ()=>Number(document.querySelector('#statUnique')?.textContent)>=1,
+    ()=>Number(document.querySelector('#statUnique')?.textContent)>=1 &&
+      (document.querySelector('#runStatus')?.textContent||'').includes('Живой взгляд'),
     null,{timeout:35000});
   assert.equal(await page.locator('pnx-photo-viewer').count(),1);
   assert.match(await page.locator('#runStatus').innerText(),/Живой взгляд/);
