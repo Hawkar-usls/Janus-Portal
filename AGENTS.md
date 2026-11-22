@@ -47,3 +47,11 @@ The owner explicitly confirmed **R2 works in their browser** after R3–R5 rollb
 ## R7 North Korea, Cairo and Africa coverage safety
 
 Read `docs/KOREA_CAIRO_AFRICA_R7.md` before touching R7. The 17 new geographical `CITY` starts are **NOT** verified 360° assets. The live Panoramax audit found no suitable 360° in sampled North Korea/Cairo bboxes; Togo results had apparent location contamination, and the sample photo resembled a European road while the coordinate was offshore. Do not market these records as genuine local 360s. New starts have bounded max search 40km, graceful 0-visit return to Start and are EXCLUDED from generic random; existing verified modes retain original 20,000km adaptive search. External source-owned 360/3D tour links for Korea/Egypt are static `<a>` tags, not image mirroring or new imports. R2 entrypoint `./src/app.js` and the five original imports remain the owner-confirmed contract. Never restore archived R3–R5 wholesale.
+
+## R8 Unified Source Gateway
+
+Read `docs/UNIFIED_SOURCE_GATEWAY_R8.md`. The user asked to access Panoramax, Google, North Korea tours, Giza 3D and Egyptian media from **one Portal UI**. The implementation is a section in `index.html`, CSS, and in-module functions in `src/app.js` — **no sixth JS import or new CDN**. Panoramax viewer/gaze R2 unchanged. Existing Google Street View provider now explicitly receives `visitedPoints` and `minSeparationKm`, tested with fake responses without paid API calls.
+
+**Rights gate:** Only Panoramax and official Google with a user-provided restricted key render inside the JANUS viewer. DPRK Panorama, Harvard Digital Giza and Egyptian Ministry media are **source-owned off-site links** with `noopener noreferrer` because reproduction/framing rights are not verified. Never bypass X-Frame-Options/CSP, scrape tiles, mirror copyrighted media, or falsely count external visits/J Coins. The gateway should report *source type and verified coverage* honestly.
+
+Release gate: `npm run verify`, `tools/browser-gateway-check.mjs` with optional Playwright, then PR CI, Pages, deployed HTTPS Edge test, and **user-browser confirmation**. Do not reinstate archived R3–R5 modules. Preserve all previous 5→10→20→40… exploration behavior and R7 40km no-coverage protection.
