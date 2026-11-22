@@ -1,3 +1,14 @@
+## R3 merge and live deployment verified — 2026-11-22
+
+- [PR #10](https://github.com/Hawkar-usls/Janus-Portal/pull/10) **merged**: `24f6e737413c31ddb7ba55c251536a2791cae290`.
+- Main [CI 45014029643](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45014029643): **29/29 tests PASS**.
+- [GitHub Pages 45014029614](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45014029614): **SUCCESS**. Public URL **https://hawkar-usls.github.io/Janus-Portal/**. HTML and all new JS files `src/tours.js`, `src/tour-runner.js`, `src/discovery.js`, `src/fullscreen.js` returned **HTTP 200**.
+- Real **Edge on public HTTPS**: tabs showed 12 tours, 37 destinations; Cairo/Giza searchable; Paris guided tour opened a genuine Panoramax photo **~1.2km from Eiffel Tower**; native fullscreen entered with `viewerPanel` height 980px and collapsed; **0 JS page errors**.
+- Local Edge additional: planned route displayed **5 ordered stops + polyline**, simulated mobile no-Fullscreen-API immersive panel 844px and ESC restore; **0 JS errors**.
+- Production-site browser with a *mocked empty Panoramax API* correctly handled Egyptian tour: **7 stops skipped, 0 visits, JC not awarded**; no JS exceptions. This is the safe fallback, not a claim that Egypt is without panoramas.
+- Added `tools/browser-discovery-check.mjs` to reproduce tabs/fullscreen/mobile/zero-coverage checks using optional Playwright; Pages workflow now scoped to application source changes to avoid doc-only redeploys.
+- Remaining external dependencies: actual JANUS site editor/auth and J Coin wallet (#1–3), Google Street View browser key restrictions/real Cairo imagery (#4), held-out object attention calibration (#9). **Do not claim these closed.**
+
 ## R3 excursion/fullscreen update — 2026-11-22
 
 - Feature branch `feat/immersive-discovery-tours-r3`, new feature PR pending. Explicit user requirement: immersive/fullscreen panorama that can be collapsed, many more starting locations, dedicated Cairo / landmark tourist excursion tabs in the spirit of Microsoft Flight Simulator Discovery Flights.
