@@ -325,7 +325,50 @@ function viewerFeedback(text, kind='searching') {
   overlay.querySelector('.view-feedback-icon').textContent=kind==='missing'?'⌕':'◌';
   overlay.querySelector('.view-feedback-text').textContent=text;
 }
+// R14 WANDERER: when a real source-backed region is exhausted, select a
+// different currently verified start with an unvisited, spatially distinct
+// panorama. Deterministic near-first order, no random origin menu or paid Google.
+function nextAfkRegion() {
+  const visited=new Set(state.history.map(visitKey));
+  const from=state.current||state.origin;
+  const choices=[];
+  for(const [key,photos] of liveCoverage){
+    if(state.afkExhausted.has(key)||!CITY[key])continue;
+    for(const photo of photos){
+      if(!['panoramax','kartaview','commons'].includes(photo.provider))continue;
+      if(visited.has(visitKey(photo)))continue;
+      if(state.history.some(point=>distanceKm(point,photo)<0.02))continue;
+      if(distanceKm(CITY[key],photo)>Number($('radius').value)+.005)continue;
+      choices.push({key,photo,km:distanceKm(from,CITY[key])});
+    }
+  }
+  choices.sort((a,b)=>a.km-b.km||a.key.localeCompare(b.key)||
+    a.photo.provider.localeCompare(b.photo.provider));
+  return choices[0]||null;
+}
+function setAfkMode(value) {
+  state.afk=Boolean(value);
+  $('afkNote').textContent=state.afk
+    ? 'AFK активно: JANUS осматривает снимки и переключается между подтверждёнными регионами без платных Google-запросов.'
+    : 'AFK выключено. Открытые панорамы остаются в паспорте этого браузера.';
+  refreshControls();
+}
+function toggleAfk() {
+  if(state.afk){stop();return;}
+  if(state.running)stop();
+  if(!liveCoverage.has($('originChoice').value)){
+    message('Для AFK сначала дождись подтверждённых панорам в каталоге.',true);
+    return;
+  }
+  state.afkExhausted.clear();
+  state.afkSwitches=0;
+  setAfkMode(true);
+  run();
+  if(!state.running)setAfkMode(false);
+}
 function stop() {
+  state.afk=false;
+  state.afkExhausted.clear();
   viewerFeedback(null);
   state.generation++;
   state.running = false;
@@ -340,6 +383,7 @@ function stop() {
   $('gazeStage').textContent = 'Взгляд остановлен';
   state.busy = false;
   setStatus('Остановлено');
+  $('afkNote').textContent='AFK выключено. Новые открытия сохраняются в локальном паспорте.';
   refreshControls();
   // A long autonomous session cannot keep an old catalogue indefinitely.
   maybeRefreshCoverage();
@@ -422,6 +466,7 @@ async function travel() {
   setStatus('Поиск новой точки…', 'warn');
   viewerFeedback('Ищу доступную 360° панораму в выбранном районе…');
   const origin = state.current || state.origin;
+  let continueAfk=false;
   updateRadius(Number($('radius').value), 'Поиск ещё не посещённых панорам');
   try {
     const visited = new Set(state.history.map(visitKey));
@@ -492,7 +537,30 @@ async function travel() {
   } catch (error) {
     if (error?.name !== 'AbortError' && state.running && generation === state.generation) {
       const noPoints = error?.name === 'NoLocationsError';
-      if (noPoints && state.limitedCoverage) {
+      if(noPoints && state.afk && !state.manualMode) {
+        state.afkExhausted.add(state.selectedSourceKey);
+        const next=nextAfkRegion();
+        if(next){
+          state.selectedSourceKey=next.key;
+          state.origin={...CITY[next.key]};
+          state.current=null;
+          state.startCandidate=next.photo;
+          state.limitedCoverage=LIMITED_COVERAGE_KEYS.has(next.key);
+          state.afkSwitches++;
+          setStatus('AFK · следующий регион','live');
+          viewerFeedback('🌍 Перехожу к следующему подтверждённому региону…');
+          message('🌙 AFK: текущий район исчерпан. Продолжаю из нового доступного района.');
+          continueAfk=true;
+        }else{
+          state.afk=false;
+          state.running=false;
+          state.paused=false;
+          setStatus('AFK · доступные точки исследованы');
+          viewerFeedback('В текущем подтверждённом каталоге больше нет новых панорам. Обнови список, чтобы продолжить.','missing');
+          message('AFK завершён: новых непосещённых панорам в проверенных стартовых районах не обнаружено. Это не означает, что исследован весь мир.');
+          $('afkNote').textContent='AFK завершён · новых точек в текущем каталоге нет.';
+        }
+      }else if (noPoints && state.limitedCoverage) {
         message('Для выбранного региона в проверенных выборках Panoramax не нашлось новых 360° снимков поблизости (радиус до ' +
           Math.max(MAX_LIMITED_SEARCH_KM, Number($('radius').value)) +
           ' км). Не подменяем их фотографиями другой страны. Выбери другое место в нашем поиске или официальный источник в настройках.', true);
@@ -518,6 +586,7 @@ async function travel() {
           else liveCoverage.delete(state.selectedSourceKey);
           state.running=false;
           state.paused=false;
+          state.afk=false;
           renderLiveOptions();
           updateCoverageStatus();
         }else{
@@ -530,7 +599,15 @@ async function travel() {
       state.busy = false;
       state.abort = null;
       refreshControls();
-      // The gaze timeline (not a fixed timeout) initiates the next jump.
+      // Only verified source candidates can trigger an AFK cross-region hop.
+      // A guarded timer lets STOP abort before another request begins.
+      if(continueAfk&&state.running&&!state.paused){
+        state.timer=setTimeout(()=>{
+          state.timer=null;
+          if(state.running&&state.afk&&generation===state.generation)travel();
+        },650);
+      }
+      // Otherwise the original gaze timeline initiates the next jump.
     }
   }
 }
@@ -803,6 +880,7 @@ if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
   stageText('Автодвижение выключено по системным настройкам');
 }
 $('startBtn').addEventListener('click', run);
+$('afkBtn').addEventListener('click',toggleAfk);
 $('pauseBtn').addEventListener('click', togglePause);
 $('nextBtn').addEventListener('click', skip);
 $('downloadBtn').addEventListener('click', downloadHistory);
