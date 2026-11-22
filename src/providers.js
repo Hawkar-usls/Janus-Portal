@@ -83,7 +83,7 @@ export class PanoramaxProvider {
     this.view = null;
     this.rotation = null;
   }
-  async searchAtRadius({origin, radiusKm, visited, random, signal}) {
+  async searchAtRadius({origin, radiusKm, visited, visitedPoints = [], minSeparationKm = 0.02, random, signal}) {
     const found = [];
     // Seeded points offer a reliable escape from empty regions (oceans, deserts)
     // once the expanding radius can geographically reach real coverage.
@@ -106,9 +106,13 @@ export class PanoramaxProvider {
       const json = await response.json();
       for (const f of json.features || []) {
         const c = featureToCandidate(f);
-        if (c && !visited.has(c.provider + ':' + c.id) && distanceKm(origin, c) <= radiusKm + 0.005) {
-          found.push(c);
-        }
+        if (!c || visited.has(c.provider + ':' + c.id) || distanceKm(origin, c) > radiusKm + 0.005) continue;
+        // Avoid filling the result budget with photos from the same few metres.
+        // Otherwise a large Panoramax sequence masks all other unseen spots.
+        if (visitedPoints.some(p => distanceKm(p, c) < minSeparationKm)) continue;
+        if (found.some(p => distanceKm(p, c) < minSeparationKm)) continue;
+        found.push(c);
+        if (found.length >= 8) break;
       }
     }
     return found;
@@ -176,7 +180,8 @@ export class GoogleProvider {
         const id = data?.location?.pano;
         if (!coords || !id) continue;
         const candidate = {provider: 'google', id, lat: coords.lat(), lng: coords.lng()};
-        if (!visited.has('google:' + id) && distanceKm(origin, candidate) <= radiusKm + 0.005) {
+        if (!visited.has('google:' + id) && distanceKm(origin, candidate) <= radiusKm + 0.005 &&
+            !visitedPoints.some(p => distanceKm(p, candidate) < minSeparationKm)) {
           found.push(candidate);
         }
       } catch (error) {
