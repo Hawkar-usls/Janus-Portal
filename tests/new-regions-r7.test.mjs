@@ -19,7 +19,7 @@ test('North Korea Cairo and wider Africa are searchable coordinate starts, not p
     assert.ok(html.includes(title));
   assert.ok(html.includes('id="originCatalog"'));
   assert.ok(html.includes('id="coverageStatus"'));
-  assert.ok(html.includes('свежими 360°-метаданными'));
+  assert.ok(html.includes('JANUS объединяет Panoramax, KartaView и Wikimedia Commons'));
 });
 test('unverified search is bounded locally and cannot contaminate existing random pool',()=>{
   assert.match(app,/const LIMITED_COVERAGE_KEYS = new Set\(\[/);
@@ -35,7 +35,7 @@ test('unverified search is bounded locally and cannot contaminate existing rando
 test('every R7 region is handled by one internal search without external links',()=>{
   assert.match(html,/<select id="originChoice"/);
   assert.match(html,/<button id="startBtn" class="primary">▶ Запустить<\/button>/);
-  assert.ok(html.includes('автоматически каждые 5 минут'));
+  assert.ok(app.includes('LIVE_REFRESH_MS=5*60*1000'));
   assert.ok(!html.includes('<option value="random">'));
   assert.ok(!html.includes('<option value="random-verified">'));
   assert.equal(html.includes('external-panorama-links'),false);
