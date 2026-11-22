@@ -17,6 +17,16 @@ This file exists so the next authorized ChatGPT agent can continue **without nee
 
 On 2026-11-22 GitHub Actions PR run [45007676303](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45007676303) ran **14/14 tests PASS** including provider spatial deduplication. Edge on Yaksa rendered a real Paris 360° panorama with visible source credits; first visit, Leaflet map, pause/resume worked. A later auto-second-jump test exhausted sampled candidates because the provider filled its result budget with near-identical photos; the provider was patched to filter by 20m *before* that cap and CI passed, but **the second automatic jump has not yet been revalidated in a browser after this fix**. Panoramax API metadata was independently fetched in Paris, Rennes and Lyon. A nonblocking /api/configuration 404 from the third-party viewer was observed.
 
+## Human Gaze R2 update — 2026-11-22
+
+- Feature branch `feat/human-gaze-r2`, PR [#8](https://github.com/Hawkar-usls/Janus-Portal/pull/8) implements **natural gaze + variable dwell + local visual interest**. See [docs/HUMAN_GAZE_R2.md](HUMAN_GAZE_R2.md).
+- Yaksa Windows Node v24: `npm run verify` **23/23 PASS**.
+- Live Edge Panoramax test #1: loaded real image, `getXYZ().x` moved **247.97° → 320.10°**, pause froze same pose, resume moved again; 3 contrast regions were found.
+- Live Edge Panoramax test #2: observed **max zoom 50/100**, deliberate look-back, fixation, zoom-in/zoom-out, then **2nd automatic jump**: unique visit count **1→2**; no uncaught page JS errors.
+- Local ML test: after correcting a nonexistent CDN version to `@mediapipe/tasks-vision@1.2.3`, actual Edge loaded JS/WASM and a 7.25 MB model (all HTTP 200); on one Paris pano `0c5a2b1b-62dc-4a37-a744-bdf0bab67002`, model output **one tentative `person` detection with score 0.5021**. This is a model prediction, not independently hand-labeled accuracy validation.
+- R2 still needs Google Street View live API key/configuration test, semantic heading calibration on independent images, and main website deployment; J Coins remain backend-gated.
+- ML mode is **opt-in** to avoid automatically fetching a large model and minimize optional third-party telemetry for visitors.
+
 ## Handoff update — 2026-11-22 (main merged)
 
 - PR [#5](https://github.com/Hawkar-usls/Janus-Portal/pull/5) **merged** to `main`; squash SHA `85fa0b28034fb4e8602e9dda65b13c737ae51b4b`.
