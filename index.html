@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1321">
+  <meta name="description" content="JANUS PORTAL — виртуальные путешествия по панорамам мира">
+  <title>JANUS PORTAL — бесконечная экспедиция</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="./src/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="module" src="./src/app.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="JANUS Portal home">
+        <span class="brand-icon">◉</span>
+        <span><strong>JANUS <em>PORTAL</em></strong><small>EXPLORE THE UNSEEN</small></span>
+      </a>
+      <div class="top-right"><span class="pulse" aria-hidden="true"></span><span id="modeBadge">Локальный режим</span><a href="https://github.com/Hawkar-usls/Janus-Portal" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div>
+    </header>
+    <main>
+      <section class="hero">
+        <div><span class="eyebrow">◈ АВТОНОМНЫЙ ИССЛЕДОВАТЕЛЬ</span>
+          <h1>Весь мир —<br><em>один прыжок.</em></h1>
+          <p>Смотри по сторонам, открывай новые места и собирай собственную историю путешествий.</p>
+        </div>
+        <div class="hero-orbit" aria-hidden="true">🌐</div>
+      </section>
+      <div class="layout">
+        <section class="viewer-panel">
+          <div class="viewer-toolbar">
+            <div><span class="label">ТЕКУЩАЯ ПАНОРАМА</span><h2 id="placeLabel">Ждём первого прыжка</h2></div>
+            <span class="status" id="runStatus"><span class="dot"></span> Ожидание</span>
+          </div>
+          <div class="view" id="viewer">
+            <div class="view-empty"><span class="planet">🌎</span><h3>Твой портал готов</h3><p>Настрой маршрут и нажми «Запустить»</p></div>
+          </div>
+          <div class="view-foot">
+            <div><span class="label">РАДИУС ПОИСКА</span><strong id="activeRadius">5 км</strong><small id="radiusHint">Расширяется автоматически, когда новых панорам не найдено</small></div>
+            <div><span class="label">КООРДИНАТЫ</span><strong id="coords">—</strong><a id="mapLink" href="#" target="_blank" rel="noopener noreferrer" hidden>Открыть на карте ↗</a></div>
+          </div>
+          <p class="notice" id="notice" role="status" aria-live="polite">Каждый прыжок ведёт к новой панораме. История записывается только после загрузки изображения.</p>
+        </section>
+        <aside class="settings panel">
+          <div class="panel-title"><div><span class="label">КОНТРОЛЬ МИССИИ</span><h2>Настройки</h2></div><span class="gear" aria-hidden="true">⚙</span></div>
+          <label for="provider">Источник панорам</label>
+          <select id="provider"><option value="panoramax">Panoramax · открытые 360°</option><option value="google">Google Street View · API</option></select>
+          <div id="googleKeyWrap" hidden><label for="googleKey">Google Maps API-ключ</label><input type="password" id="googleKey" autocomplete="off" placeholder="Ограниченный по домену браузерный ключ"><small>Ключ не сохраняется; Google API может тарифицироваться.</small></div>
+          <label for="originChoice">Откуда начинаем</label>
+          <select id="originChoice">
+            <option value="paris">Париж, Франция</option><option value="rennes">Ренн, Франция</option><option value="lyon">Лион, Франция</option>
+            <option value="kyiv">Киев, Украина</option><option value="tokyo">Токио, Япония</option><option value="newyork">Нью-Йорк, США</option>
+            <option value="rio">Рио-де-Жанейро, Бразилия</option><option value="random">Случайный город</option><option value="custom">Свои координаты</option>
+          </select>
+          <div id="customOrigin" hidden><label for="latlng">Широта, долгота</label><input id="latlng" placeholder="48.8647, 2.3404" spellcheck="false"></div>
+          <div class="range-top"><label for="radius">Начальный радиус</label><strong id="radiusVal">5 км</strong></div>
+          <input id="radius" type="range" min="1" max="50" step="1" value="5">
+          <small>Если все места уже посещены: 5 → 10 → 20 → 40 км → … → 20 000 км.</small>
+          <div class="range-top"><label for="seconds">Время на осмотр</label><strong id="secondsVal">8 сек</strong></div>
+          <input id="seconds" type="range" min="2" max="30" step="1" value="8">
+          <button id="boost" class="secondary wide" aria-pressed="false">⚡ Турбо ×2: выключено</button>
+          <div class="controls"><button id="startBtn" class="primary">▶ Запустить</button><button id="pauseBtn" class="secondary" disabled>Ⅱ Пауза</button><button id="nextBtn" class="secondary" disabled>↪ Прыжок</button></div>
+          <small class="footnote">Отсутствие результата поиска не означает полного отсутствия панорам: данные источников могут быть неполными. Google требует квоты и биллинг.</small>
+        </aside>
+      </div>
+      <section class="stats" aria-label="Статистика экспедиции">
+        <div class="stat"><span>УНИКАЛЬНЫХ МЕСТ</span><strong id="statUnique">0</strong><small>отдельных панорам</small></div>
+        <div class="stat"><span>УДАЧНЫХ ПРЫЖКОВ</span><strong id="statJumps">0</strong><small>успешно открытых</small></div>
+        <div class="stat"><span>ПУТЬ</span><strong id="statKm">0 км</strong><small>между местами по прямой</small></div>
+        <div class="stat"><span>J COINS</span><strong id="statCoins">—</strong><small id="coinsNote">Ожидает серверной интеграции</small></div>
+      </section>
+      <section class="lower">
+        <div class="panel map-panel">
+          <div class="section-heading"><div><span class="label">ГЕОГРАФИЯ ОТКРЫТИЙ</span><h2>Карта путешествия</h2></div><span class="mini">Нажми точку на карте</span></div>
+          <div id="map" aria-label="Интерактивная карта посещённых панорам"></div>
+          <small>© OpenStreetMap contributors · метки показывают посещённые точки и маршрут.</small>
+        </div>
+        <div class="panel achievements">
+          <div class="section-heading"><div><span class="label">ЛИЧНЫЙ ПРОГРЕСС</span><h2>Достижения</h2></div>🏆</div>
+          <div class="achievement-grid" id="achievements"></div>
+          <p class="muted">Глобальный рейтинг и награды JC появятся после подключения авторизации и серверного кошелька сайта.</p>
+        </div>
+      </section>
+      <section class="history panel">
+        <div class="history-heading"><div><span class="label">ЖУРНАЛ ЭКСПЕДИЦИИ</span><h2>Посещённые места</h2></div>
+          <div class="history-actions"><button id="downloadBtn" class="secondary">↓ Экспорт JSON</button><button id="resetBtn" class="tertiary">Очистить локальную историю</button></div>
+        </div>
+        <div class="history-list" id="history"><p class="muted">Ещё нет открытий. Сделай первый прыжок!</p></div>
+      </section>
+    </main>
+    <footer>JANUS PORTAL · Исследовательская версия. Локальная статистика не является основанием для начисления J Coins. Панорамы принадлежат их источникам.</footer>
+  </div>
+</body>
+</html>

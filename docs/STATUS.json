@@ -1,0 +1,52 @@
+{
+  "project": "JANUS-PORTAL",
+  "updated_at_utc": "2026-11-22",
+  "repo": "Hawkar-usls/Janus-Portal",
+  "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
+  "branch_under_review": "feat/adaptive-portal-mvp",
+  "engineering_status": "CI_UNIT_PASS_14_OF_14__BROWSER_FIRST_PANORAMA_PASS__SECOND_AUTOMATIC_JUMP_RETEST_REQUIRED",
+  "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
+  "completed": {
+    "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
+    "navigation": "default 5 km, then doubling until 20000 km, nearest random unvisited geodesic sample, 20m spatial exclusion",
+    "providers": "Panoramax STAC 360-only metadata and official viewer; Google StreetViewService and StreetViewPanorama optional",
+    "local_storage": "Panoramax persistent in browser; Google coordinates session-only",
+    "statistics": "local count, distance, Panoramax map, achievements, JSON export; no user-wide accounts",
+    "tests": "GitHub Actions PR run 45007676303: 14/14 PASS on 2026-11-22 (includes provider spatial sampling).",
+    "validation": "Edge headless on Yaksa rendered genuine Paris Panoramax 360 view with credits, recorded visit, displayed map, pause/resume passed; one 404 API /configuration nonblocking."
+  },
+  "gates": {
+    "unit_tests": "PASS_CI_14_OF_14__RUN_45007676303",
+    "live_panoramax_metadata": "PASS_METADATA_ONLY",
+    "real_browser_panoramax_rotation": "PARTIAL_BROWSER_PASS_FIRST_VISIT_PAUSE_RESUME__SECOND_JUMP_PENDING",
+    "real_browser_google_key_restricted": "PENDING",
+    "github_actions_ci": "PASS_PR_AND_PUSH_45007676303",
+    "github_pages_publish": "PENDING",
+    "main_site_tab": "BLOCKED_SITE_EDITOR_ACCESS",
+    "main_site_account_auth": "BLOCKED_SITE_SOURCE",
+    "server_authoritative_J_coins": "BLOCKED_WALLET_API_AND_RULE_APPROVAL",
+    "competitive_global_leaderboard": "BLOCKED_SERVER_BACKEND",
+    "compliance_review_google": "PENDING"
+  },
+  "reward_policy": {
+    "proposed": "1 J Coin for first eligible unique visited place",
+    "repetition": "0 J Coin",
+    "production_enabled": false,
+    "server_authorization_required": true,
+    "cap": "must be defined before enabling",
+    "balance_source": "existing JANUS wallet only"
+  },
+  "privacy_security": {
+    "google_key_committed": false,
+    "google_coordinates_persistent": false,
+    "OSM_mixed_with_google": false,
+    "source_credit": "native Panoramax and Google widgets; OSM attribution",
+    "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
+  },
+  "next": "Read AGENTS.md and docs/CONTINUATION.md; verify CI/Pages/browser, integrate real site backend, preserve invariants",
+  "browser_bug_history": [
+    "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
+    "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
+    "Changed provider to filter visited/nearby positions before filling candidate budget; added 2 provider tests, all 14 CI tests pass. Real second jump after fix awaits repeat browser run."
+  ]
+}
