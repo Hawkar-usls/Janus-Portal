@@ -56,16 +56,16 @@ test('catalogue only builds from current API confirmations, with no random or st
  assert.ok(!app.includes("key === 'random'"));
  assert.ok(!app.includes('VERIFIED_REGION_KEYS ='));
  assert.match(app,/liveCoverage\.clear\(\)/);
- assert.match(app,/probePanoramaxCoverage\(entry\.origin/);
- assert.match(app,/if\(result\.candidate\)liveCoverage\.set/);
+ assert.match(app,/probeMerged360\(entry\.origin/);
+ assert.match(app,/if\(result\.candidates\.length\)liveCoverage\.set/);
  assert.match(app,/LIVE_REFRESH_MS=5\*60\*1000/);
  assert.match(app,/document\.addEventListener\('visibilitychange'/);
  assert.match(app,/window\.addEventListener\('online',maybeRefreshCoverage\)/);
  assert.match(html,/id="refreshCoverageBtn"/);
 });
-test('source-specific Google mode stays manual to avoid billable undisclosed catalogue probes',()=>{
- assert.match(app,/inPanoramax=\$\('provider'\)\.value==='panoramax'/);
- assert.match(app,/Google: автоматический каталог отключён/);
+test('Google remains opt-in manual to avoid billable catalogue probes',()=>{
+ assert.match(app,/manual&&\$\('googleConsent'\)\.checked/);
+ assert.match(app,/includeGoogle:wantsGoogle/);
  assert.match(app,/liveCoverage\.has\(key\)/);
  assert.match(html,/id="manualStartBtn"/);
  assert.match(html,/id="manualOrigin"/);

@@ -64,3 +64,13 @@ body.portal-fullscreen-locked{overflow:hidden}
 .settings .google-key-help:hover{color:#d5fffb}
 .coverage-bar small[data-state="timeout"],.coverage-bar small[data-state="error"]{color:#ffbd96}
 .coverage-refresh:not(:disabled){cursor:pointer}
+
+/* R13: one merged location search; contributor credits remain inside viewer. */
+.source-credentials{border:1px solid #29465f;border-radius:11px;padding:10px 12px;margin:15px 0 12px;background:#0c2131}
+.source-credentials summary{color:#bce6ef;cursor:pointer;font-size:12px;font-weight:700}
+.source-credentials .source-paid-consent{display:flex;gap:9px;align-items:flex-start;line-height:1.45;margin:15px 0 5px}
+.source-paid-consent input{width:16px!important;min-height:16px!important;flex:none;margin:0}
+.source-360-frame{position:relative;width:100%;height:100%;background:#060e1b;overflow:hidden}
+.source-360-frame canvas{position:absolute;inset:0;width:100%;height:100%}
+.external-360-attribution{position:absolute;bottom:12px;left:12px;right:12px;max-width:min(720px,calc(100% - 24px));display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:9px 11px;color:#e9f7ff;background:rgba(5,20,35,.83);border:1px solid #446278;border-radius:9px;font-size:11px;line-height:1.4;pointer-events:auto}
+.external-360-attribution a{color:#81f4d9;font-weight:700;text-decoration:underline}

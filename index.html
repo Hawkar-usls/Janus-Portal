@@ -49,15 +49,19 @@
         </section>
         <aside class="settings panel">
           <div class="panel-title"><div><span class="label">КОНТРОЛЬ МИССИИ</span><h2>Поиск панорам</h2></div><span class="gear" aria-hidden="true">⚙</span></div>
-          <label for="provider">Источник панорам</label>
-          <select id="provider"><option value="panoramax">Panoramax · открытые 360°</option><option value="google">Google Street View · API</option></select>
-          <div id="googleKeyWrap" hidden>
+          <!-- Compatibility only: users never select photo providers. -->
+          <select id="provider" hidden aria-hidden="true"><option value="merged" selected>Автоматический поиск всех доступных 360°</option></select>
+          <details id="googleAuth" class="source-credentials">
+            <summary>Google Street View · необязательное подключение</summary>
+            <div id="googleKeyWrap">
             <label for="googleKey">Google Street View · ключ Google Cloud</label>
             <input type="password" id="googleKey" autocomplete="off" placeholder="Свой ключ Google Maps JavaScript API" spellcheck="false">
             <small>Ключ не сохраняется Порталом. Разреши только Maps JavaScript API и адрес этого сайта, настрой квоты и биллинг. Загруженные панорамы остаются в официальном просмотрщике Google.</small>
             <a class="google-key-help" href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank" rel="noopener noreferrer">Как получить и ограничить ключ Google ↗</a>
-            <small>Бесплатный Google Maps Demo Key подходит для ограниченного прототипирования карт, но не предоставляет встроенный Street View. Для панорам нужен свой ключ проекта с разрешённым Street View.</small>
-          </div>
+            <small>Бесплатный Google Maps Demo Key не поддерживает Street View. Ключ применяется только при явно запущенном ручном поиске; массовое обновление не делает платных Google-запросов.</small>
+            <label class="source-paid-consent"><input type="checkbox" id="googleConsent"> Добавить Google к моему ручному поиску (может тарифицироваться)</label>
+            </div>
+          </details>
           <label for="originChoice">Откуда начинаем</label>
           <select id="originChoice" aria-describedby="coverageStatus" disabled>
             <option value="" selected>⏳ Проверяем доступные 360°…</option>
@@ -66,6 +70,7 @@
 <option value="paris">Париж, Франция</option><option value="rennes">Ренн, Франция</option><option value="lyon">Лион, Франция</option>
             <option value="kyiv">Киев, Украина</option><option value="tokyo">Токио, Япония</option><option value="newyork">Нью-Йорк, США</option>
             <option value="rio">Рио-де-Жанейро, Бразилия</option>
+            <option value="sandiego">Сан-Диего, США · фотосферы</option>
             <optgroup label="🌏 Южная Азия · проверяем по API">
               <option value="pune">🇮🇳 Пуна, Индия · улицы</option>
               <option value="kathmandu">🇳🇵 Катманду, Непал · панорамы</option>
@@ -116,13 +121,13 @@
             <small id="coverageStatus" role="status" aria-live="polite">Обновляем каталог Panoramax по живым данным…</small>
             <button type="button" id="refreshCoverageBtn" class="coverage-refresh">⟳ Обновить</button>
           </div>
-          <small>В списке только районы со свежими 360°-метаданными Panoramax и доступным адресом изображения. Проверка выполняется при открытии сайта и повторяется автоматически каждые 5 минут. Это не подтверждение достоверности каждого геотега; загрузка фото проверяется при запуске.</small>
+          <small>JANUS объединяет Panoramax, KartaView и Wikimedia Commons по координатам без выбора источника. Одна кнопка «Обновить» проверяет все три каталога вместе; непроверенные 2D-фото исключены. Google подключается к ручному поиску только после ввода ключа и согласия. Фото откроется здесь же после проверки загрузки.</small>
           <details id="manualOrigin" class="manual-origin">
             <summary>📍 Свои координаты · отдельная проверка</summary>
             <label for="latlng">Широта, долгота</label>
             <input id="latlng" placeholder="48.8647, 2.3404" spellcheck="false">
             <button type="button" class="secondary" id="manualStartBtn">▶ Найти по координатам</button>
-            <small>Ручной поиск не добавляет непроверенные места в каталог. Google Street View доступен только здесь с собственным ограниченным API-ключом.</small>
+            <small>Поиск по координатам проверяет все бесплатные источники вместе. Если ты ввёл Google-ключ и включил платный поиск, добавится также Google Street View. Неподтверждённые места в общий список не попадают.</small>
           </details>
           <div class="range-top"><label for="radius">Начальный радиус</label><strong id="radiusVal">5 км</strong></div>
           <input id="radius" type="range" min="1" max="50" step="1" value="5">
