@@ -33,7 +33,10 @@
         <section class="viewer-panel">
           <div class="viewer-toolbar">
             <div><span class="label">ТЕКУЩАЯ ПАНОРАМА</span><h2 id="placeLabel">Ждём первого прыжка</h2></div>
-            <span class="status" id="runStatus"><span class="dot"></span> Ожидание</span>
+            <div class="viewer-toolbar-actions">
+              <span class="status" id="runStatus"><span class="dot"></span> Ожидание</span>
+              <button id="fullscreenBtn" type="button" class="viewer-fullscreen-btn" aria-label="Развернуть панораму на весь экран" aria-pressed="false" title="На весь экран">⛶ <span class="fullscreen-label">На весь экран</span></button>
+            </div>
           </div>
           <div class="view" id="viewer">
             <div class="view-empty"><span class="planet">🌎</span><h3>Твой портал готов</h3><p>Настрой маршрут и нажми «Запустить»</p></div>
