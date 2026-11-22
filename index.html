@@ -51,7 +51,13 @@
           <div class="panel-title"><div><span class="label">КОНТРОЛЬ МИССИИ</span><h2>Поиск панорам</h2></div><span class="gear" aria-hidden="true">⚙</span></div>
           <label for="provider">Источник панорам</label>
           <select id="provider"><option value="panoramax">Panoramax · открытые 360°</option><option value="google">Google Street View · API</option></select>
-          <div id="googleKeyWrap" hidden><label for="googleKey">Google Maps API-ключ</label><input type="password" id="googleKey" autocomplete="off" placeholder="Ограниченный по домену браузерный ключ"><small>Ключ не сохраняется; Google API может тарифицироваться.</small></div>
+          <div id="googleKeyWrap" hidden>
+            <label for="googleKey">Google Street View · ключ Google Cloud</label>
+            <input type="password" id="googleKey" autocomplete="off" placeholder="Свой ключ Google Maps JavaScript API" spellcheck="false">
+            <small>Ключ не сохраняется Порталом. Разреши только Maps JavaScript API и адрес этого сайта, настрой квоты и биллинг. Загруженные панорамы остаются в официальном просмотрщике Google.</small>
+            <a class="google-key-help" href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank" rel="noopener noreferrer">Как получить и ограничить ключ Google ↗</a>
+            <small>Бесплатный Google Maps Demo Key подходит для ограниченного прототипирования карт, но не предоставляет встроенный Street View. Для панорам нужен свой ключ проекта с разрешённым Street View.</small>
+          </div>
           <label for="originChoice">Откуда начинаем</label>
           <select id="originChoice" aria-describedby="coverageStatus" disabled>
             <option value="" selected>⏳ Проверяем доступные 360°…</option>
