@@ -1,3 +1,12 @@
+## R13 — unified provider mixer without source selection (2026-11-22)
+
+- Latest owner request: all source panoramas intermixed by location, one Update for every source together, zero visible provider selection.
+- Branch feat/r13-merged-multi-provider-catalogue. Integrated keyless public Panoramax federation, KartaView SPHERE/FOV>=300 with CDN-linked 2:1 image and Wikimedia Commons officially geosearched equirectangular 2:1 with CC/free license. Each source checks candidate metadata, GPS and HTTPS asset; the geographic dropdown includes a site only if a source passes. 39 known centres, including San Diego from Commons, not whole planet. Source counts overlap and the geographic list deduplicates place names.
+- In-file WebGL equirectangular viewer in original src/providers.js renders real KartaView and Commons photos inside JANUS original window, with author/license/source link, drag/zoom and R2 gaze/fullscreen. Discovered upside-down texture via screenshot and corrected UNPACK_FLIP_Y_WEBGL=false. Pause must not destroy WebGL: stopRotation no-op, dispose only on photo/source change. Existing Panoramax official viewer unchanged. Single original app module remains five imports.
+- Google only with explicit manual key + paid search checkbox, max 4 paid metadata calls per manual journey; none on background refresh. Mapillary still requires user-issued application token and real E2E/licence check; not claimed connected.
+- Yaksa 55/55 Node tests PASS. tools/browser-merged-r13-check.mjs Edge actual source coverage 20 unique regions, Panoramax19 / KartaView7 / Wikimedia1 (overlapping), rendered actual Fes KartaView and San Diego Commons inside view with credits/correct orientation, original Fes Start and fullscreen PASS, zero page JavaScript exceptions. Screenshot QA files remain in Yaksa temp directory, not committed.
+- Pending: PR CI -> squash merge -> Pages (R12 coherent JS/CSS SHA paths) -> real public HTTPS Edge combined scan/real KV and Commons display -> owner browser confirmation. Full detail docs/MIXED_SOURCES_R13.md. Do not revert R11 live-only verification or R9 one search.
+
 ## R12 production verified — fixed stuck R11 selector and Google demo misconception (2026-11-22)
 
 - Owner screenshot: loading label `⏳ Проверяем доступные 360°…` stuck with unstyled manual refresh button; asked for Google Street View demo key.
