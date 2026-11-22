@@ -19,7 +19,7 @@ test('Pages build uses commit-specific JS/CSS paths and includes transitive impo
     assert.match(html,/name="janus-build" content="aabbccddee11"/);
     assert.doesNotMatch(html,/(?:src|href)="\.\/src\/(?:app\.js|styles\.css)"/);
     const file=join(out,'assets','aabbccddee11');
-    for(const name of ['app.js','providers.js','navigation.js','tours.js','discovery.js','gaze.js','attention.js','styles.css']){
+    for(const name of ['app.js','providers.js','navigation.js','tours.js','discovery.js','gaze.js','attention.js','native-panorama.js','quick-start.js','styles.css']){
       assert.ok((await stat(join(file,name))).size>0,name);
     }
     const js=await readFile(join(file,'app.js'),'utf8');
