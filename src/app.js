@@ -3,22 +3,18 @@ import {PanoramaxProvider, GoogleProvider} from './providers.js';
 import {readHistory, addVisit, getStats, STORAGE_KEY} from './storage.js';
 import {GazeDirector, buildGazePlan} from './gaze.js';
 import {analyzeInterest} from './attention.js';
+import {DESTINATIONS,destinationById} from './tours.js';
+import {findTourCandidate} from './tour-runner.js';
+import {installDiscovery} from './discovery.js';
+import {installFullscreen} from './fullscreen.js';
 
 const $ = id => document.getElementById(id);
-const CITY = {
-  paris: {lat: 48.86473, lng: 2.34041},
-  rennes: {lat: 48.11617, lng: -1.68669},
-  lyon: {lat: 45.76561, lng: 4.84002},
-  kyiv: {lat: 50.4501, lng: 30.5234},
-  tokyo: {lat: 35.6762, lng: 139.6503},
-  newyork: {lat: 40.7128, lng: -74.0060},
-  rio: {lat: -22.9068, lng: -43.1729}
-};
 const state = {
   history: readHistory(), running: false, paused: false, busy: false,
   turbo: false, provider: null, current: null, origin: null,
   abort: null, timer: null, gaze: null, interest: null, planBaseSeconds: 16,
-  generation: 0, map: null, mapLayer: null, leaflet: null
+  generation: 0, map: null, mapLayer: null, leaflet: null,
+  tour: null, tourIndex: 0, tourViewed: 0, tourSkipped: 0, lastTourStop: null
 };
 
 function setStatus(message, kind = '') {
@@ -38,7 +34,7 @@ function cleanTimer() {
   state.timer = null;
 }
 function refreshControls() {
-  $('startBtn').textContent = state.running ? '■ Остановить' : '▶ Запустить';
+  $('startBtn').textContent = state.running ? '■ Остановить' : state.tour ? '▶ Экскурсия' : '▶ Запустить';
   $('pauseBtn').disabled = !state.running;
   $('pauseBtn').textContent = state.paused ? '▶ Продолжить' : 'Ⅱ Пауза';
   $('nextBtn').disabled = !state.running || state.busy;
@@ -52,14 +48,30 @@ function updateRadius(radius, note) {
   if (note) $('radiusHint').textContent = note;
 }
 function getOrigin() {
-  const key = $('originChoice').value;
-  if (key === 'random') return {...CITY[Object.keys(CITY)[Math.floor(Math.random() * Object.keys(CITY).length)]]};
-  if (key !== 'custom') return {...CITY[key]};
-  const vals = $('latlng').value.split(/[,;\s]+/).filter(Boolean).map(Number);
-  if (vals.length !== 2 || !vals.every(Number.isFinite) || vals[0] < -90 || vals[0] > 90 || vals[1] < -180 || vals[1] > 180) {
-    throw new Error('Укажи корректные координаты: широта, долгота (например 48.8647, 2.3404).');
+  const key=$('originChoice').value;
+  if(key==='random'){
+    const choice=DESTINATIONS[Math.floor(Math.random()*DESTINATIONS.length)];
+    return {lat:choice.lat,lng:choice.lng};
   }
-  return {lat: vals[0], lng: vals[1]};
+  if(key==='custom'){
+    const vals=$('latlng').value.split(/[,;\\s]+/).filter(Boolean).map(Number);
+    if(vals.length!==2||!vals.every(Number.isFinite)||vals[0]<-90||vals[0]>90||vals[1]<-180||vals[1]>180)
+      throw new Error('Укажи координаты широта, долгота (например 48.8647, 2.3404).');
+    return {lat:vals[0],lng:vals[1]};
+  }
+  const place=destinationById(key);
+  if(!place)throw new Error('Неизвестная стартовая точка');
+  return {lat:place.lat,lng:place.lng};
+}
+function updateTourStatus(detail='') {
+  const element=$('tourProgress');
+  if(!state.tour){element.hidden=true;element.textContent='';return}
+  element.hidden=false;
+  const total=state.tour.stops.length;
+  element.textContent='🧭 '+state.tour.title+
+    ' · осмотрено '+state.tourViewed+' / '+total+
+    ' · пропущено '+state.tourSkipped+
+    (detail?' · '+detail:'');
 }
 function chooseProvider() {
   if ($('provider').value === 'google') {
@@ -141,9 +153,11 @@ async function prepareGaze(candidate,controller,generation) {
   $('attentionStatus').textContent=modeLabel + ' · ' + n + ' ' + noun + peopleNote;
   startGaze(candidate,analysis.points);
 }
-function showLocation(candidate) {
+function showLocation(candidate,tourStop=null) {
   $('coords').textContent = candidate.lat.toFixed(5) + ', ' + candidate.lng.toFixed(5);
-  $('placeLabel').textContent = candidate.provider === 'google' ? 'Google Street View' : 'Panoramax 360°';
+  $('placeLabel').textContent = tourStop
+    ? 'Экскурсия: '+tourStop.name+' · рядом ('+distanceKm(tourStop,candidate).toFixed(1)+' км)'
+    : candidate.provider === 'google' ? 'Google Street View' : 'Panoramax 360°';
   $('mapLink').href = candidate.provider === 'google'
     ? 'https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=' + candidate.lat + ',' + candidate.lng
     : 'https://www.openstreetmap.org/?mlat=' + candidate.lat + '&mlon=' + candidate.lng + '#map=15/' + candidate.lat + '/' + candidate.lng;
@@ -162,22 +176,56 @@ async function travel() {
   updateRadius(Number($('radius').value), 'Поиск ещё не посещённых панорам');
   try {
     const visited = new Set(state.history.map(visitKey));
-    const candidate = await findNext({
-      origin,
-      baseRadiusKm: Number($('radius').value),
-      visited,
-      visitedPoints: state.history,
-      minSeparationKm: 0.02,
-      searchAtRadius: options => state.provider.searchAtRadius(options),
-      signal: controller.signal,
-      onExpand: ({radiusKm}) => {
-        if (generation === state.generation) {
-          updateRadius(radiusKm, 'В пределах предыдущего радиуса новые точки не найдены');
-          message('Новые панорамы не обнаружены. Автоматически расширяю радиус до ' +
-            radiusKm.toLocaleString('ru-RU') + ' км…');
+    let candidate, tourResult=null;
+    if(state.tour){
+      const result=await findTourCandidate({
+        tour:state.tour,startIndex:state.tourIndex,visited,
+        visitedPoints:state.history,
+        searchAtRadius:options=>state.provider.searchAtRadius(options),
+        signal:controller.signal,
+        onStop:({index,stop,total})=>{
+          if(generation!==state.generation)return;
+          updateTourStatus('остановка '+(index+1)+'/'+total+': '+stop.name);
+          message('Ищу доступную 360° панораму рядом с «'+stop.name+'»…');
+        },
+        onSkip:({stop})=>{
+          if(generation===state.generation)
+            message('Не удалось найти новую панораму рядом с «'+(stop?.name||'точкой')+'». Продолжаю экскурсию.');
         }
+      });
+      if(!state.running || generation!==state.generation || controller.signal.aborted)return;
+      state.tourSkipped+=result.skipped;
+      if(!result.candidate){
+        const tourName=state.tour.title,seen=state.tourViewed,skipped=state.tourSkipped;
+        stop();
+        setStatus('Экскурсия завершена');
+        updateTourStatus('маршрут завершён');
+        message('Экскурсия «'+tourName+'» завершена. Открыто панорам: '+seen+
+          ', пропущено остановок: '+skipped+'. Недоступность в выборке не означает отсутствия панорам.');
+        return;
       }
-    });
+      tourResult=result;
+      candidate=result.candidate;
+      updateRadius(candidate.searchRadiusKm,
+        'Реально найденная панорама неподалёку от '+result.stop.name);
+    } else {
+      candidate = await findNext({
+        origin,
+        baseRadiusKm: Number($('radius').value),
+        visited,
+        visitedPoints: state.history,
+        minSeparationKm: 0.02,
+        searchAtRadius: options => state.provider.searchAtRadius(options),
+        signal: controller.signal,
+        onExpand: ({radiusKm}) => {
+          if (generation === state.generation) {
+            updateRadius(radiusKm, 'В пределах предыдущего радиуса новые точки не найдены');
+            message('Новые панорамы не обнаружены. Автоматически расширяю радиус до ' +
+              radiusKm.toLocaleString('ru-RU') + ' км…');
+          }
+        }
+      });
+    }
     if (!state.running || generation !== state.generation || controller.signal.aborted) return;
     setStatus('Загрузка панорамы…', 'warn');
     await state.provider.show(candidate, $('viewer'));
@@ -185,10 +233,16 @@ async function travel() {
     const previous = state.current || state.origin;
     const jumpDistance = distanceKm(previous, candidate);
     state.current = candidate;
+    if(tourResult){
+      state.tourIndex=tourResult.index+1;
+      state.tourViewed++;
+      state.lastTourStop=tourResult.stop;
+    }
     const saved = addVisit(state.history, candidate);
     state.history = saved.entries;
-    showLocation(candidate);
-    updateRadius(candidate.searchRadiusKm, candidate.expansions
+    showLocation(candidate,tourResult?.stop);
+    updateTourStatus();
+    if(!tourResult)updateRadius(candidate.searchRadiusKm, candidate.expansions
       ? 'Поиск расширен ' + candidate.expansions + ' раз(а)'
       : 'Найдено в начальном радиусе');
     message('✓ Новая панорама • прыжок ' + jumpDistance.toFixed(2) + ' км' +
@@ -218,18 +272,21 @@ async function travel() {
 function run() {
   if (state.running) {stop(); return;}
   try {
-    state.origin = getOrigin();
+    state.origin = state.tour ? {lat:state.tour.stops[0].lat,lng:state.tour.stops[0].lng} : getOrigin();
     state.provider = chooseProvider();
   } catch (e) {
     message(e.message, true);
     return;
   }
   state.current = null;
+  if(state.tour){state.tourIndex=0;state.tourViewed=0;state.tourSkipped=0;state.lastTourStop=null;updateTourStatus('начинаем');}
+  else updateTourStatus();
   state.running = true;
   state.paused = false;
   state.generation++;
   refreshControls();
-  message('Маршрут запущен. Начинаю с радиуса ' + $('radius').value + ' км.');
+  message(state.tour ? 'Экскурсия «'+state.tour.title+'» запущена. Покажу доступные 360° панорамы рядом с остановками маршрута.' :
+    'Маршрут запущен. Начинаю с радиуса ' + $('radius').value + ' км.');
   travel();
 }
 function togglePause() {
@@ -388,6 +445,38 @@ $('interestMode').addEventListener('change', () => {
     }).finally(()=>{state.busy=false;refreshControls();});
   }
 });
+const select=$('originChoice');
+select.replaceChildren();
+for(const place of DESTINATIONS){
+  const option=document.createElement('option');
+  option.value=place.id;option.textContent=place.emoji+' '+place.name+', '+place.country;
+  select.append(option);
+}
+for(const [id,label] of [['random','🎲 Случайное место'],['custom','📍 Свои координаты']]){
+  const option=document.createElement('option');option.value=id;option.textContent=label;select.append(option);
+}
+select.value='paris';
+let discovery;
+discovery=installDiscovery({
+  onFree(){
+    if(state.tour){if(state.running)stop();state.tour=null;updateTourStatus();refreshControls();}
+  },
+  onTour(tour){
+    if(state.running)stop();
+    state.tour=tour;state.tourIndex=0;state.tourViewed=0;state.tourSkipped=0;state.lastTourStop=null;
+    updateTourStatus('маршрут выбран');
+    refreshControls();
+    run();
+  },
+  onDestination(place){
+    if(state.running)stop();
+    state.tour=null;updateTourStatus();
+    discovery.selectTab('explore');
+    select.value=place.id;
+    run();
+  }
+});
+installFullscreen({panel:$('viewerPanel'),button:$('fullscreenBtn')});
 if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
   $('motionStyle').value='off';
   stageText('Автодвижение выключено по системным настройкам');
