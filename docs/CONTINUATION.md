@@ -1,66 +1,10 @@
-## R5 public release verified — 2026-11-22
+## Critical rollback — 2026-11-22
 
-- [PR #14](https://github.com/Hawkar-usls/Janus-Portal/pull/14) merged into main SHA 1426c88a77136b9b2ea6812ee4825f2ec20da4cf.
-- [Main CI 45019779385](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45019779385): PASS 36/36.
-- [Pages deploy 45019779402](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45019779402): SUCCESS; HTTPS build meta 1426c88a7713 HTTP 200.
-- Tested public URL: https://hawkar-usls.github.io/Janus-Portal/?r5=1426c88a
-- Real Edge on public HTTPS: hero 'Начать путешествие сейчас' loaded credited Panoramax Reine SD image as interactive 360; gaze rotated 0°->50.7°.
-- CDN JS (unpkg/jsdelivr) and Panoramax metadata API deliberately blocked during browser test: quick-start still loaded and animated. 19 tour / 70 destination catalogue, regional filters, fullscreen and empty-provider safeguards passed.
-- R5 uses first-party WebGL sphere and source attribution, 9s image timeout, 18s overall search budget, direct known real demo image; WebGL-disabled browser sees a labeled static preview. Google undefined vars fixed; live official key still outstanding.
-- REMAINING UNKNOWN: end-user's actual network and browser. Remote Yaksa PASS is not proof the end-user sees it. If user still gets no response, inspect displayed error, `github.io` access, actual Panoramax photo-host access, browser extensions/embedded views, and hosting alternative with properly authorized connection.
-
-## R5 critical start repair — 2026-11-22
-
-- User twice reported: «не работает», then «не работает и не запускает ничего». Prior main Pages loaded correctly on Yaksa desktop/mobile, but this did NOT prove it worked in the user's browser. We found a definite broken Google path and several potential first-visit blockers.
-- Feature branch: fix/start-reliability-native-viewer-r5. Priority: working first click / no indefinite loading, rather than more catalogue additions.
-- New prominent hero button «Начать путешествие сейчас» opens independently verified Reine/Norway Panoramax 360 photo directly from an openly licensed SD asset (Luc Girod, CC-BY-SA-4.0). It DOES NOT require a Panoramax metadata API call, jsdelivr or unpkg. Repeat views do not count as unique again.
-- Native WebGL equirectangular panorama implementation src/native-panorama.js with natural gaze integration, drag and wheel, proper vertical image orientation, artist/license/source credit; static preview when WebGL unavailable (do not claim 360 for fallback). Automatically cancels in-flight images on Stop.
-- GoogleProvider.searchAtRadius had undefined probeCount, visitedPoints and minSeparationKm, a real runtime ReferenceError; now explicitly accepts them. Unit fixture test passes; real credential-gated Google E2E remains open.
-- Panoramax metadata queries have 6.5s timeout, return upon first valid candidate; entire search has 18s budget. On error, visible actionable message and START button resets, rather than inert-looking STOP.
-- Yaksa Node: 36/36 tests PASS. Real Edge local first-click pano + gaze PASS (source image upright). With jsdelivr, unpkg, api.panoramax.xyz blocked in browser, direct quick start and camera movement still PASS. Disabled WebGL -> attributed static image PASS; no uncaught page JS errors.
-- tools/browser-start-check.mjs is the reproducible R5 smoke script. tools/browser-extreme-live-check.mjs and browser-gaze-check.mjs updated for native viewer. Main release gates pending at writing: PR, CI, Pages HTTPS and user-specific access.
-- If user still reports failure AFTER R5 deploy, DO NOT claim fixed for their network: obtain exact error or screenshot and verify whether github.io, panoramax.openstreetmap.fr or JS modules are blocked; use an authorized alternative hosting provider only with actual account access. Vercel connector previously returned forbidden for owner's team; do not invent a Vercel URL.
-
-## R4 merge & public HTTPS validation — 2026-11-22
-
-- [PR #11](https://github.com/Hawkar-usls/Janus-Portal/pull/11) **merged** to main (squash SHA: 99d9ffbc34c95a5a612d830a4e8c4c5beed9deb1).
-- [Main CI 45015425907](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45015425907): **PASS 33/33**.
-- [Pages 45015425891](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45015425891): **SUCCESS**. Live URL: https://hawkar-usls.github.io/Janus-Portal/.
-- **Edge/Playwright on live HTTPS:** 70 destinations / 19 tours, 33 extreme / 7 extreme, India/Africa regional filters, fullscreen/mobile fallback ESC, mocked empty Cairo and Spiti sources -> 0 fictitious visits or J Coins, all PASS, no JS exceptions.
-- **Actual live Panoramax 360** at Reine/Norway (67.92775, 13.07143) opened on public HTTPS; local visit=1, gaze started. Reproduce with tools/browser-extreme-live-check.mjs and tools/browser-discovery-check.mjs, PORTAL_URL set to public Pages URL, Playwright installed, BROWSER_PATH set for Edge or Chrome.
-- **OPEN:** remote India/Africa 360 coverage remains sparse/unknown. Panoramax first-page samples (Chitkul, Opuwo, Lake Bunyonyi) had no 360 and Mhamid 5 flat images. [Issue #12](https://github.com/Hawkar-usls/Janus-Portal/issues/12) tracks independent provider coverage auditing, permitted expansion and no false photo/place pairing. Do not claim these locations are explorable in 360 until verified.
-- Main JANUS site tab (#1), real server-side J Coin wallet (#2), leaderboard (#3), Google API restricted key (#4) and semantic calibration (#9) still unresolved.
-
-## R4 «Экстремальный туризм» / удалённые сёла — 2026-11-22
-
-- Feature branch: feat/extreme-rural-expeditions-r4. User asked for extreme-tourism places in free random Portal AND a new excursion category, especially rural India and Africa. Interpret extreme as remoteness/terrain, NOT a judgement of residents or national income.
-- src/tours.js: 37→70 starting places, 12→19 tours; 33 remote destinations, 7 extreme excursions; four subfilters (India, Africa, other Asia, world) and region-aware random picker.
-- src/app.js: global random includes remote; separate remote-world, random India and random Africa starts. Preserved free radius 5→10→20… and tour nearby checks 2–4km; no new J Coin payouts.
-- Edge on Yaksa: 33/33 local tests PASS. tools/browser-discovery-check.mjs PASS with 19 tours, 70 places, regional filters, Cairo & Spiti mocked empty-panorama source → 0 fake visits/JC, and mobile fullscreen ESC.
-- Genuine Edge/Playwright Panoramax Reine, Norway photo opened at 67.92775, 13.07143, 1 unique visit and natural gaze. tools/browser-extreme-live-check.mjs reproduces; imagery may change.
-- Panoramax first-page samples: Chitkul 0 images, Mhamid 5 images but 0 360, Opuwo 0, Bunyonyi 0, Reine 26 images and 1 360. Do not claim exhaustive coverage.
-- Documentation: docs/EXTREME_RURAL_R4.md. PR/CI/Pages gate pending; inspect Actions before promoting a status.
-- Main-site tab, auth, server J Coins, leaderboard and Google restricted browser key remain blocked.
-
-## R3 merge and live deployment verified — 2026-11-22
-
-- [PR #10](https://github.com/Hawkar-usls/Janus-Portal/pull/10) **merged**: `24f6e737413c31ddb7ba55c251536a2791cae290`.
-- Main [CI 45014029643](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45014029643): **29/29 tests PASS**.
-- [GitHub Pages 45014029614](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45014029614): **SUCCESS**. Public URL **https://hawkar-usls.github.io/Janus-Portal/**. HTML and all new JS files `src/tours.js`, `src/tour-runner.js`, `src/discovery.js`, `src/fullscreen.js` returned **HTTP 200**.
-- Real **Edge on public HTTPS**: tabs showed 12 tours, 37 destinations; Cairo/Giza searchable; Paris guided tour opened a genuine Panoramax photo **~1.2km from Eiffel Tower**; native fullscreen entered with `viewerPanel` height 980px and collapsed; **0 JS page errors**.
-- Local Edge additional: planned route displayed **5 ordered stops + polyline**, simulated mobile no-Fullscreen-API immersive panel 844px and ESC restore; **0 JS errors**.
-- Production-site browser with a *mocked empty Panoramax API* correctly handled Egyptian tour: **7 stops skipped, 0 visits, JC not awarded**; no JS exceptions. This is the safe fallback, not a claim that Egypt is without panoramas.
-- Added `tools/browser-discovery-check.mjs` to reproduce tabs/fullscreen/mobile/zero-coverage checks using optional Playwright; Pages workflow now scoped to application source changes to avoid doc-only redeploys.
-- Remaining external dependencies: actual JANUS site editor/auth and J Coin wallet (#1–3), Google Street View browser key restrictions/real Cairo imagery (#4), held-out object attention calibration (#9). **Do not claim these closed.**
-
-## R3 excursion/fullscreen update — 2026-11-22
-
-- Feature branch `feat/immersive-discovery-tours-r3`, new feature PR pending. Explicit user requirement: immersive/fullscreen panorama that can be collapsed, many more starting locations, dedicated Cairo / landmark tourist excursion tabs in the spirit of Microsoft Flight Simulator Discovery Flights.
-- Created `src/tours.js`: 37 curated starting locations, 12 themed routes, notably Cairo/Giza/Luxor and world wonders; `src/tour-runner.js` searches the actual panorama provider within **2 then 4 km** of each planned stop (max 2 probes/radius). Absent or previously viewed images are skipped, not replaced by a different city's photo. Ordinary autonomous radius stays **5→10→20→…20,000 km**.
-- Added `src/discovery.js` accessible tabs, search/category filters and stop summaries; `src/fullscreen.js` native Fullscreen API with button/ESC exit and CSS fallback. Routes display planned markers on the interactive map.
-- Yaksa local Node v24 `npm run verify`: **29/29 PASS**. Edge real browser: 12 tours, 37 destinations, Cairo/Giza search present, Paris landmark tour opened an actual Panoramax photo **0.8 km from Eiffel Tower**, native fullscreen `#viewerPanel` entered at **980px** then collapsed; uncaught JavaScript errors **0**. Simulated Panoramax with zero features in Cairo route: **7 stops skipped, 0 visits, J Coins remain —**, no JS errors.
-- A direct Panoramax first-page query for sampled Giza, Egyptian Museum Cairo, and Karnak bounding boxes returned 0 photos in each on 2026-11-22. This is **not exhaustive** and **not proof that the sites lack all 360 imagery**. Google mode still needs a properly limited browser key, API+quota, and live verification.
-- See `docs/DISCOVERY_TOURS_R3.md` for implementation and exact gates. Pending merge/deploy on a successful PR + Pages; check Actions and deployed URL before claiming it live.
+- User reported that later Portal builds rendered styled HTML but **none of the controls initialized**. The screenshot contained the R5 watchdog "Код Портала не загрузился". The original JS failure was not captured.
+- Emergency production rollback restores the **first published, proven R2** tree at `1b34bff74e2239d34cbdc09c1753df1041d63dc2`. Confirmed Edge on Yaksa locally: live Paris panorama, gaze, 23/23 tests, 0 uncaught JS errors.
+- **Do not lose later work:** full R5 and all tours/extreme/fullscreen features backed up in `archive/r5-before-r2-rollback-20261122` (SHA `20fd3848927b4e93346498df95eddaaa6e88aed1`). See [ROLLBACK_2026-11-22.md](ROLLBACK_2026-11-22.md).
+- A plausible regression is the more complex asset/module graph and commit-specific `assets/<sha>` paths, but exact root cause **NOT independently established**. R5 passed Yaksa, so user-browser access remains the decisive gate.
+- Restore additional features only after user independently confirms R2 launch. No JC awards, no unapproved Google keys.
 
 # JANUS PORTAL — Resumption / next agent checklist (2026-11-22)
 
