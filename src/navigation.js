@@ -61,13 +61,14 @@ export function visitKey(candidate) {
   return String(candidate.provider) + ':' + String(candidate.id);
 }
 
-export function chooseCandidate(candidates, origin, radiusKm, visited = new Set(), random = Math.random) {
+export function chooseCandidate(candidates, origin, radiusKm, visited = new Set(), random = Math.random, visitedPoints = [], minSeparationKm = 0) {
   const unique = new Map();
   for (const c of candidates || []) {
     if (!c || !c.id || !c.provider || !Number.isFinite(c.lat) || !Number.isFinite(c.lng)) continue;
     if (c.lat < -90 || c.lat > 90 || c.lng < -180 || c.lng > 180) continue;
     const key = visitKey(c);
     if (visited.has(key) || unique.has(key)) continue;
+    if (minSeparationKm > 0 && visitedPoints.some(point => distanceKm(point, c) < minSeparationKm)) continue;
     const km = distanceKm(origin, c);
     if (km <= radiusKm + 0.005) unique.set(key, {...c, distanceKm: km});
   }
@@ -80,7 +81,8 @@ export function chooseCandidate(candidates, origin, radiusKm, visited = new Set(
 
 export async function findNext({
   origin, baseRadiusKm = DEFAULT_RADIUS_KM, maxRadiusKm = MAX_RADIUS_KM,
-  visited = new Set(), searchAtRadius, random = Math.random, onExpand = () => {}, signal
+  visited = new Set(), visitedPoints = [], minSeparationKm = 0,
+  searchAtRadius, random = Math.random, onExpand = () => {}, signal
 }) {
   if (!origin || !Number.isFinite(origin.lat) || !Number.isFinite(origin.lng)) {
     throw new TypeError('A valid origin is required');
@@ -93,7 +95,7 @@ export async function findNext({
     if (i) onExpand({radiusKm, previousRadiusKm: radii[i - 1], step: i});
     const results = await searchAtRadius({origin, radiusKm, visited, random, signal});
     if (signal?.aborted) throw new DOMException('Search cancelled', 'AbortError');
-    const next = chooseCandidate(results, origin, radiusKm, visited, random);
+    const next = chooseCandidate(results, origin, radiusKm, visited, random, visitedPoints, minSeparationKm);
     if (next) return {...next, searchRadiusKm: radiusKm, expansions: i};
   }
   const error = new Error('Не удалось найти новую панораму в проверенных выборках даже при расширении поиска.');
