@@ -42,6 +42,9 @@ test('missing source cannot masquerade as a local Korea or Cairo 360 photo',()=>
   assert.match(app,/Не подменяем их фотографиями другой страны/);
   assert.match(app,/state\.running = false/);
   assert.equal(app.includes('ссылки на внешние 360°'),false);
-  assert.ok(html.includes('покрытие Panoramax пока не подтверждено'));
+  assert.ok(html.includes('свежими 360°-метаданными Panoramax'));
+  assert.ok(html.includes('id="originCatalog"'));
+  assert.ok(!html.includes('<option value="random">'));
+  assert.ok(!html.includes('<option value="random-verified">'));
   assert.ok(html.includes('все 360° открываются здесь'));
 });
