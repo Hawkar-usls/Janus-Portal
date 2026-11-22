@@ -63,3 +63,11 @@ body.portal-immersive-fallback{overflow:hidden}
 .extreme-region-filters .discovery-filter{font-size:11px;border-style:dashed}
 .extreme-region-filters .discovery-filter.active{border-style:solid}
 @media(max-width:560px){.extreme-region-filters{gap:5px}.extreme-region-filters .discovery-filter{font-size:10px;padding:7px 9px}}
+
+/* R5: first-visit launch visible above the fold, including on phones. */
+.quick-start{display:flex;align-items:flex-start;flex-wrap:wrap;gap:11px;margin:20px 0 0}
+.quick-start button{font-size:15px;padding:13px 20px;box-shadow:0 6px 22px #01c9a52b}
+.quick-start small{font-size:12px;line-height:1.5;color:#8bb8c7;max-width:240px;padding-top:6px}
+.build-revision{display:inline-block;margin-left:14px;color:#7790a5;font-size:10px}
+.native-panorama-canvas:focus{outline:2px solid #78e2db}
+@media(max-width:600px){.quick-start{flex-direction:column}.quick-start button{width:100%}}

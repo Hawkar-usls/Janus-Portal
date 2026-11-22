@@ -11,6 +11,22 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script type="module" src="./src/app.js"></script>
+  <script>
+    // Remain visible when an ES-module import is blocked by a browser, network
+    // filter or extension: users should never see an inert Start button.
+    window.addEventListener('DOMContentLoaded',()=>{
+      setTimeout(()=>{
+        if(window.__JANUS_PORTAL_READY__)return;
+        const notice=document.getElementById('notice');
+        if(notice){
+          notice.textContent='⚠ Код Портала не загрузился. Проверь, не блокирует ли браузер JavaScript или домен github.io. Обнови страницу. Если не помогает — пришли скриншот этого сообщения.';
+          notice.classList.add('error');
+        }
+        const button=document.getElementById('quickStartBtn');
+        if(button)button.textContent='⚠ Загрузка заблокирована';
+      },6500);
+    });
+  </script>
 </head>
 <body>
   <div class="app">
@@ -26,6 +42,10 @@
         <div><span class="eyebrow">◈ АВТОНОМНЫЙ ИССЛЕДОВАТЕЛЬ</span>
           <h1>Весь мир —<br><em>один прыжок.</em></h1>
           <p>Смотри по сторонам, открывай новые места и собирай собственную историю путешествий.</p>
+          <div class="quick-start">
+            <button type="button" id="quickStartBtn" class="primary" aria-label="Открыть проверенную 360-градусную панораму">▶ Начать путешествие сейчас</button>
+            <small>Быстрый старт: Рейне, Норвегия — проверенный источник Panoramax 360°</small>
+          </div>
         </div>
         <div class="hero-orbit" aria-hidden="true">🌐</div>
       </section>

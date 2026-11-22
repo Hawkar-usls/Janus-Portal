@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {PanoramaxProvider} from '../src/providers.js';
+import {PanoramaxProvider,GoogleProvider} from '../src/providers.js';
+import {QUICK_START_PANORAMA} from '../src/quick-start.js';
 
 const origin={lat:48.86473,lng:2.34041};
 function feature(id,lat,lng,fieldOfView=360){
@@ -38,4 +39,42 @@ test('rejects flat panoramax photos and previously visited IDs',async()=>{
    });
    assert.equal(results.length,0);
  }finally{globalThis.fetch=oldFetch;}
+});
+
+test('Google source search uses provided probe budget and visited positions',async()=>{
+  const provider=new GoogleProvider('test-key-not-loaded');
+  provider.ready=async()=>({});
+  let calls=0;
+  provider.service={getPanorama:async()=>{
+    calls++;
+    return {data:{location:{pano:'google-public-pano-fixture',latLng:{
+      lat:()=>origin.lat+.001,lng:()=>origin.lng+.001
+    }}}};
+  }};
+  const samples=await provider.searchAtRadius({
+    origin,radiusKm:5,visited:new Set(),visitedPoints:[],probeCount:1,
+    minSeparationKm:.02,random:()=>.4
+  });
+  assert.equal(samples.length,1);
+  assert.equal(samples[0].provider,'google');
+  assert.equal(calls,1);
+  const repeats=await provider.searchAtRadius({
+    origin,radiusKm:5,visited:new Set(['google:google-public-pano-fixture']),
+    visitedPoints:[],probeCount:1,random:()=>.4
+  });
+  assert.deepEqual(repeats,[]);
+  const nearby=await provider.searchAtRadius({
+    origin,radiusKm:5,visited:new Set(),
+    visitedPoints:[{lat:origin.lat+.001,lng:origin.lng+.001}],
+    minSeparationKm:.1,probeCount:1,random:()=>.4
+  });
+  assert.deepEqual(nearby,[]);
+});
+test('quick start uses a real, attributed equirectangular source without API lookup',()=>{
+  assert.equal(QUICK_START_PANORAMA.provider,'panoramax');
+  assert.ok(QUICK_START_PANORAMA.id.length>15);
+  assert.ok(QUICK_START_PANORAMA.previewUrl.startsWith('https://panoramax.openstreetmap.fr/'));
+  assert.equal(QUICK_START_PANORAMA.license,'CC-BY-SA-4.0');
+  assert.ok(QUICK_START_PANORAMA.producer);
+  assert.ok(QUICK_START_PANORAMA.lat>60&&QUICK_START_PANORAMA.lat<70);
 });

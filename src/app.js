@@ -7,6 +7,7 @@ import {DESTINATIONS,destinationById,pickRandomDestination} from './tours.js';
 import {findTourCandidate} from './tour-runner.js';
 import {installDiscovery} from './discovery.js';
 import {installFullscreen} from './fullscreen.js';
+import {QUICK_START_PANORAMA} from './quick-start.js';
 
 const $ = id => document.getElementById(id);
 const state = {
@@ -169,21 +170,30 @@ function showLocation(candidate,tourStop=null) {
     : 'https://www.openstreetmap.org/?mlat=' + candidate.lat + '&mlon=' + candidate.lng + '#map=15/' + candidate.lat + '/' + candidate.lng;
   $('mapLink').hidden = false;
 }
-async function travel() {
+async function travel(firstCandidate=null) {
   if (!state.running || state.paused || state.busy) return;
   cleanTimer();
   state.busy = true;
   const generation = state.generation;
   const controller = new AbortController();
   state.abort = controller;
+  // Preserve the default 5km adaptive explorer, but never leave the visitor
+  // waiting indefinitely on a blocked remote network or unpopulated region.
+  let searchExpired=false;
+  const searchBudget=firstCandidate?null:setTimeout(()=>{
+    searchExpired=true;
+    controller.abort();
+  },18000);
   refreshControls();
-  setStatus('Поиск новой точки…', 'warn');
+  setStatus(firstCandidate?'Открываю проверенную панораму…':'Поиск новой точки…', 'warn');
   const origin = state.current || state.origin;
   updateRadius(Number($('radius').value), 'Поиск ещё не посещённых панорам');
   try {
     const visited = new Set(state.history.map(visitKey));
-    let candidate, tourResult=null;
-    if(state.tour){
+    let candidate=firstCandidate, tourResult=null;
+    if(firstCandidate){
+      updateRadius(0,'Прямое открытие проверенной панорамы без поиска API');
+    } else if(state.tour){
       const result=await findTourCandidate({
         tour:state.tour,startIndex:state.tourIndex,visited,
         visitedPoints:state.history,
@@ -232,9 +242,10 @@ async function travel() {
         }
       });
     }
+    if(searchBudget!==null)clearTimeout(searchBudget);
     if (!state.running || generation !== state.generation || controller.signal.aborted) return;
     setStatus('Загрузка панорамы…', 'warn');
-    await state.provider.show(candidate, $('viewer'));
+    await state.provider.show(candidate, $('viewer'),{signal:controller.signal});
     if (!state.running || generation !== state.generation || controller.signal.aborted) return;
     const previous = state.current || state.origin;
     const jumpDistance = distanceKm(previous, candidate);
@@ -248,25 +259,35 @@ async function travel() {
     state.history = saved.entries;
     showLocation(candidate,tourResult?.stop);
     updateTourStatus();
-    if(!tourResult)updateRadius(candidate.searchRadiusKm, candidate.expansions
+    if(!tourResult&&!firstCandidate)updateRadius(candidate.searchRadiusKm, candidate.expansions
       ? 'Поиск расширен ' + candidate.expansions + ' раз(а)'
       : 'Найдено в начальном радиусе');
-    message('✓ Новая панорама • прыжок ' + jumpDistance.toFixed(2) + ' км' +
+    message((saved.added?'✓ Новая панорама':'✓ Повторное открытие (без нового посещения)') + ' • прыжок ' + jumpDistance.toFixed(2) + ' км' +
       (candidate.provider === 'google' ? ' • Google: только статистика текущей сессии' : saved.persisted ? ' • сохранено в локальной истории' : ' • локальное сохранение недоступно') +
       '. JC пока не начисляются.');
     renderStats();
     await prepareGaze(candidate,controller,generation);
     if (state.paused) setStatus('Пауза');
   } catch (error) {
-    if (error?.name !== 'AbortError' && state.running && generation === state.generation) {
-      const noPoints = error?.name === 'NoLocationsError';
-      message(noPoints
-        ? 'Поиск по доступным выборкам завершён без новых 360° панорам. Можно выбрать другой город или источник. Это не доказывает, что все места посещены.'
-        : 'Ошибка: ' + (error?.message || String(error)), true);
-      setStatus(noPoints ? 'Места не найдены' : 'Ошибка', 'warn');
-      state.paused = true; // avoid infinite chargeable requests and tight retry loops
+    if(state.running && generation===state.generation &&
+       (searchExpired||error?.name!=='AbortError')){
+      const noPoints=error?.name==='NoLocationsError';
+      const failedMessage=searchExpired
+        ? 'Поиск занял больше 18 секунд и остановлен. Источник панорам может быть недоступен или выбранный район пока не покрыт. Нажми «Начать путешествие сейчас» для проверенного примера.'
+        : noPoints
+          ? 'В проверенных выборках новых 360° панорам не нашлось. Попробуй другую локацию или кнопку быстрого старта.'
+          : 'Не удалось открыть панораму: '+(error?.message||String(error))+
+            '. Можно попробовать быстрый старт или другой источник.';
+      message(failedMessage,true);
+      setStatus(searchExpired?'Нет ответа':noPoints?'Нет панорам':'Ошибка загрузки','warn');
+      // On a failed first start, reset the button to "Start" instead of
+      // requiring a confusing extra click on "Stop" before retry.
+      state.running=false;
+      state.paused=false;
+      state.gaze?.stop();
     }
   } finally {
+    if(searchBudget!==null)clearTimeout(searchBudget);
     if (generation === state.generation) {
       state.busy = false;
       state.abort = null;
@@ -275,11 +296,13 @@ async function travel() {
     }
   }
 }
-function run() {
-  if (state.running) {stop(); return;}
+function run(firstCandidate=null) {
+  if(state.running){stop();if(!firstCandidate)return}
   try {
-    state.origin = state.tour ? {lat:state.tour.stops[0].lat,lng:state.tour.stops[0].lng} : getOrigin();
-    state.provider = chooseProvider();
+    state.origin = firstCandidate
+      ? {lat:firstCandidate.lat,lng:firstCandidate.lng}
+      : state.tour?{lat:state.tour.stops[0].lat,lng:state.tour.stops[0].lng}:getOrigin();
+    state.provider = firstCandidate?new PanoramaxProvider():chooseProvider();
   } catch (e) {
     message(e.message, true);
     return;
@@ -293,7 +316,7 @@ function run() {
   refreshControls();
   message(state.tour ? 'Экскурсия «'+state.tour.title+'» запущена. Покажу доступные 360° панорамы рядом с остановками маршрута.' :
     'Маршрут запущен. Начинаю с радиуса ' + $('radius').value + ' км.');
-  travel();
+  travel(firstCandidate);
 }
 function togglePause() {
   if (!state.running) return;
@@ -504,7 +527,16 @@ if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
   $('motionStyle').value='off';
   stageText('Автодвижение выключено по системным настройкам');
 }
-$('startBtn').addEventListener('click', run);
+$('startBtn').addEventListener('click',()=>run());
+$('quickStartBtn').addEventListener('click',()=>{
+  if(state.running)stop();
+  state.tour=null;updateTourStatus();
+  $('provider').value='panoramax';
+  $('googleKeyWrap').hidden=true;
+  select.value='reine';
+  run(QUICK_START_PANORAMA);
+  $('viewerPanel').scrollIntoView?.({behavior:'smooth',block:'start'});
+});
 $('pauseBtn').addEventListener('click', togglePause);
 $('nextBtn').addEventListener('click', skip);
 $('downloadBtn').addEventListener('click', downloadHistory);
@@ -521,3 +553,4 @@ $('resetBtn').addEventListener('click', () => {
 });
 refreshControls();
 renderStats();
+window.__JANUS_PORTAL_READY__=true;

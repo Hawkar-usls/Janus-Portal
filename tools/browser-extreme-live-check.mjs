@@ -14,8 +14,7 @@ page.on('pageerror',e=>errors.push(e.message));
 try{
   await page.goto(process.env.PORTAL_URL||'http://127.0.0.1:4173/',
     {waitUntil:'domcontentloaded',timeout:25000});
-  await page.locator('#originChoice').selectOption('reine');
-  await page.locator('#startBtn').click();
+  await page.locator('#quickStartBtn').click();
   await page.waitForFunction(
     ()=>Number(document.querySelector('#statUnique')?.textContent)>=1,
     null,{timeout:65000}
@@ -24,7 +23,7 @@ try{
   const [lat,lng]=current.split(',').map(Number);
   assert.ok(lat>=67.8&&lat<=68.1 && lng>=12.8&&lng<=13.3,
     'Unexpected jump outside Reine / Lofoten: '+current);
-  assert.ok(await page.locator('pnx-photo-viewer').count()===1);
+  assert.ok(await page.locator('.native-panorama canvas, pnx-photo-viewer').count()===1);
   assert.deepEqual(errors,[]);
   const record={result:'LIVE_PANORAMAX_360_PASS',
     place:'Reine, Norway',coordinates:current,

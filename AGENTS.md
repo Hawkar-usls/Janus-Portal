@@ -31,6 +31,7 @@
 - `src/discovery.js` and `src/fullscreen.js`: tabs, catalogue filters and accessible panorama fullscreen/ESC/mobile fallback.
 - `src/gaze.js`: R2 natural gaze choreography with eased turns, focus, squint, returns, variable dwell, pause/resume/stop; no API calls.
 - `src/attention.js`: Panoramax-only local contrast saliency and optional MediaPipe object/person inference; **never** process Google photos.
+- `src/native-panorama.js`: R5 self-contained WebGL equirectangular Panoramax renderer (licensed SD photo with credit; static fallback). `src/quick-start.js`: verified CC-BY-SA Reine photo for first-click demo without metadata API or third-party JS. `tools/browser-start-check.mjs`: blocks JS CDN and API in Playwright to prove first click still renders.
 - `src/providers.js`: external API adapters. Watch for changed Panoramax web-viewer version and Google API behavior.
 - `src/app.js`: controls, timeline, map, achievements, no global JS coins reward.
 - `src/storage.js`: local Panoramax history; Google session-only.
