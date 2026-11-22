@@ -17,6 +17,16 @@ This file exists so the next authorized ChatGPT agent can continue **without nee
 
 On 2026-11-22 GitHub Actions PR run [45007676303](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45007676303) ran **14/14 tests PASS** including provider spatial deduplication. Edge on Yaksa rendered a real Paris 360° panorama with visible source credits; first visit, Leaflet map, pause/resume worked. A later auto-second-jump test exhausted sampled candidates because the provider filled its result budget with near-identical photos; the provider was patched to filter by 20m *before* that cap and CI passed, but **the second automatic jump has not yet been revalidated in a browser after this fix**. Panoramax API metadata was independently fetched in Paris, Rennes and Lyon. A nonblocking /api/configuration 404 from the third-party viewer was observed.
 
+## R2 publication update — 2026-11-22
+
+- PR [#8](https://github.com/Hawkar-usls/Janus-Portal/pull/8) **merged** into `main`, squash SHA `0c2b6cfd38c2714cc4b578098d4a8a7a82568dd0`.
+- `23/23` tests passed in [main CI](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45012146536).
+- **Live Portal** is available at **https://hawkar-usls.github.io/Janus-Portal/**. Pages enabled via authorized GitHub API (`build_type=workflow`). CI workflow [45012393984](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45012393984) successfully deployed after restoring `src/gaze.js` and `src/attention.js` to the build artifact and adding a 20s artifact-indexing delay.
+- Edge smoke on the published HTTPS site: Panoramax real panorama loaded; x 235.02° → 250.07° (genuine movement), pausing froze pose exactly, resuming worked; no page JS exceptions. Nonblocking Panoramax `/api/configuration` HTTP 404 still appears.
+- Separate local Edge E2E: live squint **zoom 50/100**, a second automatic jump (1→2), and optional local MediaPipe `person` model category score ~0.50 on one Paris image. These results do not imply reliable independent object-detection accuracy; calibration is [issue #9](https://github.com/Hawkar-usls/Janus-Portal/issues/9).
+- Old issues [#6](https://github.com/Hawkar-usls/Janus-Portal/issues/6) and [#7](https://github.com/Hawkar-usls/Janus-Portal/issues/7) closed after successful checks.
+- Existing site tab [#1](https://github.com/Hawkar-usls/Janus-Portal/issues/1), J Coins [#2](https://github.com/Hawkar-usls/Janus-Portal/issues/2), user rankings [#3](https://github.com/Hawkar-usls/Janus-Portal/issues/3), Google restricted key [#4](https://github.com/Hawkar-usls/Janus-Portal/issues/4) remain unresolved. **No server JC awards.**
+
 ## Human Gaze R2 update — 2026-11-22
 
 - Feature branch `feat/human-gaze-r2`, PR [#8](https://github.com/Hawkar-usls/Janus-Portal/pull/8) implements **natural gaze + variable dwell + local visual interest**. See [docs/HUMAN_GAZE_R2.md](HUMAN_GAZE_R2.md).
