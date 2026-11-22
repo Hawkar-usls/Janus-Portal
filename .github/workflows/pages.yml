@@ -30,6 +30,13 @@ jobs:
           cp src/*.js src/styles.css dist/src/
           test -s dist/src/gaze.js
           test -s dist/src/attention.js
+          # GitHub Pages caches both JS and CSS for 600 seconds. HTML can be
+          # newer than these assets: a stale R10 JS with R11 HTML leaves the
+          # selector stuck forever on "Проверяем...". Version BOTH file URLs
+          # atomically from the same deployment SHA; source remains R2 paths.
+          sed -i "s|./src/app.js|./src/app.js?build=${GITHUB_SHA}|g; s|./src/styles.css|./src/styles.css?build=${GITHUB_SHA}|g" dist/index.html
+          grep -Fq "./src/app.js?build=${GITHUB_SHA}" dist/index.html
+          grep -Fq "./src/styles.css?build=${GITHUB_SHA}" dist/index.html
           touch dist/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
