@@ -20,12 +20,14 @@
 - Respect each Panoramax photo's license and credit. Leaflet/OpenStreetMap attribution is mandatory.
 - J Coins are **not** minted by the client. Client local history and test results are not evidence of rewards. Before 1 JC/new visit becomes real, integrate existing JANUS wallet server-side with idempotency, abuse controls, cap and reconciliation. Reuse actual site account identity.
 - Do not run uncontrolled paid Google API search loops; cap calls and detect quota errors. Do not imply Panoramax is available everywhere.
+- **Remote / extreme travel:** do not conflate poverty, a country, or village residents with danger. Stop centres refer to geographic places, not homes or individuals. Coverage is uncertain; if a 360° panorama cannot be confirmed, skip an excursion stop rather than showing a distant photo under the wrong landmark name. Never generate visit rewards from hardcoded catalogue entries.
 - Ask for permissions only if genuinely needed. Don't re-ask for site/repo details already available.
 
 ## Architecture
 
 - `src/navigation.js`: deterministic geodesic jump selection, expansion strategy.
 - `src/tours.js` and `src/tour-runner.js`: R3 curated tourist routes (including Cairo), bounded landmark-local searches, no fake photos or JC rewards.
+- `src/tours.js` R4: 70 start places / 19 tours, 33 remote rural destinations and 7 extreme-tourism routes. Regional India/Africa/Asia/world filters, `pickRandomDestination` with optional region. `docs/EXTREME_RURAL_R4.md` gives evidence and limitations.
 - `src/discovery.js` and `src/fullscreen.js`: tabs, catalogue filters and accessible panorama fullscreen/ESC/mobile fallback.
 - `src/gaze.js`: R2 natural gaze choreography with eased turns, focus, squint, returns, variable dwell, pause/resume/stop; no API calls.
 - `src/attention.js`: Panoramax-only local contrast saliency and optional MediaPipe object/person inference; **never** process Google photos.
@@ -40,4 +42,4 @@
 
 Use labels: `UNIT_PASS`, `LIVE_PROVIDER_PASS`, `BROWSER_E2E_PASS`, `PAGES_DEPLOYED`, `SITE_TAB_LIVE`, `WALLET_BACKEND_PASS`. Never promote a missing gate. Prefer links to concrete run IDs and PRs.
 
-**First read** `docs/CONTINUATION.md`, `docs/DISCOVERY_TOURS_R3.md` and `docs/HUMAN_GAZE_R2.md`; check PR #8 and its verification gates. For browser regression run `tools/browser-gaze-check.mjs` with live Panoramax/Playwright when possible. Never mark actual person identification: only tentative category detections with confidence. The map and J Coins remain separately gated.
+**First read** `docs/CONTINUATION.md`, `docs/EXTREME_RURAL_R4.md`, `docs/DISCOVERY_TOURS_R3.md` and `docs/HUMAN_GAZE_R2.md`; check PR #8 and its verification gates. For browser regression run `tools/browser-gaze-check.mjs` with live Panoramax/Playwright when possible. Never mark actual person identification: only tentative category detections with confidence. The map and J Coins remain separately gated.
