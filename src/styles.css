@@ -43,3 +43,17 @@ body.portal-fullscreen-locked{overflow:hidden}
   .viewer-panel.portal-fullscreen-active .view-foot .label{font-size:8px}
   .viewer-panel.portal-fullscreen-active .notice{padding:5px 10px;font-size:10px;max-height:40px;overflow:hidden}
 }
+
+/* R11 live catalogue inside the original single search. */
+.coverage-bar{display:flex;align-items:center;justify-content:space-between;gap:9px;margin:7px 0 13px}
+.coverage-bar small{margin:0;flex:1;min-width:0;color:#a2d9e2;font-size:11px;line-height:1.5}
+.coverage-refresh{border:1px solid #3b7e8a;border-radius:9px;background:#133947;color:#b6f6ed;padding:8px 10px;font-size:11px;font-weight:700;min-width:88px}
+.coverage-refresh:hover{background:#185363}
+.coverage-refresh:disabled{opacity:.5}
+.manual-origin{padding:11px 13px;margin:14px 0 7px;border:1px solid #29465f;border-radius:11px;background:#0c2131}
+.manual-origin summary{color:#b5dee8;cursor:pointer;font-size:12px;font-weight:700}
+.manual-origin summary:focus-visible{outline:2px solid #7be2d5;outline-offset:3px}
+.manual-origin label{margin:13px 0 7px}
+.manual-origin button{margin-top:10px;width:100%}
+.manual-origin small{margin-top:9px}
+@media(max-width:650px){.coverage-bar{align-items:flex-start}.coverage-refresh{flex:0 0 auto}}

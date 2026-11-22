@@ -17,21 +17,27 @@ test('North Korea Cairo and wider Africa are searchable coordinate starts, not p
   assert.equal(new Set(names).size,17);
   for(const title of ['Северная Корея','Каир и Египет','Другая Африка'])
     assert.ok(html.includes(title));
-  assert.ok(html.includes('не подтверждены')||html.includes('не подтверждённого'));
+  assert.ok(html.includes('id="originCatalog"'));
+  assert.ok(html.includes('id="coverageStatus"'));
+  assert.ok(html.includes('свежими 360°-метаданными'));
 });
 test('unverified search is bounded locally and cannot contaminate existing random pool',()=>{
   assert.match(app,/const LIMITED_COVERAGE_KEYS = new Set\(\[/);
   for(const key of names)assert.ok(app.includes("'"+key+"'"));
   assert.match(app,/const MAX_LIMITED_SEARCH_KM = 40/);
   assert.match(app,/maxRadiusKm:\s*state.limitedCoverage/);
-  assert.match(app,/Object.keys\(CITY\).filter\(id => !LIMITED_COVERAGE_KEYS.has\(id\)\)/);
+  assert.ok(!app.includes("if (key === 'random')"));
+  assert.ok(!app.includes('random-verified'));
+  assert.ok(app.includes('liveCoverage.has'));
   assert.match(app,/state\.running = false/);
   assert.match(app,/Не подменяем их фотографиями другой страны/);
 });
 test('every R7 region is handled by one internal search without external links',()=>{
-  assert.match(html,/<select id="originChoice">/);
+  assert.match(html,/<select id="originChoice"/);
   assert.match(html,/<button id="startBtn" class="primary">▶ Запустить<\/button>/);
-  assert.ok(html.includes('выбранный источник'));
+  assert.ok(html.includes('автоматически каждые 5 минут'));
+  assert.ok(!html.includes('<option value="random">'));
+  assert.ok(!html.includes('<option value="random-verified">'));
   assert.equal(html.includes('external-panorama-links'),false);
   assert.equal(html.includes('sourceGateway'),false);
   assert.equal(html.includes('north-korea-travel.com'),false);

@@ -1,3 +1,13 @@
+## R11 live 360 catalogue instead of random/unverified starts — 2026-11-22
+
+- Latest owner request: remove the two random country choices and show only current source-confirmed 360° places through the single original panorama search, preserving R2 viewer and R10 fullscreen.
+- Branch feat/r11-live-360-catalogue-no-random. Existing src/providers.js now has probePanoramaxCoverage: one no-store Panoramax search per known centre within 1.2km, 120-result cap, 8s timeout, FOV>=300/equirectangular with valid ID, collection, source image asset and photo within 5km of the centre. No new ES module import file.
+- In index.html, the 38 candidate place names are in a hidden inert originCatalog template, not an exposed list. The visible originChoice is built ONLY from verified live results, with updated count/time/failure status and manual refresh button. Both random origin values removed. Auto-refresh on load, visible-tab/online return and every five minutes when idle, with four concurrent requests; stale/failed entries always removed.
+- Manual coordinates are a separate disclosure and launch action (never misrepresented as a confirmed location); Google paid Street View auto catalogue disabled, manual-only restricted browser API key. First discovered Panoramax source photo is opened immediately within the original R2 #viewer, then natural gaze/next jumps unchanged. Failed photo is evicted; no fake visits or coins.
+- Yaksa npm run verify: 45/45 PASS, original five ES imports and R10 fullscreen preserved. Real Edge test tools/browser-live-catalogue-r11-check.mjs: 19/38 API-confirmed areas, Pyongyang/Cairo absent; real Fes Panoramax 360 photo and fullscreen PASS, 0 JS errors. Mock Fes to Kathmandu refresh removes stale; empty and HTTP 503 yield empty list; Google manual-only and mobile PASS.
+- Honest limitations: only known 38 anchor regions scanned; number of available places changes by time and may not be 19. Not global discovery or independently authenticated geotags. Actual photograph might vanish after metadata check.
+- At handoff branch stage, still pending PR/CI, merge, Pages deployment, public HTTPS Edge smoke and owner-browser confirmation. Canonical spec docs/LIVE_CATALOGUE_R11.md. Historical R6/R7 static regional and R8 gateway instructions are superseded.
+
 ## R10 production fullscreen verified — 2026-11-22
 
 - [PR #21](https://github.com/Hawkar-usls/Janus-Portal/pull/21) merged to main as `15625c506e034d538d1e4cc67700992b841e2107`; [Main CI 45027354737](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45027354737) **39/39 PASS**, [GitHub Pages 45027354747](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45027354747) **SUCCESS**.

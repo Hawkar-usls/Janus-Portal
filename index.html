@@ -53,45 +53,48 @@
           <select id="provider"><option value="panoramax">Panoramax · открытые 360°</option><option value="google">Google Street View · API</option></select>
           <div id="googleKeyWrap" hidden><label for="googleKey">Google Maps API-ключ</label><input type="password" id="googleKey" autocomplete="off" placeholder="Ограниченный по домену браузерный ключ"><small>Ключ не сохраняется; Google API может тарифицироваться.</small></div>
           <label for="originChoice">Откуда начинаем</label>
-          <select id="originChoice">
-            <option value="paris">Париж, Франция</option><option value="rennes">Ренн, Франция</option><option value="lyon">Лион, Франция</option>
+          <select id="originChoice" aria-describedby="coverageStatus" disabled>
+            <option value="" selected>⏳ Проверяем доступные 360°…</option>
+          </select>
+          <template id="originCatalog">
+<option value="paris">Париж, Франция</option><option value="rennes">Ренн, Франция</option><option value="lyon">Лион, Франция</option>
             <option value="kyiv">Киев, Украина</option><option value="tokyo">Токио, Япония</option><option value="newyork">Нью-Йорк, США</option>
             <option value="rio">Рио-де-Жанейро, Бразилия</option>
-            <optgroup label="🌏 Южная Азия · реальные 360°">
+            <optgroup label="🌏 Южная Азия · проверяем по API">
               <option value="pune">🇮🇳 Пуна, Индия · улицы</option>
               <option value="kathmandu">🇳🇵 Катманду, Непал · панорамы</option>
             </optgroup>
-            <optgroup label="🌍 Северная Африка · реальные 360°">
+            <optgroup label="🌍 Северная Африка · проверяем по API">
               <option value="fes">🇲🇦 Фес, Марокко · старый город</option>
               <option value="merzouga">🇲🇦 Район Мерзуги, Марокко · Сахара</option>
             </optgroup>
-            <optgroup label="🌴 Юго-Восточная Азия · реальные 360°">
+            <optgroup label="🌴 Юго-Восточная Азия · проверяем по API">
               <option value="cebu">🇵🇭 Себу, Филиппины</option>
               <option value="busay">🇵🇭 Окрестности Себу, Филиппины</option>
               <option value="georgetown">🇲🇾 Джорджтаун, Малайзия</option>
               <option value="balikpulau">🇲🇾 Окрестности Балик-Пулау, Малайзия</option>
               <option value="bayanlepas">🇲🇾 Баян-Лепас, Малайзия</option>
             </optgroup>
-            <optgroup label="🌎 Южная Америка · реальные 360°">
+            <optgroup label="🌎 Южная Америка · проверяем по API">
               <option value="cuenca">🇪🇨 Куэнка, Эквадор · исторический район</option>
               <option value="sayaussi">🇪🇨 Саяуси, Эквадор · окраины</option>
               <option value="ricaurte">🇪🇨 Рикаурте, Эквадор · окрестности</option>
               <option value="banoscuenca">🇪🇨 Район Баньос, Эквадор</option>
               <option value="elvalle">🇪🇨 Юго-восток Куэнки, Эквадор</option>
             </optgroup>
-            <optgroup label="🇰🇵 Северная Корея · Panoramax 360° не подтверждены">
-              <option value="pyongyang">Пхеньян · поиск рядом, без гарантии 360°</option>
-              <option value="kaesong">Кэсон · поиск рядом, без гарантии 360°</option>
-              <option value="wonsan">Вонсан · поиск рядом, без гарантии 360°</option>
+            <optgroup label="🇰🇵 Северная Корея">
+              <option value="pyongyang">Пхеньян</option>
+              <option value="kaesong">Кэсон</option>
+              <option value="wonsan">Вонсан</option>
             </optgroup>
-            <optgroup label="🇪🇬 Каир и Египет · Panoramax 360° не подтверждены">
-              <option value="cairo">Каир · центр, проверить покрытие</option>
-              <option value="giza">Гиза · пирамиды, проверить покрытие</option>
-              <option value="saqqara">Саккара · проверить покрытие</option>
-              <option value="alexandria">Александрия · проверить покрытие</option>
-              <option value="luxor">Луксор · проверить покрытие</option>
+            <optgroup label="🇪🇬 Каир и Египет">
+              <option value="cairo">Каир</option>
+              <option value="giza">Гиза</option>
+              <option value="saqqara">Саккара</option>
+              <option value="alexandria">Александрия</option>
+              <option value="luxor">Луксор</option>
             </optgroup>
-            <optgroup label="🌍 Другая Африка · Panoramax 360° пока не подтверждены">
+            <optgroup label="🌍 Другая Африка">
               <option value="nairobi">Кения · Найроби</option>
               <option value="zanzibar">Танзания · Занзибар</option>
               <option value="kampala">Уганда · Кампала</option>
@@ -102,12 +105,19 @@
               <option value="capetown">ЮАР · Кейптаун</option>
               <option value="victoriafalls">Зимбабве · водопад Виктория</option>
             </optgroup>
-            <option value="random">🎲 Случайное место мира</option>
-            <option value="random-verified">🌍 Случайный проверенный 360° из новых регионов</option>
-            <option value="custom">Свои координаты</option>
-          </select>
-          <small>Выбирай место и нажимай «Запустить» — все 360° открываются здесь через выбранный источник. Для Северной Кореи, Каира и части Африки покрытие Panoramax пока не подтверждено; поиск рядом ограничен, чтобы не выдавать фотографии другой страны за нужную точку.</small>
-          <div id="customOrigin" hidden><label for="latlng">Широта, долгота</label><input id="latlng" placeholder="48.8647, 2.3404" spellcheck="false"></div>
+          </template>
+          <div class="coverage-bar">
+            <small id="coverageStatus" role="status" aria-live="polite">Обновляем каталог Panoramax по живым данным…</small>
+            <button type="button" id="refreshCoverageBtn" class="coverage-refresh">⟳ Обновить</button>
+          </div>
+          <small>В списке только районы со свежими 360°-метаданными Panoramax и доступным адресом изображения. Проверка выполняется при открытии сайта и повторяется автоматически каждые 5 минут. Это не подтверждение достоверности каждого геотега; загрузка фото проверяется при запуске.</small>
+          <details id="manualOrigin" class="manual-origin">
+            <summary>📍 Свои координаты · отдельная проверка</summary>
+            <label for="latlng">Широта, долгота</label>
+            <input id="latlng" placeholder="48.8647, 2.3404" spellcheck="false">
+            <button type="button" class="secondary" id="manualStartBtn">▶ Найти по координатам</button>
+            <small>Ручной поиск не добавляет непроверенные места в каталог. Google Street View доступен только здесь с собственным ограниченным API-ключом.</small>
+          </details>
           <div class="range-top"><label for="radius">Начальный радиус</label><strong id="radiusVal">5 км</strong></div>
           <input id="radius" type="range" min="1" max="50" step="1" value="5">
           <small>Если все места уже посещены: 5 → 10 → 20 → 40 км → … → 20 000 км.</small>
