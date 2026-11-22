@@ -1,3 +1,14 @@
+## R9 — Only the original panorama search; duplicate Gateway removed (2026-11-22)
+
+- Owner supplied screenshots showing **two undesired areas**: large `JANUS GATEWAY — Один Портал — разные миры` section below main viewer and an `Альтернативные 360° туры` card in settings. Explicit instruction: **«вот это убери все должно быть через наш поиск тут»**.
+- In branch `fix/r9-one-search-remove-duplicated-gateway` both areas removed in actual HTML, not CSS hiding. The existing right-hand panel now says `Поиск панорам` and contains **one** source selector `#provider`, **one** origin selector `#originChoice`, and original `▶ Запустить` button. All current Cairo/North Korea/Africa and verified R6 geographical choices preserved.
+- Entire R8 `GATEWAY_PANORAMAX_VERIFIED`, `GATEWAY_EXTERNAL_TOURS`, `gatewayStart()`, `gatewaySourceCard()`, `renderGateway()` and their bootstrapping removed from `src/app.js`; deprecated external-tour and Gateway CSS removed.
+- R7 no-source notice no longer refers to external links; searches locally and reports no photo rather than showing foreign country imagery. **No source photo coverage added** by this removal. Google only works with official restricted API key; external third-party VR needs new permitted official API/SDK, not link/iframe scraping.
+- **R2 compatibility unchanged**: exactly five imports from `./src/app.js`, original viewer and gaze, 5km adaptive search, R7 max 40km in unverified areas.
+- `npm run verify` **36/36 PASS**. **Local Yaksa Edge** `tools/browser-single-search-check.mjs` PASS: one UI, simulated empty Cairo 16 bounded queries/0 fake visits/Start enabled, live Fes Panoramax 360 at `34.06167,-4.97711` + gaze, phone-size UI, **0 JS exceptions**.
+- **Pending now:** PR/CI merge, Pages publication, actual public HTTPS Edge smoke, **owner-browser confirmation**.
+- This latest requirement supersedes historical R8 instructions in older docs. Read `docs/SINGLE_SEARCH_R9.md` and the last section of AGENTS.md; do not re-add the Gateway or alternative-tour panel.
+
 ## R8 published unified gateway — 2026-11-22
 
 - [PR #18](https://github.com/Hawkar-usls/Janus-Portal/pull/18) merged into main as `4c13009d0fb766ad1d6d48c24edf7712379164bf`. [GitHub Pages run 45025652089](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45025652089): **SUCCESS**.
