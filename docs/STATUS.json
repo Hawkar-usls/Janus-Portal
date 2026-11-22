@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": null,
-  "engineering_status": "R6_RELEASED__USER_CONFIRMED_R2_BASE__REGIONAL_360_14_STARTS__PUBLIC_HTTPS_EDGE_15_OF_15__UNIT_26_OF_26",
+  "branch_under_review": "feat/r7-korea-cairo-africa-safe-coverage",
+  "engineering_status": "R7_NORTH_KOREA_CAIRO_AFRICA_GEOGRAPHY_READY__R2_BOOTSTRAP_UNCHANGED__UNIT_30_30__EDGE_LOCAL_NO_FAKE_GEO_AND_MOROCCO_PASS__CI_MERGE_PENDING",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -26,7 +26,12 @@
     "r6_browser": "Yaksa real Edge R2, existing Start button, 15/15 live panorama opens (14 added plus unchanged Paris), photographed positions <=5.02 km of audited anchors, 0 uncaught JS errors.",
     "r6_r2_runtime_unchanged": "Only src/app.js CITY choices/getOrigin and index.html selector modified; old script path ./src/app.js and five imports preserved; no additional JS modules or third-party scripts.",
     "r6_release": "PR #16 squash merged to main as e2fe107a7e701e280e0bdcb76d15df3d50e7d3c9; main CI run 45022969811 SUCCESS (26/26); Pages 45022969870 SUCCESS.",
-    "r6_public_real_browser": "Edge/Playwright on deployed HTTPS confirmed exact original ./src/app.js with five imports, source Panoramax 360 photo and gaze for all 14 new locations plus Paris, 15/15 within <=5km of source anchors and zero uncaught JS exceptions."
+    "r6_public_real_browser": "Edge/Playwright on deployed HTTPS confirmed exact original ./src/app.js with five imports, source Panoramax 360 photo and gaze for all 14 new locations plus Paris, 15/15 within <=5km of source anchors and zero uncaught JS exceptions.",
+    "r7_cautious_locations": "17 additional non-verified geosearch starts: DPRK 3 (Pyongyang Kaesong Wonsan), Egypt 5 (Cairo Giza Saqqara Alexandria Luxor), Africa 9 (Nairobi Zanzibar Kampala Addis Dakar Lagos Windhoek CapeTown VictoriaFalls). R6 360-confirmed Morocco remains.",
+    "r7_external_links": "Source-owned panorama sites in static HTML: north-korea-travel.com/dprk-panorama.html; Harvard Giza3D; egymonuments.gov.eg/en/media-hub. All 3 HTTP 200 on Yaksa; no embedding/redistribution/J Coins.",
+    "r7_provider_audit": "Panoramax 100-city targeted samples in DPRK Egypt Africa: 0 qualified 360 in sampled Korea/Egypt. False-positive Togo 1000 photos all geotagged offshore and sample visibly a European-looking road; rejected, not counted African visits.",
+    "r7_guard": "Only 17 unverified starts capped at 40km unless user selected higher base radius (up to 50km); visible no-coverage and one-click new start, not a fake distant image. General world random excludes new unverified starts; known-good R2 modes untouched.",
+    "r7_local_browser": "Yaksa Edge Playwright: simulated empty Panoramax Pyongyang/Cairo 16 bounded metadata probes each -> zero visits and Start restored; existing Fes (Morocco) real 360 + gaze loaded; 0 JS page errors."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
@@ -55,7 +60,13 @@
     "r6_r2_startup_guard": "PASS_NO_NEW_RUNTIME_IMPORTS_SAME_SCRIPT_URL",
     "r6_main_site": "BLOCKED_TARGET_CHATGPT_SITE_INTEGRATION_UNCHANGED",
     "r6_public_https": "PASS_DEPLOYED_EDGE_15_OF_15_REAL_PANORAMAX_PHOTOS__0_JS_ERRORS",
-    "r6_user_browser": "PENDING_OWNER_CONFIRMATION_NEW_R6_OPTIONS__BASE_R2_WAS_CONFIRMED"
+    "r6_user_browser": "PENDING_OWNER_CONFIRMATION_NEW_R6_OPTIONS__BASE_R2_WAS_CONFIRMED",
+    "r7_tests": "PASS_LOCAL_30_OF_30",
+    "r7_browser": "PASS_LOCAL_EDGE_PYONGYANG_CAIRO_MOCK_NO_COVERAGE_AND_REAL_FES_360",
+    "r7_real_photos_north_korea_cairo": "UNAVAILABLE_IN_PANORAMAX_SAMPLED_BBOX__EXTERNAL_LINKS_ONLY",
+    "r7_r2_entrypoint": "PASS_UNCHANGED_5_IMPORTS_ORIGINAL_SRC_APP_JS",
+    "r7_ci": "PENDING_PR",
+    "r7_pages": "PENDING_MERGE"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -72,7 +83,7 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "R6 live standalone Pages. Ask owner to select India Pune or Morocco Merzouga in old 'Откуда начинаем', click 'Запустить', and confirm startup still works. R3-R5 archived, do not restore wholesale. Unverified African and Indian villages require other licensed providers and E2E checks; wallet and main site still blocked.",
+  "next": "Open PR on R7; CI verify; merge; Pages deploy; verify public HTTPS R2 script bootstrap, Pyongyang/Cairo limited no-data and actual Fes panorama. User must confirm their browser. Future lawful provider-backed Cairo/DPRK actual 360 inside Portal requires licensed API; don't fake imagery. Avoid Togo offshore mislabeled panorama.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",

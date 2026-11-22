@@ -76,11 +76,41 @@
               <option value="banoscuenca">🇪🇨 Район Баньос, Эквадор</option>
               <option value="elvalle">🇪🇨 Юго-восток Куэнки, Эквадор</option>
             </optgroup>
+            <optgroup label="🇰🇵 Северная Корея · Panoramax 360° не подтверждены">
+              <option value="pyongyang">Пхеньян · поиск рядом, без гарантии 360°</option>
+              <option value="kaesong">Кэсон · поиск рядом, без гарантии 360°</option>
+              <option value="wonsan">Вонсан · поиск рядом, без гарантии 360°</option>
+            </optgroup>
+            <optgroup label="🇪🇬 Каир и Египет · Panoramax 360° не подтверждены">
+              <option value="cairo">Каир · центр, проверить покрытие</option>
+              <option value="giza">Гиза · пирамиды, проверить покрытие</option>
+              <option value="saqqara">Саккара · проверить покрытие</option>
+              <option value="alexandria">Александрия · проверить покрытие</option>
+              <option value="luxor">Луксор · проверить покрытие</option>
+            </optgroup>
+            <optgroup label="🌍 Другая Африка · Panoramax 360° пока не подтверждены">
+              <option value="nairobi">Кения · Найроби</option>
+              <option value="zanzibar">Танзания · Занзибар</option>
+              <option value="kampala">Уганда · Кампала</option>
+              <option value="addis">Эфиопия · Аддис-Абеба</option>
+              <option value="dakar">Сенегал · Дакар</option>
+              <option value="lagos">Нигерия · Лагос</option>
+              <option value="windhoek">Намибия · Виндхук</option>
+              <option value="capetown">ЮАР · Кейптаун</option>
+              <option value="victoriafalls">Зимбабве · водопад Виктория</option>
+            </optgroup>
             <option value="random">🎲 Случайное место мира</option>
             <option value="random-verified">🌍 Случайный проверенный 360° из новых регионов</option>
             <option value="custom">Свои координаты</option>
           </select>
-          <small>Новые страны добавлены по найденным 360° снимкам Panoramax. Кадры могут исчезать из источника; если место недоступно, выбери другое. Обычный запуск Парижа не изменён.</small>
+          <small>Новые точки R7 (Северная Корея, Каир, часть Африки) — только географические ориентиры. Подтверждённого Panoramax 360° там пока нет: поиск ограничен ближайшими 40 км, чтобы не показывать другую страну под неверным названием. Старые проверенные регионы и Париж работают как раньше.</small>
+          <div class="external-panorama-links">
+            <strong>🌐 Альтернативные 360° туры (открываются у правообладателей)</strong>
+            <p><a href="https://www.north-korea-travel.com/dprk-panorama.html" target="_blank" rel="noopener noreferrer">🇰🇵 Панорамы Северной Кореи: Пхеньян, Кэсон и другие места ↗</a></p>
+            <p><a href="https://giza.fas.harvard.edu/giza3d/" target="_blank" rel="noopener noreferrer">🇪🇬 Гиза: виртуальная экскурсия Digital Giza (Гарвард) ↗</a></p>
+            <p><a href="https://egymonuments.gov.eg/en/media-hub/" target="_blank" rel="noopener noreferrer">🇪🇬 Египет: 360° медиатека Министерства туризма ↗</a></p>
+            <small>Внешние туры не начисляют посещения JANUS и не передают фотографии в Портал. Марокко (Фес и Мерзуга) доступно в обычном просмотрщике 360°.</small>
+          </div>
           <div id="customOrigin" hidden><label for="latlng">Широта, долгота</label><input id="latlng" placeholder="48.8647, 2.3404" spellcheck="false"></div>
           <div class="range-top"><label for="radius">Начальный радиус</label><strong id="radiusVal">5 км</strong></div>
           <input id="radius" type="range" min="1" max="50" step="1" value="5">
