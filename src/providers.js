@@ -75,12 +75,14 @@ function featureToCandidate(feature) {
   if (!feature?.id || !feature?.collection || !Number.isFinite(lat) || !Number.isFinite(lng)) return null;
   // Full 360 photo only; flat photos cannot be rotated around.
   if (!equirectangular && fieldOfView < 300) return null;
-  return {provider: 'panoramax', id: feature.id, collection: feature.collection, lat, lng};
+  return {provider: 'panoramax', id: feature.id, collection: feature.collection, lat, lng,
+    previewUrl: feature.assets?.sd?.href || feature.assets?.thumb?.href || null};
 }
 
 export class PanoramaxProvider {
   constructor() {
     this.view = null;
+    this.photo = null;
     this.rotation = null;
   }
   async searchAtRadius({origin, radiusKm, visited, visitedPoints = [], minSeparationKm = 0.02, random, signal}) {
@@ -132,15 +134,26 @@ export class PanoramaxProvider {
     container.appendChild(viewer);
     this.view = viewer;
     await loadedWithin(viewer.onceFirstPicLoaded());
+    await viewer.oncePSVReady();
+    this.photo = viewer.psv || null;
+    if (!this.photo?.getXYZ || !this.photo?.setXYZ)
+      throw new Error('Panoramax photo viewer does not expose supported getXYZ/setXYZ methods');
+    const p = this.photo.getXYZ();
+    this.photo.setXYZ(p.x, p.y, 0);
   }
-  startRotation(intervalMs) {
-    this.stopRotation();
-    if (!this.view) return;
-    // The official viewer exposes a relative pan method; this does not
-    // synthesize or download Street View image tiles.
-    const stepMs = Math.max(60, Math.round(intervalMs / 90));
-    this.rotation = setInterval(() => this.view?.moveRight?.(), stepMs);
+  getPose() {
+    const p=this.photo?.getXYZ?.() || {x:0,y:0,z:0};
+    return {heading:p.x, pitch:p.y, zoom:p.z};
   }
+  setPose(pose) {
+    this.photo?.setXYZ?.(pose.heading, pose.pitch, pose.zoom);
+  }
+  getFrontHeading() {
+    const h=this.photo?.getPictureOriginalHeading?.();
+    return Number.isFinite(h) ? h : this.getPose().heading;
+  }
+  // Legacy compatibility; gaze director now owns the animation clock.
+  startRotation() {this.stopRotation();}
   stopRotation() {
     if (this.rotation) clearInterval(this.rotation);
     this.rotation = null;
@@ -226,16 +239,20 @@ export class GoogleProvider {
       setTimeout(check, 150);
     }));
   }
-  startRotation(intervalMs) {
-    this.stopRotation();
-    if (!this.view) return;
-    const start = performance.now();
-    const heading = this.view.getPov().heading;
-    this.rotation = setInterval(() => {
-      const fraction = ((performance.now() - start) % intervalMs) / intervalMs;
-      this.view?.setPov({heading: (heading + 360 * fraction) % 360, pitch: 0});
-    }, 60);
+  getPose() {
+    const p=this.view?.getPov?.() || {heading:0,pitch:0};
+    return {heading:p.heading, pitch:p.pitch, zoom:(this.view?.getZoom?.() || 0) * 35};
   }
+  setPose(pose) {
+    if (!this.view) return;
+    this.view.setPov({heading:pose.heading, pitch:pose.pitch});
+    const current=this.view.getZoom?.() || 0;
+    const target=Math.max(0,Math.min(2.2,pose.zoom/35));
+    // Avoid expensive tiny zoom updates on every animation frame.
+    if (Math.abs(current-target) >= .09) this.view.setZoom(target);
+  }
+  getFrontHeading() {return this.getPose().heading;}
+  startRotation() {this.stopRotation();}
   stopRotation() {
     if (this.rotation) clearInterval(this.rotation);
     this.rotation = null;
