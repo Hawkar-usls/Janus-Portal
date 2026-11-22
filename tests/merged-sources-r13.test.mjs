@@ -49,7 +49,7 @@ test('Wikimedia Commons accepts geotagged licensed full 2:1 sphere only',async()
  };
  await mocked(async url=>{
   assert.match(String(url),/^https:\/\/commons\.wikimedia\.org\/w\/api\.php\?/);
-  assert.match(String(url),/origin=%2A/);
+  assert.match(String(url),/origin=(?:%2A|\*)/);
   return resp({query:{pages:{
    42:photo,
    43:{...photo,pageid:43,imageinfo:[{...photo.imageinfo[0],width:3000,height:3000}]},
