@@ -1,0 +1,33 @@
+{
+  "schema_id": "hawkar.project-status.v1",
+  "project": "Janus-Portal",
+  "repository": "https://github.com/Hawkar-usls/Janus-Portal",
+  "portfolio_class": "browser_panorama_explorer_prototype",
+  "last_reviewed": "2026-11-22",
+  "maturity": "ACTIVE_PROTOTYPE",
+  "completion_status": "R14_PAGES_RELEASED__BROWSER_DEMO_EVIDENCE__ACCOUNT_WALLET_HOLD",
+  "summary": "Public browser 360-degree panorama explorer with source-checked region catalog, AFK expedition and local Passport. Root status is navigation only; docs/STATUS.json remains authoritative.",
+  "implemented": [
+    "R14 AFK Wanderer and Passport with local-only XP",
+    "Panoramax/KartaView/Wikimedia mixed-source catalog subject to live API validation",
+    "Google Street View only via restricted explicit user API key and manual request",
+    "Main CI and public deployed browser smoke documented in docs/STATUS.json"
+  ],
+  "not_established": [
+    "Production server-backed user accounts, global leaderboard or authoritative J Coins",
+    "Guaranteed worldwide coverage or continuously available source photos",
+    "Integrated ChatGPT Sites Portal tab or background operation when browser is closed"
+  ],
+  "flagship_research": false,
+  "source_review": {
+    "scope": "PUBLIC_METADATA_AND_SOURCE_DOCUMENTATION_ONLY",
+    "main_commit_before_metadata_update": "10425c2927ea6efb70ab951206c4602923973338",
+    "canonical_detailed_status": "docs/STATUS.json",
+    "ci_reference": "https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45049721142",
+    "independent_external_science_validation": false,
+    "no_runtime_or_model_change": true,
+    "portfolio_reconciliation_pr": "https://github.com/Hawkar-usls/Janus/pull/69"
+  },
+  "visibility_policy": "https://github.com/Hawkar-usls/Janus/blob/main/portfolio-visibility.json",
+  "presentation_standard": "https://github.com/Hawkar-usls/Janus/blob/main/docs/PUBLIC_REPOSITORY_PRESENTATION_STANDARD.md"
+}
