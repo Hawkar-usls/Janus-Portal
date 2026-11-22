@@ -62,6 +62,13 @@
             <label class="source-paid-consent"><input type="checkbox" id="googleConsent"> Добавить Google к моему ручному поиску (может тарифицироваться)</label>
             </div>
           </details>
+          <details id="mapillaryAuth" class="source-credentials">
+            <summary>Mapillary · необязательный бесплатный токен</summary>
+            <label for="mapillaryToken">Токен приложения Mapillary</label>
+            <input type="password" id="mapillaryToken" autocomplete="off" spellcheck="false" placeholder="Свой client access token">
+            <small>Создай бесплатный клиентский токен Mapillary. Он не сохраняется и передаётся только Mapillary при проверке изображений и открытии панорамы. Чтобы обновить все источники сразу, нажми «Обновить».</small>
+            <a class="google-key-help" href="https://www.mapillary.com/developer" target="_blank" rel="noopener noreferrer">Получить токен Mapillary ↗</a>
+          </details>
           <label for="originChoice">Откуда начинаем</label>
           <select id="originChoice" aria-describedby="coverageStatus" disabled>
             <option value="" selected>⏳ Проверяем доступные 360°…</option>
@@ -121,7 +128,7 @@
             <small id="coverageStatus" role="status" aria-live="polite">Обновляем каталог Panoramax по живым данным…</small>
             <button type="button" id="refreshCoverageBtn" class="coverage-refresh">⟳ Обновить</button>
           </div>
-          <small>JANUS объединяет Panoramax, KartaView и Wikimedia Commons по координатам без выбора источника. Одна кнопка «Обновить» проверяет все три каталога вместе; непроверенные 2D-фото исключены. Google подключается к ручному поиску только после ввода ключа и согласия. Фото откроется здесь же после проверки загрузки.</small>
+          <small>JANUS объединяет Panoramax, KartaView, Wikimedia Commons и Mapillary (с токеном) по координатам без выбора источника. Одна кнопка «Обновить» проверяет все три каталога вместе; непроверенные 2D-фото исключены. Google подключается к ручному поиску только после ввода ключа и согласия. Фото откроется здесь же после проверки загрузки.</small>
           <details id="manualOrigin" class="manual-origin">
             <summary>📍 Свои координаты · отдельная проверка</summary>
             <label for="latlng">Широта, долгота</label>
