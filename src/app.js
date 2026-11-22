@@ -803,7 +803,9 @@ function renderStats() {
 }
 function downloadHistory() {
   const payload = {schema: 'janus-portal-history-v1', exportedAt: new Date().toISOString(),
-    authority: 'local-only-not-valid-for-rewards', visits: state.history};
+    authority: 'local-only-not-valid-for-rewards', visits: state.history,
+    passport: passport(), game: {xpFormula: '10 per unique view + 25 per approximate country',
+      accountSync: false, jCoinsCredited: false}};
   const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a'); link.href = url; link.download = 'janus-portal-expedition.json';
