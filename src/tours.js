@@ -37,7 +37,42 @@ export const DESTINATIONS = Object.freeze([
   {id:'bali', name:'Бали', country:'Индонезия', category:'nature', emoji:'🌴', lat:-8.4095, lng:115.1889},
   {id:'grandcanyon', name:'Гранд-Каньон', country:'США', category:'nature', emoji:'🏜️', lat:36.0544, lng:-112.1401},
   {id:'yellowstone', name:'Йеллоустон', country:'США', category:'nature', emoji:'♨️', lat:44.4605, lng:-110.8281},
-  {id:'machupicchu', name:'Мачу-Пикчу', country:'Перу', category:'ancient', emoji:'⛰️', lat:-13.1631, lng:-72.5450}
+  {id:'machupicchu', name:'Мачу-Пикчу', country:'Перу', category:'ancient', emoji:'⛰️', lat:-13.1631, lng:-72.5450},
+  // R4: Remote villages, dramatic terrain and overland expeditions.
+  // "Extreme" describes remoteness/terrain here, never income or the residents.
+  {id:'chitkul',name:'Читкул',country:'Индия',category:'extreme',emoji:'🏔️',tag:'высокогорное село',lat:31.35184,lng:78.43683},
+  {id:'kaza',name:'Каза, долина Спити',country:'Индия',category:'extreme',emoji:'⛰️',tag:'горный посёлок',lat:32.2260,lng:78.0721},
+  {id:'kibber',name:'Киббер',country:'Индия',category:'extreme',emoji:'🏡',tag:'высокогорное село',lat:32.3315,lng:78.0070},
+  {id:'langza',name:'Лангза',country:'Индия',category:'extreme',emoji:'🦕',tag:'горное село',lat:32.2650,lng:78.0560},
+  {id:'turtuk',name:'Туртук',country:'Индия',category:'extreme',emoji:'🌄',tag:'удалённое село',lat:34.8470,lng:76.8270},
+  {id:'ziro',name:'Зиро',country:'Индия',category:'extreme',emoji:'🌾',tag:'горная долина',lat:27.5450,lng:93.8230},
+  {id:'mawlynnong',name:'Мавлиннонг',country:'Индия',category:'extreme',emoji:'🌿',tag:'село в Мегхалае',lat:25.2020,lng:91.9160},
+  {id:'tawang',name:'Таванг',country:'Индия',category:'extreme',emoji:'🛕',tag:'высокогорный городок',lat:27.5860,lng:91.8650},
+  {id:'kagbeni',name:'Кагбени',country:'Непал',category:'extreme',emoji:'🏡',tag:'горное село',lat:28.8380,lng:83.7840},
+  {id:'manang',name:'Мананг',country:'Непал',category:'extreme',emoji:'🥾',tag:'горное село',lat:28.6660,lng:84.0250},
+  {id:'namche',name:'Намче-Базар',country:'Непал',category:'extreme',emoji:'🏔️',tag:'гималайский посёлок',lat:27.8060,lng:86.7140},
+  {id:'imlil',name:'Имлиль',country:'Марокко',category:'extreme',emoji:'🏔️',tag:'село в Атласских горах',lat:31.1350,lng:-7.9200},
+  {id:'mhamid',name:'Мхамид-эль-Гизлан',country:'Марокко',category:'extreme',emoji:'🐪',tag:'село у Сахары',lat:29.8250,lng:-5.7200},
+  {id:'merzouga',name:'Мерзуга',country:'Марокко',category:'extreme',emoji:'🏜️',tag:'пустынное село',lat:31.0980,lng:-4.0130},
+  {id:'opuwo',name:'Опуво',country:'Намибия',category:'extreme',emoji:'🌵',tag:'удалённый городок',lat:-18.0607,lng:13.8400},
+  {id:'solitaire',name:'Солитэр',country:'Намибия',category:'extreme',emoji:'🚙',tag:'посёлок в пустыне',lat:-23.8830,lng:16.0000},
+  {id:'sesriem',name:'Сесрием',country:'Намибия',category:'extreme',emoji:'🏜️',tag:'пустынный район',lat:-24.5850,lng:15.7990},
+  {id:'spitzkoppe',name:'Шпицкоппе',country:'Намибия',category:'extreme',emoji:'🪨',tag:'скалы и пустыня',lat:-21.8260,lng:15.1850},
+  {id:'bunyonyi',name:'Озеро Буньони',country:'Уганда',category:'extreme',emoji:'🛶',tag:'сельский озёрный район',lat:-1.2700,lng:29.9000},
+  {id:'mto-wa-mbu',name:'Мто-ва-Мбу',country:'Танзания',category:'extreme',emoji:'🌱',tag:'сельский район',lat:-3.3700,lng:35.8500},
+  {id:'lushoto',name:'Лушото',country:'Танзания',category:'extreme',emoji:'🌳',tag:'горный городок',lat:-4.7820,lng:38.2900},
+  {id:'loiyangalani',name:'Лойянгалани',country:'Кения',category:'extreme',emoji:'🏜️',tag:'удалённый посёлок',lat:2.7560,lng:36.7200},
+  {id:'lalibela',name:'Лалибэла',country:'Эфиопия',category:'extreme',emoji:'⛪',tag:'горный исторический город',lat:12.0320,lng:39.0470},
+  {id:'sapa',name:'Шапа',country:'Вьетнам',category:'extreme',emoji:'🌫️',tag:'горный городок',lat:22.3360,lng:103.8440},
+  {id:'ha-giang',name:'Хазянг',country:'Вьетнам',category:'extreme',emoji:'🏍️',tag:'горный регион',lat:22.8280,lng:104.9850},
+  {id:'dong-van',name:'Донгван',country:'Вьетнам',category:'extreme',emoji:'⛰️',tag:'горный городок',lat:23.2800,lng:105.3610},
+  {id:'banaue',name:'Банауэ',country:'Филиппины',category:'extreme',emoji:'🌾',tag:'горное поселение и террасы',lat:16.9190,lng:121.0560},
+  {id:'sagada',name:'Сагада',country:'Филиппины',category:'extreme',emoji:'🌄',tag:'горный посёлок',lat:17.0830,lng:120.9020},
+  {id:'uyuni',name:'Уюни',country:'Боливия',category:'extreme',emoji:'🧂',tag:'высокогорная солончаковая равнина',lat:-20.4620,lng:-66.8250},
+  {id:'atacama',name:'Сан-Педро-де-Атакама',country:'Чили',category:'extreme',emoji:'🌋',tag:'пустынное поселение',lat:-22.9080,lng:-68.1990},
+  {id:'el-chalten',name:'Эль-Чальтен',country:'Аргентина',category:'extreme',emoji:'🥾',tag:'патагонский горный посёлок',lat:-49.3260,lng:-72.8840},
+  {id:'reine',name:'Рейне, Лофотены',country:'Норвегия',category:'extreme',emoji:'🌊',tag:'прибрежное рыбацкое село',lat:67.9330,lng:13.0900},
+  {id:'gasadalur',name:'Гасадалур',country:'Фарерские острова',category:'extreme',emoji:'🌬️',tag:'удалённое прибрежное село',lat:62.1050,lng:-7.4330}
 ]);
 
 // Stops are **search centres**, never hardcoded photo IDs or "guaranteed views".
@@ -133,6 +168,59 @@ export const TOURS = Object.freeze([
     STOP('Фусими Инари, Киото',34.9671,135.7727),
     STOP('Дворец Кёнбоккун, Сеул',37.5796,126.9770),
     STOP('Марина-Бэй, Сингапур',1.2834,103.8607)
+  ]},
+  // Dedicated "Экстремальный туризм": virtual tours of remote landscapes
+  // and communities; never an assertion that residents or nations are dangerous.
+  {id:'spiti-villages',icon:'🏔️',category:'extreme',title:'Высокогорные сёла Индии',subtitle:'Читкул, Спити и Гималаи',stops:[
+    STOP('Село Читкул, долина Баспа',31.35184,78.43683,'Высокогорная долина'),
+    STOP('Каза, долина Спити',32.2260,78.0721,'Главный посёлок долины'),
+    STOP('Село Киббер',32.3315,78.0070,'Сельская застройка на склонах'),
+    STOP('Село Лангза',32.2650,78.0560,'Каменные дома и горные виды'),
+    STOP('Монастырь Ки',32.2970,78.0100,'Монастырь в Гималаях'),
+    STOP('Село Туртук',34.8470,76.8270,'Долина Шайок в Ладакхе')
+  ]},
+  {id:'india-hidden',icon:'🌾',category:'extreme',title:'Индия: за пределами мегаполисов',subtitle:'Сёла и удалённые горные районы',stops:[
+    STOP('Мавлиннонг, Мегхалая',25.2020,91.9160,'Село в зелёных горах'),
+    STOP('Долина Зиро',27.5450,93.8230,'Сельский ландшафт'),
+    STOP('Таванг',27.5860,91.8650,'Высокогорный городок'),
+    STOP('Читкул',31.35184,78.43683,'Горное село'),
+    STOP('Туртук',34.8470,76.8270,'Удалённое село')
+  ]},
+  {id:'sahara-atlas',icon:'🐪',category:'extreme',title:'Сахара и Атласские горы',subtitle:'Марокко: горные сёла, оазисы и пески',stops:[
+    STOP('Село Имлиль, Атлас',31.1350,-7.9200,'Горное поселение'),
+    STOP('Аит-Бен-Хадду',31.0470,-7.1320,'Глинобитная архитектура'),
+    STOP('Загoра',30.3320,-5.8370,'Оазисная долина'),
+    STOP('Мхамид-эль-Гизлан',29.8250,-5.7200,'На границе Сахары'),
+    STOP('Мерзуга и дюны Эрг-Шебби',31.0980,-4.0130,'Пустынная панорама')
+  ]},
+  {id:'namib-desert',icon:'🏜️',category:'extreme',title:'Пустыни Намибии',subtitle:'Удалённые поселения и дороги Намиба',stops:[
+    STOP('Посёлок Солитэр',-23.8830,16.0000,'Дорожный перекрёсток'),
+    STOP('Сесрием',-24.5850,15.7990,'Подступы к дюнам'),
+    STOP('Соссусфлей',-24.7270,15.2920,'Песчаные дюны'),
+    STOP('Скалы Шпицкоппе',-21.8260,15.1850,'Гранитные скалы'),
+    STOP('Городок Опуво',-18.0607,13.8400,'Север Намибии')
+  ]},
+  {id:'east-african-roads',icon:'🌍',category:'extreme',title:'Удалённые дороги Восточной Африки',subtitle:'Кения, Танзания, Уганда и Эфиопия',stops:[
+    STOP('Лойянгалани, озеро Туркана',2.7560,36.7200,'Удалённый посёлок'),
+    STOP('Мто-ва-Мбу, Танзания',-3.3700,35.8500,'Сельская местность'),
+    STOP('Лушото, горы Усамбара',-4.7820,38.2900,'Горный городок'),
+    STOP('Озеро Буньони, Уганда',-1.2700,29.9000,'Сельские берега озера'),
+    STOP('Лалибэла, Эфиопия',12.0320,39.0470,'Высокогорные памятники')
+  ]},
+  {id:'nepal-trekking-villages',icon:'🥾',category:'extreme',title:'Непал: тропами Гималаев',subtitle:'Высокогорные поселения и долины',stops:[
+    STOP('Кагбени, Мустанг',28.8380,83.7840,'Горное село'),
+    STOP('Мананг',28.6660,84.0250,'Горный посёлок'),
+    STOP('Намче-Базар',27.8060,86.7140,'Поселение у маршрутов к Эвересту'),
+    STOP('Долина Кхумбу',27.8050,86.7200,'Горные ландшафты')
+  ]},
+  {id:'world-remote',icon:'🧭',category:'extreme',title:'На краю карты',subtitle:'Патагония, Анды, Азия и северные острова',stops:[
+    STOP('Посёлок Уюни, Боливия',-20.4620,-66.8250,'Высокогорный солончаковый край'),
+    STOP('Сан-Педро-де-Атакама, Чили',-22.9080,-68.1990,'Пустыня Атакама'),
+    STOP('Эль-Чальтен, Патагония',-49.3260,-72.8840,'Горный посёлок'),
+    STOP('Горная Шапа, Вьетнам',22.3360,103.8440,'Рисовые террасы'),
+    STOP('Банауэ, Филиппины',16.9190,121.0560,'Горные террасы'),
+    STOP('Рейне, Лофотены',67.9330,13.0900,'Рыбацкое село'),
+    STOP('Гасадалур, Фарерские острова',62.1050,-7.4330,'Атлантическое побережье')
   ]}
 ]);
 export const TOUR_CATEGORIES = Object.freeze([
@@ -140,14 +228,23 @@ export const TOUR_CATEGORIES = Object.freeze([
   {id:'ancient',label:'🏛️ История'},
   {id:'cities',label:'🏙️ Города'},
   {id:'nature',label:'🏔️ Природа'},
-  {id:'wonders',label:'🌟 Чудеса света'}
+  {id:'wonders',label:'🌟 Чудеса света'},
+  {id:'extreme',label:'🏕️ Экстремальный туризм'}
 ]);
 export const DESTINATION_CATEGORIES = Object.freeze([
   {id:'all',label:'Все направления'},
   {id:'cities',label:'Города'},
   {id:'ancient',label:'История'},
-  {id:'nature',label:'Природа'}
+  {id:'nature',label:'Природа'},
+  {id:'extreme',label:'🏕️ Экстремальный туризм'}
 ]);
+export function pickRandomDestination({category='all',random=Math.random}={}) {
+  const pool=category==='all'?DESTINATIONS:DESTINATIONS.filter(p=>p.category===category);
+  if(!pool.length)throw new RangeError('No destinations in category: '+category);
+  const fraction=Number(random());
+  const i=Math.min(pool.length-1,Math.max(0,Math.floor((Number.isFinite(fraction)?fraction:0)*pool.length)));
+  return pool[i];
+}
 export const destinationById = id => DESTINATIONS.find(d=>d.id===id) || null;
 export const tourById = id => TOURS.find(t=>t.id===id) || null;
 export const hasCoordinates = x => x && Number.isFinite(x.lat) &&
