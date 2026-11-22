@@ -1,3 +1,14 @@
+## R6 production verification — 2026-11-22
+
+- User confirmed the restored original R2 works on their device. R6 intentionally preserves the same browser bootstrap and only adds verified coordinates to the original selector.
+- [PR #16](https://github.com/Hawkar-usls/Janus-Portal/pull/16) **merged** to main: `e2fe107a7e701e280e0bdcb76d15df3d50e7d3c9`.
+- [Main CI 45022969811](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45022969811): **PASS 26/26**. [Pages 45022969870](https://github.com/Hawkar-usls/Janus-Portal/actions/runs/45022969870): **SUCCESS**.
+- Live URL: https://hawkar-usls.github.io/Janus-Portal/?region=r6-e2fe107
+- **Public HTTPS Edge/Playwright 15/15 PASS**: 14 new source-confirmed Panoramax 360 starts (six countries) plus control Paris, all actual photos within 5km of audited search anchors, natural gaze status `Живой взгляд`, **0** uncaught JS errors. Deployed HTML `./src/app.js`, JS 5 original imports, HTML and JS HTTP 200.
+- **Still requires owner confirmation** that new options appear and work in their browser. Do not equate Yaksa proof with owner device proof. Source coverage for rural India/Africa generally incomplete, avoid inventing village panoramas.
+- Source audit: [VERIFIED_REGIONAL_PANORAMAS_R6.md](VERIFIED_REGIONAL_PANORAMAS_R6.md); test: `tools/browser-regional-panoramas-check.mjs` with `PORTAL_URL` and optional Playwright.
+- R3–R5 remain archived in `archive/r5-before-r2-rollback-20261122`; do not reintroduce their client modules without independent gate. Account/J Coins/main site integration remain pending.
+
 ## R6: новые реально найденные 360° регионы поверх работающей R2 — 2026-11-22
 
 - Владелец подтвердил, что восстановленная оригинальная R2 **работает в его браузере**. Поэтому R6 не переносит интерфейс на новые модули или новый asset-loader.
