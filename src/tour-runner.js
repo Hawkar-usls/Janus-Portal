@@ -17,8 +17,9 @@ export async function findTourCandidate({
     onStop({index,stop,total:tour.stops.length});
     try{
       const candidate=await findNext({
-        origin:{lat:stop.lat,lng:stop.lng},baseRadiusKm:1,maxRadiusKm:4,
-        visited,visitedPoints,minSeparationKm:0.02,searchAtRadius,signal,random
+        origin:{lat:stop.lat,lng:stop.lng},baseRadiusKm:2,maxRadiusKm:4,
+        visited,visitedPoints,minSeparationKm:0.02,
+        searchAtRadius:opts=>searchAtRadius({...opts,probeCount:2}),signal,random
       });
       return {candidate,stop,index,skipped};
     }catch(error){
