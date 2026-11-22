@@ -1,6 +1,8 @@
 import {findNext, distanceKm, visitKey} from './navigation.js';
 import {PanoramaxProvider, GoogleProvider} from './providers.js';
 import {readHistory, addVisit, getStats, STORAGE_KEY} from './storage.js';
+import {GazeDirector, buildGazePlan} from './gaze.js';
+import {analyzeInterest} from './attention.js';
 
 const $ = id => document.getElementById(id);
 const CITY = {
@@ -15,7 +17,8 @@ const CITY = {
 const state = {
   history: readHistory(), running: false, paused: false, busy: false,
   turbo: false, provider: null, current: null, origin: null,
-  abort: null, timer: null, generation: 0, map: null, mapLayer: null, leaflet: null
+  abort: null, timer: null, gaze: null, interest: null, planBaseSeconds: 16,
+  generation: 0, map: null, mapLayer: null, leaflet: null
 };
 
 function setStatus(message, kind = '') {
@@ -27,8 +30,8 @@ function message(text, error = false) {
   $('notice').textContent = text;
   $('notice').classList.toggle('error', error);
 }
-function effectiveMs() {
-  return Math.round(Number($('seconds').value) * (state.turbo ? 500 : 1000));
+function gazeRate() {
+  return (state.turbo ? 2 : 1) * (state.planBaseSeconds / Number($('seconds').value));
 }
 function cleanTimer() {
   if (state.timer) clearTimeout(state.timer);
@@ -74,15 +77,66 @@ function stop() {
   state.abort?.abort();
   state.abort = null;
   state.provider?.stopRotation();
+  state.gaze?.stop();
+  state.gaze = null;
+  state.interest = null;
+  $('gazeStage').textContent = 'Взгляд остановлен';
   state.busy = false;
   setStatus('Остановлено');
   refreshControls();
 }
-function scheduleNext() {
-  cleanTimer();
-  if (state.running && !state.paused && !state.busy) {
-    state.timer = setTimeout(() => travel(), effectiveMs());
-  }
+function stageText(text) {
+  $('gazeStage').textContent = text;
+}
+function startGaze(candidate, interests = []) {
+  state.gaze?.stop();
+  const generation=state.generation;
+  state.planBaseSeconds=Number($('seconds').value);
+  const style=$('motionStyle').value;
+  const plan=buildGazePlan({
+    start:state.provider.getPose(),
+    baseSeconds:state.planBaseSeconds,
+    focusPoints:interests,
+    gentle:style==='gentle',
+    reducedMotion:style==='off'
+  });
+  const total=plan.totalMs / 1000 / (state.turbo ? 2 : 1);
+  $('gazeTime').textContent='Осмотр ~' + total.toFixed(1) + ' сек';
+  state.gaze=new GazeDirector({
+    apply:pose=>{if(state.running&&state.generation===generation)state.provider.setPose(pose);},
+    onStage:({label})=>{if(state.generation===generation)stageText(label);},
+    onFinish:()=>{
+      if(!state.running||state.generation!==generation)return;
+      stageText('Следующий прыжок…');
+      state.gaze=null;
+      if(!state.paused)travel();
+    }
+  });
+  state.gaze.start(plan,gazeRate());
+  if(state.paused)state.gaze.pause();
+  else setStatus('Живой взгляд','live');
+}
+async function prepareGaze(candidate,controller,generation) {
+  const mode=$('interestMode').value;
+  stageText('Оценивает панораму…');
+  $('gazeTime').textContent='Составляет сценарий';
+  const analysis=await analyzeInterest({
+    candidate,
+    frontHeading:state.provider.getFrontHeading(),
+    mode,
+    signal:controller.signal,
+    onInfo:stageText
+  });
+  if(!state.running||controller.signal.aborted||generation!==state.generation)return;
+  state.interest=analysis;
+  const n=analysis.points.length;
+  const modeLabel=analysis.reason==='detected-objects'?'Возможные объекты (локальная ML)':
+    analysis.reason==='contrast-heuristic'||analysis.reason==='contrast-fallback' ||
+    analysis.reason==='model-unavailable-contrast-fallback'?'Визуальные детали (контраст)':
+    analysis.reason==='google-no-pixel-analysis'?'Без анализа изображений Google':
+    'Исследовательские движения';
+  $('attentionStatus').textContent=modeLabel + ' · ' + n + ' точек';
+  startGaze(candidate,analysis.points);
 }
 function showLocation(candidate) {
   $('coords').textContent = candidate.lat.toFixed(5) + ', ' + candidate.lng.toFixed(5);
@@ -138,10 +192,8 @@ async function travel() {
       (candidate.provider === 'google' ? ' • Google: только статистика текущей сессии' : saved.persisted ? ' • сохранено в локальной истории' : ' • локальное сохранение недоступно') +
       '. JC пока не начисляются.');
     renderStats();
-    if (!state.paused) {
-      state.provider.startRotation(effectiveMs());
-      setStatus('Исследование', 'live');
-    } else setStatus('Пауза');
+    await prepareGaze(candidate,controller,generation);
+    if (state.paused) setStatus('Пауза');
   } catch (error) {
     if (error?.name !== 'AbortError' && state.running && generation === state.generation) {
       const noPoints = error?.name === 'NoLocationsError';
@@ -156,7 +208,7 @@ async function travel() {
       state.busy = false;
       state.abort = null;
       refreshControls();
-      if (state.running && !state.paused) scheduleNext();
+      // The gaze timeline (not a fixed timeout) initiates the next jump.
     }
   }
 }
@@ -182,13 +234,13 @@ function togglePause() {
   state.paused = !state.paused;
   if (state.paused) {
     cleanTimer();
+    state.gaze?.pause();
     state.provider?.stopRotation();
     setStatus('Пауза');
   } else {
     if (!state.busy) {
-      state.provider?.startRotation(effectiveMs());
-      scheduleNext();
-      setStatus('Исследование', 'live');
+      state.gaze?.resume();
+      setStatus('Живой взгляд', 'live');
     } else setStatus('Поиск…', 'warn');
   }
   refreshControls();
@@ -196,10 +248,16 @@ function togglePause() {
 function skip() {
   if (!state.running || state.busy) return;
   state.paused = false;
+  state.gaze?.stop();
+  state.gaze = null;
   state.provider?.stopRotation();
   cleanTimer();
   refreshControls();
   travel();
+}
+function replanGaze() {
+  if (!state.running || state.busy || !state.current) return;
+  startGaze(state.current,state.interest?.points||[]);
 }
 function updateMap() {
   const leaflet = state.leaflet || window.L;
@@ -303,19 +361,34 @@ $('radius').addEventListener('input', () => {
 });
 $('seconds').addEventListener('input', () => {
   $('secondsVal').textContent = $('seconds').value + ' сек';
-  if (state.running && !state.paused && !state.busy) {
-    state.provider?.startRotation(effectiveMs());
-    scheduleNext();
-  }
+  state.gaze?.setRate(gazeRate());
 });
 $('boost').addEventListener('click', () => {
   state.turbo = !state.turbo;
   $('boost').setAttribute('aria-pressed', String(state.turbo));
   $('boost').textContent = '⚡ Турбо ×2: ' + (state.turbo ? 'включено' : 'выключено');
-  if (state.running && !state.paused && !state.busy) {
-    state.provider?.startRotation(effectiveMs()); scheduleNext();
+  state.gaze?.setRate(gazeRate());
+});
+$('motionStyle').addEventListener('change',replanGaze);
+$('interestMode').addEventListener('change', () => {
+  if (state.running && state.current && !state.busy) {
+    // An explicit user change can re-run the same photo's optional analysis.
+    state.gaze?.stop();
+    state.gaze=null;
+    const controller=new AbortController();
+    state.abort?.abort();
+    state.abort=controller;
+    state.busy=true;
+    refreshControls();
+    prepareGaze(state.current,controller,state.generation).catch(error=>{
+      if(error?.name!=='AbortError')message('Анализ недоступен: '+error.message,true);
+    }).finally(()=>{state.busy=false;refreshControls();});
   }
 });
+if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+  $('motionStyle').value='off';
+  stageText('Автодвижение выключено по системным настройкам');
+}
 $('startBtn').addEventListener('click', run);
 $('pauseBtn').addEventListener('click', togglePause);
 $('nextBtn').addEventListener('click', skip);
