@@ -1,7 +1,21 @@
+import {NativePanorama} from './native-panorama.js';
 import {bboxAround, distanceKm, randomProbe} from './navigation.js';
 
 const PANORAMAX_ENDPOINT = 'https://api.panoramax.xyz/api';
 const PANORAMAX_VIEWER = 'https://cdn.jsdelivr.net/npm/@panoramax/web-viewer@5.2.0/build/cjs/index_photoviewer.js';
+function linkedAbort(signal, timeoutMs=6500) {
+  const controller=new AbortController();
+  const abort=()=>controller.abort();
+  if(signal?.aborted)abort();
+  else signal?.addEventListener('abort',abort,{once:true});
+  const timer=setTimeout(abort,timeoutMs);
+  return {
+    signal:controller.signal,
+    done(){clearTimeout(timer);signal?.removeEventListener('abort',abort)},
+    expired(){return controller.signal.aborted&&!signal?.aborted}
+  };
+}
+
 let panoramaxLoad;
 let googleLoad;
 
@@ -75,8 +89,14 @@ function featureToCandidate(feature) {
   if (!feature?.id || !feature?.collection || !Number.isFinite(lat) || !Number.isFinite(lng)) return null;
   // Full 360 photo only; flat photos cannot be rotated around.
   if (!equirectangular && fieldOfView < 300) return null;
+  const license=feature.links?.find(link=>link.rel==='license');
+  const source=feature.links?.find(link=>link.rel==='via');
   return {provider: 'panoramax', id: feature.id, collection: feature.collection, lat, lng,
-    previewUrl: feature.assets?.sd?.href || feature.assets?.thumb?.href || null};
+    previewUrl: feature.assets?.sd?.href || feature.assets?.thumb?.href || null,
+    producer:feature.properties?.['geovisio:producer']||feature.providers?.find(p=>p.roles?.includes('producer'))?.name||'Panoramax',
+    license:feature.properties?.license||license?.title||'См. лицензию источника',
+    licenseUrl:license?.href||'https://panoramax.xyz/',
+    sourceUrl:source?.href||'https://panoramax.openstreetmap.fr/'};
 }
 
 export class PanoramaxProvider {
@@ -103,9 +123,18 @@ export class PanoramaxProvider {
       if (signal?.aborted || found.length >= 8) break;
       const box = bboxAround(point, Math.min(radiusKm / 3, 1.2));
       const url = PANORAMAX_ENDPOINT + '/search?bbox=' + box.join(',') + '&limit=80';
-      const response = await fetch(url, {signal, headers: {Accept: 'application/geo+json'}});
-      if (!response.ok) throw new Error('Panoramax: HTTP ' + response.status);
-      const json = await response.json();
+      const request=linkedAbort(signal,6500);
+      let json;
+      try {
+        const response=await fetch(url,{signal:request.signal,headers:{Accept:'application/geo+json'}});
+        if(!response.ok)throw new Error('Panoramax: HTTP '+response.status);
+        json=await response.json();
+      } catch(error) {
+        if(signal?.aborted)throw new DOMException('Поиск остановлен','AbortError');
+        throw new Error(request.expired()
+          ? 'Panoramax не отвечает более 6 секунд. Проверь соединение с api.panoramax.xyz.'
+          : 'Не удалось связаться с Panoramax: '+(error?.message||error));
+      } finally {request.done()}
       for (const f of json.features || []) {
         const c = featureToCandidate(f);
         if (!c || visited.has(c.provider + ':' + c.id) || distanceKm(origin, c) > radiusKm + 0.005) continue;
@@ -116,12 +145,25 @@ export class PanoramaxProvider {
         found.push(c);
         if (found.length >= 8) break;
       }
+      // First suitable new view is enough to start, instead of delaying the
+      // visitor for all remaining metadata probes before showing anything.
+      if (found.length) break;
     }
     return found;
   }
   async show(candidate, container) {
-    await ensurePanoramaxViewer();
     this.stopRotation();
+    this.view?.destroy?.();
+    // Standard R5 path renders open equirectangular imagery directly, with
+    // mandatory photographer/license/source credit, no third-party script CDN.
+    if(candidate.previewUrl){
+      const viewer=await NativePanorama.open(candidate,container);
+      this.view=viewer;
+      this.photo=viewer;
+      return;
+    }
+    // Legacy source without an image URL: official viewer fallback.
+    await ensurePanoramaxViewer();
     container.replaceChildren();
     const viewer = document.createElement('pnx-photo-viewer');
     viewer.setAttribute('endpoint', PANORAMAX_ENDPOINT);
@@ -174,7 +216,7 @@ export class GoogleProvider {
     this.service ||= new maps.StreetViewService();
     return maps;
   }
-  async searchAtRadius({origin, radiusKm, visited, random, signal}) {
+  async searchAtRadius({origin, radiusKm, visited=new Set(), visitedPoints=[], minSeparationKm=0.02, probeCount=4, random=Math.random, signal}) {
     await this.ready();
     const found = [];
     // Bound paid service lookups; the engine handles expanding to wider radii.
