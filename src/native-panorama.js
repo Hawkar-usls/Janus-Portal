@@ -11,12 +11,15 @@ const el=(name,text)=>{
   if(text!==undefined)node.textContent=text;
   return node;
 };
-function loadImage(src,timeoutMs=9000){
+function loadImage(src,timeoutMs=9000,signal){
   return new Promise((resolve,reject)=>{
     const im=new Image();im.crossOrigin='anonymous';im.decoding='async';
     let done=false;
     const timeout=setTimeout(()=>end(new Error('Панорама не ответила за '+Math.round(timeoutMs/1000)+' сек')),timeoutMs);
-    function end(error){if(done)return;done=true;clearTimeout(timeout);im.onload=im.onerror=null;
+    const abort=()=>{im.src='';end(new DOMException('Загрузка отменена','AbortError'))};
+    if(signal?.aborted){abort();return}
+    signal?.addEventListener('abort',abort,{once:true});
+    function end(error){if(done)return;done=true;clearTimeout(timeout);signal?.removeEventListener('abort',abort);im.onload=im.onerror=null;
       if(error)reject(error);else resolve(im)}
     im.onload=()=>end();im.onerror=()=>end(new Error('Изображение Panoramax недоступно'));
     im.src=src;
@@ -80,10 +83,11 @@ export class NativePanorama {
     this.container=container;this.image=image;
     this.pose={x:0,y:0,z:0};this.destroyed=false;this.onRemove=()=>{};
   }
-  static async open(candidate,container){
+  static async open(candidate,container,{signal}={}){
     const url=safe(candidate.previewUrl,null);
     if(!url)throw new Error('Panoramax: изображение отсутствует');
-    const image=await loadImage(url);
+    const image=await loadImage(url,9000,signal);
+    if(signal?.aborted)throw new DOMException('Загрузка отменена','AbortError');
     const viewer=new NativePanorama(container,image);
     viewer.mount(candidate);
     return viewer;
