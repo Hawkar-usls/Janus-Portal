@@ -135,7 +135,8 @@ async function prepareGaze(candidate,controller,generation) {
     analysis.reason==='model-unavailable-contrast-fallback'?'Визуальные детали (контраст)':
     analysis.reason==='google-no-pixel-analysis'?'Без анализа изображений Google':
     'Исследовательские движения';
-  $('attentionStatus').textContent=modeLabel + ' · ' + n + ' точек';
+  const noun = n%10===1 && n%100!==11 ? 'точка' : [2,3,4].includes(n%10) && !(n%100>=12 && n%100<=14) ? 'точки' : 'точек';
+  $('attentionStatus').textContent=modeLabel + ' · ' + n + ' ' + noun;
   startGaze(candidate,analysis.points);
 }
 function showLocation(candidate) {
