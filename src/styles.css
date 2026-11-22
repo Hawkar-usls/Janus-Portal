@@ -56,3 +56,10 @@ body.portal-immersive-fallback{overflow:hidden}
 /* Avoid a tall empty panorama card when the settings sidebar is longer. */
 .viewer-panel{align-self:start}
 .discovery-card .card-route{font-size:10px;color:#8ec3d1;line-height:1.5;opacity:.85}
+
+/* R4: regional lenses for remote expeditions. */
+.extreme-region-filters{display:flex;flex:1 1 100%;flex-wrap:wrap;align-items:center;gap:7px;
+  border-top:1px solid #2b4459;padding-top:11px;margin:2px 0 4px}
+.extreme-region-filters .discovery-filter{font-size:11px;border-style:dashed}
+.extreme-region-filters .discovery-filter.active{border-style:solid}
+@media(max-width:560px){.extreme-region-filters{gap:5px}.extreme-region-filters .discovery-filter{font-size:10px;padding:7px 9px}}
