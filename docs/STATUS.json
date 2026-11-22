@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": "feat/r7-korea-cairo-africa-safe-coverage",
-  "engineering_status": "R7_NORTH_KOREA_CAIRO_AFRICA_GEOGRAPHY_READY__R2_BOOTSTRAP_UNCHANGED__UNIT_30_30__EDGE_LOCAL_NO_FAKE_GEO_AND_MOROCCO_PASS__CI_MERGE_PENDING",
+  "branch_under_review": null,
+  "engineering_status": "R7_PUBLISHED__CI_MAIN_30_OF_30__PAGES_SUCCESS__PUBLIC_EDGE_R2_PROTECTED_AND_KOREA_CAIRO_NO_FAKE_COVERAGE",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -31,15 +31,17 @@
     "r7_external_links": "Source-owned panorama sites in static HTML: north-korea-travel.com/dprk-panorama.html; Harvard Giza3D; egymonuments.gov.eg/en/media-hub. All 3 HTTP 200 on Yaksa; no embedding/redistribution/J Coins.",
     "r7_provider_audit": "Panoramax 100-city targeted samples in DPRK Egypt Africa: 0 qualified 360 in sampled Korea/Egypt. False-positive Togo 1000 photos all geotagged offshore and sample visibly a European-looking road; rejected, not counted African visits.",
     "r7_guard": "Only 17 unverified starts capped at 40km unless user selected higher base radius (up to 50km); visible no-coverage and one-click new start, not a fake distant image. General world random excludes new unverified starts; known-good R2 modes untouched.",
-    "r7_local_browser": "Yaksa Edge Playwright: simulated empty Panoramax Pyongyang/Cairo 16 bounded metadata probes each -> zero visits and Start restored; existing Fes (Morocco) real 360 + gaze loaded; 0 JS page errors."
+    "r7_local_browser": "Yaksa Edge Playwright: simulated empty Panoramax Pyongyang/Cairo 16 bounded metadata probes each -> zero visits and Start restored; existing Fes (Morocco) real 360 + gaze loaded; 0 JS page errors.",
+    "r7_release": "PR #17 squash merged main at c1fd6498; main CI run 45024553613 SUCCESS (30/30); GitHub Pages 45024553601 SUCCESS.",
+    "r7_public_browser": "Public deployed HTTPS in Yaksa Edge: original R2 ./src/app.js (5 imports) HTTP 200, North Korea/Cairo options present; mocked no-coverage 16 requests and 0 visits per origin with retry Start; real Fes/Morocco Panoramax 360 + natural gaze PASS; 0 JS page errors."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
     "live_panoramax_metadata": "PASS_METADATA_ONLY",
     "real_browser_panoramax_rotation": "PASS_EDGE_NATURAL_GAZE_ZOOM_PAUSE_RESUME",
     "real_browser_google_key_restricted": "PENDING",
-    "github_actions_ci": "PASS_MAIN_RUN_45022969811__26_OF_26",
-    "github_pages_publish": "PASS_R6_PAGES_RUN_45022969870",
+    "github_actions_ci": "PASS_R7_MAIN_45024553613__30_OF_30",
+    "github_pages_publish": "PASS_R7_PAGES_RUN_45024553601",
     "main_site_tab": "BLOCKED_SITE_EDITOR_ACCESS",
     "main_site_account_auth": "BLOCKED_SITE_SOURCE",
     "server_authoritative_J_coins": "BLOCKED_WALLET_API_AND_RULE_APPROVAL",
@@ -61,12 +63,13 @@
     "r6_main_site": "BLOCKED_TARGET_CHATGPT_SITE_INTEGRATION_UNCHANGED",
     "r6_public_https": "PASS_DEPLOYED_EDGE_15_OF_15_REAL_PANORAMAX_PHOTOS__0_JS_ERRORS",
     "r6_user_browser": "PENDING_OWNER_CONFIRMATION_NEW_R6_OPTIONS__BASE_R2_WAS_CONFIRMED",
-    "r7_tests": "PASS_LOCAL_30_OF_30",
-    "r7_browser": "PASS_LOCAL_EDGE_PYONGYANG_CAIRO_MOCK_NO_COVERAGE_AND_REAL_FES_360",
+    "r7_tests": "PASS_MAIN_30_OF_30_45024553613",
+    "r7_browser": "PASS_PUBLIC_HTTPS_EDGE_KOREA_CAIRO_NO_FAKE_COVERAGE_AND_REAL_FES_PANORAMAX",
     "r7_real_photos_north_korea_cairo": "UNAVAILABLE_IN_PANORAMAX_SAMPLED_BBOX__EXTERNAL_LINKS_ONLY",
     "r7_r2_entrypoint": "PASS_UNCHANGED_5_IMPORTS_ORIGINAL_SRC_APP_JS",
-    "r7_ci": "PENDING_PR",
-    "r7_pages": "PENDING_MERGE"
+    "r7_ci": "PASS_MAIN_45024553613",
+    "r7_pages": "PASS_PUBLIC_45024553601",
+    "r7_user_browser": "PENDING_OWNER_CONFIRMATION__R2_ENTRYPOINT_PRESERVED"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -83,17 +86,17 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "Open PR on R7; CI verify; merge; Pages deploy; verify public HTTPS R2 script bootstrap, Pyongyang/Cairo limited no-data and actual Fes panorama. User must confirm their browser. Future lawful provider-backed Cairo/DPRK actual 360 inside Portal requires licensed API; don't fake imagery. Avoid Togo offshore mislabeled panorama.",
+  "next": "R7 available on public Pages, user should test it in their own browser. North Korea/Cairo geosearch may correctly report no Panoramax 360; linked authentic external DPRK Panorama / Harvard Giza3D / Egypt Ministry 360 media. Real Africa Panoramax Fes and Merzouga proven. Continue sourcing licensed in-app 360 for Egypt, DPRK and sub-Saharan African settlements without faking geolocation.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
     "Changed provider to filter visited/nearby positions before filling candidate budget; added 2 provider tests, all 14 CI tests pass. Real second jump after fix awaits repeat browser run."
   ],
   "default_branch": "main",
-  "release_commit": "e2fe107a7e701e280e0bdcb76d15df3d50e7d3c9",
-  "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/16",
+  "release_commit": "c1fd6498acc1b354eb7a6d59c3b64e629f6365f2",
+  "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/17",
   "deployment_blocker": null,
-  "release_url": "https://hawkar-usls.github.io/Janus-Portal/?region=r6-e2fe107",
+  "release_url": "https://hawkar-usls.github.io/Janus-Portal/?r7=c1fd6498",
   "known_nonblocking": "Panoramax viewer requests /api/configuration and receives HTTP 404; panorama and local gaze still work. Verify upstream API compatibility later.",
   "rollback": {
     "source": "1b34bff74e2239d34cbdc09c1753df1041d63dc2",
