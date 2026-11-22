@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": null,
-  "engineering_status": "R7_PUBLISHED__CI_MAIN_30_OF_30__PAGES_SUCCESS__PUBLIC_EDGE_R2_PROTECTED_AND_KOREA_CAIRO_NO_FAKE_COVERAGE",
+  "branch_under_review": "feat/r8-unified-source-gateway-r2-safe",
+  "engineering_status": "R8_GATEWAY_LOCAL_EDGE_MOBILE_AND_NODE_PASS__PR_CI_AND_PAGES_PENDING",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -33,7 +33,10 @@
     "r7_guard": "Only 17 unverified starts capped at 40km unless user selected higher base radius (up to 50km); visible no-coverage and one-click new start, not a fake distant image. General world random excludes new unverified starts; known-good R2 modes untouched.",
     "r7_local_browser": "Yaksa Edge Playwright: simulated empty Panoramax Pyongyang/Cairo 16 bounded metadata probes each -> zero visits and Start restored; existing Fes (Morocco) real 360 + gaze loaded; 0 JS page errors.",
     "r7_release": "PR #17 squash merged main at c1fd6498; main CI run 45024553613 SUCCESS (30/30); GitHub Pages 45024553601 SUCCESS.",
-    "r7_public_browser": "Public deployed HTTPS in Yaksa Edge: original R2 ./src/app.js (5 imports) HTTP 200, North Korea/Cairo options present; mocked no-coverage 16 requests and 0 visits per origin with retry Start; real Fes/Morocco Panoramax 360 + natural gaze PASS; 0 JS page errors."
+    "r7_public_browser": "Public deployed HTTPS in Yaksa Edge: original R2 ./src/app.js (5 imports) HTTP 200, North Korea/Cairo options present; mocked no-coverage 16 requests and 0 visits per origin with retry Start; real Fes/Morocco Panoramax 360 + natural gaze PASS; 0 JS page errors.",
+    "r8_gateway": "Unified in-page UI catalog (19 countries/places) routes Panoramax 360 within original R2 viewer, existing Google official API adapter with user-provided restricted key, and explicitly source-owned external DPRK Panorama/Harvard Giza/Egypt Ministry tours by ordinary links. No new JS imports/iframes/copyright copying.",
+    "r8_google_bugfix": "Fixed originally undefined visitedPoints and minSeparationKm in existing GoogleProvider.searchAtRadius; mocked service only, live Google key gate remains pending.",
+    "r8_browser": "Yaksa Edge desktop on local R2: Pyongyang/Giza source cards & links PASS; Google without key shows field without API call; Fes real Panoramax 360 & gaze PASS; simulated no-photo Pyongyang correctly stops with zero fake increment; mobile 390px cards fit; 0 uncaught JS errors."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
@@ -69,7 +72,15 @@
     "r7_r2_entrypoint": "PASS_UNCHANGED_5_IMPORTS_ORIGINAL_SRC_APP_JS",
     "r7_ci": "PASS_MAIN_45024553613",
     "r7_pages": "PASS_PUBLIC_45024553601",
-    "r7_user_browser": "PENDING_OWNER_CONFIRMATION__R2_ENTRYPOINT_PRESERVED"
+    "r7_user_browser": "PENDING_OWNER_CONFIRMATION__R2_ENTRYPOINT_PRESERVED",
+    "r8_unit_tests": "PASS_LOCAL_36_OF_36",
+    "r8_browser": "PASS_LOCAL_EDGE_REAL_FES_PANORAMAX_AND_FAKE_PYONGYANG_GUARD",
+    "r8_mobile": "PASS_LOCAL_EDGE_VIEWPORT_390_GATEWAY_CARDS_NO_PAGE_ERRORS",
+    "r8_entrypoint": "PASS_UNCHANGED_R2_SRC_APP_JS_FIVE_IMPORTS",
+    "r8_external_embed": "NOT_AUTHORIZED_EXTERNAL_LINK_ONLY",
+    "r8_google_live": "PENDING_RESTRICTED_GOOGLE_BROWSER_KEY",
+    "r8_pages": "PENDING_PR_MERGE",
+    "r8_user_browser": "PENDING_OWNER_CONFIRMATION"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -86,7 +97,7 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "R7 available on public Pages, user should test it in their own browser. North Korea/Cairo geosearch may correctly report no Panoramax 360; linked authentic external DPRK Panorama / Harvard Giza3D / Egypt Ministry 360 media. Real Africa Panoramax Fes and Merzouga proven. Continue sourcing licensed in-app 360 for Egypt, DPRK and sub-Saharan African settlements without faking geolocation.",
+  "next": "R8 gateway local validated. PR CI -> merge -> Pages HTTPS browser test using tools/browser-gateway-check.mjs. Owner confirm original R2 Start and new gateway. Do not embed DPRK/Giza media without permitted embed/API rights, do not award visits for external source links; no new modules.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",

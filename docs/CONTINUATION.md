@@ -1,3 +1,14 @@
+## R8 — Unified Source Gateway, one Portal interface — 2026-11-22
+
+- User requested a **universal gateway** so Panoramax, Google and North Korea/Cairo/Africa external 360/3D tours are discoverable in one JANUS interface, after owner had explicitly confirmed R2 reliability and earlier R3–R5 had broken JavaScript initialization.
+- Branch `feat/r8-unified-source-gateway-r2-safe`: new section `#sourceGateway` below the unchanged original player; 19 place presets; transparent capability/status cards for Panoramax 360 in the R2 viewer, official Google Street View only with user's restricted key, and external DPRK Panorama / Harvard Giza 3D / Egypt Ministry media via direct source-owned links.
+- **No sixth ES module, no altered `./src/app.js` path, no new CDN, no iframe, no scrapers, no copy of third-party 360 assets.** Existing 5km autonomous and R7 40km unavailable-area guard untouched; J Coins not minted from external tours.
+- Fixed existing `GoogleProvider.searchAtRadius` missing `visitedPoints` and `minSeparationKm` bindings, with 2 mocked tests; real Google E2E requires properly restricted key.
+- Yaksa Node `npm run verify`: **36/36 PASS**, original 5 imports asserted.
+- Yaksa **Edge/Playwright browser smoke** `tools/browser-gateway-check.mjs`: KNDPR/Giza provider cards correct; offsite links safe; Google without key gated without API call; actual Fes Panoramax 360 inside JANUS + natural gaze; mocked empty Pyongyang source gave **0 additional fake visits**, retry; mobile 390px source cards fit; **0 uncaught JS exceptions**.
+- Detailed architecture/scope: `docs/UNIFIED_SOURCE_GATEWAY_R8.md`. The gateway is **unified routing and UI**, not a content proxy or authorized embedded copy of outside VR. Full in-viewer integration must rely on explicit embed rights or licensed official provider SDKs.
+- **Pending at handoff creation:** PR/CI/main merge/Pages/deployed HTTPS browser gate, then user-browser re-confirmation. Keep the successful R2 startup the first priority and never restore archived R3–R5 wholesale.
+
 ## R7 публичный выпуск — 2026-11-22
 
 - [PR #17](https://github.com/Hawkar-usls/Janus-Portal/pull/17) **merged**, squash `c1fd6498acc1b354eb7a6d59c3b64e629f6365f2`.

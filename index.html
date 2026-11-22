@@ -141,6 +141,40 @@
           <small class="footnote">Отсутствие результата поиска не означает полного отсутствия панорам: данные источников могут быть неполными. Google требует квоты и биллинг.</small>
         </aside>
       </div>
+      <section id="sourceGateway" class="panel source-gateway" aria-label="Единый шлюз панорам и виртуальных экскурсий">
+        <div class="gateway-header">
+          <div><span class="label">JANUS GATEWAY · ЕДИНОЕ МЕНЮ ИСТОЧНИКОВ</span><h2>Один Портал — разные миры</h2>
+            <p>Выбери место. Доступные 360° можно открыть здесь, а специальные экскурсии — на официальном сайте источника. Доступность и формат обозначены отдельно.</p>
+          </div>
+          <span class="gateway-symbol" aria-hidden="true">🌐</span>
+        </div>
+        <div class="gateway-controls">
+          <label for="gatewayPlace">Страна или место</label>
+          <select id="gatewayPlace" aria-label="Выбрать направление шлюза">
+            <optgroup label="🇰🇵 Северная Корея">
+              <option value="pyongyang">Пхеньян</option><option value="kaesong">Кэсон</option><option value="wonsan">Вонсан</option>
+            </optgroup>
+            <optgroup label="🇪🇬 Египет">
+              <option value="cairo">Каир</option><option value="giza">Пирамиды Гизы</option><option value="saqqara">Саккара</option>
+              <option value="alexandria">Александрия</option><option value="luxor">Луксор</option>
+            </optgroup>
+            <optgroup label="🌍 Африка">
+              <option value="fes">Фес, Марокко</option><option value="merzouga">Мерзуга и Сахара</option>
+              <option value="nairobi">Найроби, Кения</option><option value="zanzibar">Занзибар, Танзания</option>
+              <option value="capetown">Кейптаун, ЮАР</option>
+            </optgroup>
+            <optgroup label="🌏 Азия и Южная Америка">
+              <option value="pune">Пуна, Индия</option><option value="kathmandu">Катманду, Непал</option>
+              <option value="cebu">Себу, Филиппины</option><option value="georgetown">Пенанг, Малайзия</option>
+              <option value="cuenca">Куэнка, Эквадор</option>
+            </optgroup>
+            <option value="paris">Париж — контрольный маршрут</option>
+          </select>
+        </div>
+        <p class="gateway-status" id="gatewayStatus" role="status" aria-live="polite">Выбери место, чтобы увидеть источники.</p>
+        <div class="gateway-sources" id="gatewaySources" aria-label="Способы просмотра выбранного места"></div>
+        <p class="gateway-disclaimer">Шлюз объединяет выбор источника, но не копирует чужие экскурсии. Внешние туры открываются на своих сайтах; посещения JANUS и J Coins по ним не записываются. Google требует собственного официального API-ключа.</p>
+      </section>
       <section class="stats" aria-label="Статистика экспедиции">
         <div class="stat"><span>УНИКАЛЬНЫХ МЕСТ</span><strong id="statUnique">0</strong><small>отдельных панорам</small></div>
         <div class="stat"><span>УДАЧНЫХ ПРЫЖКОВ</span><strong id="statJumps">0</strong><small>успешно открытых</small></div>
