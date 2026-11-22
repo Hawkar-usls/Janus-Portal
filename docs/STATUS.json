@@ -4,7 +4,7 @@
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
   "branch_under_review": null,
-  "engineering_status": "R4_MERGED__CI_33_33_PASS__PAGES_R4_LIVE__EDGE_EXTREME_FILTERS_AND_REAL_REINE_360_PASS",
+  "engineering_status": "R4_LIVE_AND_PAGES_CACHE_REPAIR_PASS__USER_NETWORK_SYMPTOM_UNREPRODUCED",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -37,7 +37,9 @@
     "extreme_api_sampling": "Panoramax first-page bounding-box samples: Chitkul India 0 images, Mhamid Morocco 5 images (0 360), Opuwo Namibia 0, Lake Bunyonyi Uganda 0, Reine Norway 26 images (1 360). This is neither comprehensive coverage nor a Google audit.",
     "extreme_r4_release": "PR #11 squash merged into main as 99d9ffbc34c95a5a612d830a4e8c4c5beed9deb1. CI main 45015425907 SUCCESS (33/33), Pages 45015425891 SUCCESS.",
     "extreme_r4_https_browser": "Edge/Playwright on deployed HTTPS: 19 tours and 70 places including 7 extreme tours and 33 extreme locations, India/Africa regional filters, fullscreen and simulated mobile ESC PASS; mocked Cairo+Spiti zero coverage caused no fake visits/JC; no uncaught JavaScript errors.",
-    "extreme_r4_https_photo": "Deployed HTTPS version opened a genuine Panoramax 360 image at Reine Norway (67.92775, 13.07143), recorded one local unique visit and started gaze; optional live smoke exited 0."
+    "extreme_r4_https_photo": "Deployed HTTPS version opened a genuine Panoramax 360 image at Reine Norway (67.92775, 13.07143), recorded one local unique visit and started gaze; optional live smoke exited 0.",
+    "pages_cache_repair": "PR #13 merged as 6430bd40035839d42b1f8194353f4cec7b9ba087; GitHub Pages run 45016735561 success; revisioned assets /assets/6430bd400358/app.js HTTP 200; browser cache mismatch risk reduced.",
+    "pages_live_retest": "Edge remote browser both desktop/mobile with fresh Pages: 19 tours, 70 places, regional India/Africa filters, fullscreen/mobile ESC, fake coverage safety PASS; real 360 Reine at 67.92775, 13.07143 loaded, gaze started."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_33_OF_33_RUN_45015425907",
@@ -67,7 +69,9 @@
     "extreme_regional_filters": "PASS_DEPLOYED_HTTPS_EDGE_19_TOURS_70_DESTINATIONS_7_EXTREME_TOURS_33_EXTREME_DESTINATIONS_INDIA_8_AFRICA_12",
     "extreme_no_false_visits": "PASS_DEPLOYED_HTTPS_EDGE_MOCKED_CAIRO_AND_SPITI_EMPTY_PANORAMAX_0_VISITS_0_JC",
     "extreme_live_360": "PASS_DEPLOYED_HTTPS_EDGE_PANORAMAX_REINE_67_92775_13_07143",
-    "extreme_all_locs_360": "OPEN_ISSUE_12_SOURCE_COVERAGE_UNVERIFIED_INDIA_AFRICA"
+    "extreme_all_locs_360": "OPEN_ISSUE_12_SOURCE_COVERAGE_UNVERIFIED_INDIA_AFRICA",
+    "cache_repair": "PASS_MAIN_34_34_UNIT__PAGES_RUN_45016735561__HTTPS_EDGE_SMOKE",
+    "end_user_network": "UNKNOWN_USER_REPORTED_NOT_WORKING__YAKSA_CANNOT_REPRODUCE"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -84,7 +88,7 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "R4 publicly deployed. Next: Issue #12 live source coverage audit for remote India/Africa and possible official provider expansion; preserve permissions. Also site tab (#1), server J Coins (#2), global ranking (#3), Google restricted key (#4), semantic gaze (#9) still pending.",
+  "next": "Ask end user what fails: GitHub Pages connection vs blank UI vs no panoramas in rural India/Africa. The site is verified on Yaksa only; do not claim universal access. If domain blocked on user's network, arrange a second hosting domain with authorized credentials. Keep provider coverage issue #12, existing site tab/wallet issues open.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
