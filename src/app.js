@@ -136,7 +136,9 @@ async function prepareGaze(candidate,controller,generation) {
     analysis.reason==='google-no-pixel-analysis'?'Без анализа изображений Google':
     'Исследовательские движения';
   const noun = n%10===1 && n%100!==11 ? 'точка' : [2,3,4].includes(n%10) && !(n%100>=12 && n%100<=14) ? 'точки' : 'точек';
-  $('attentionStatus').textContent=modeLabel + ' · ' + n + ' ' + noun;
+  const people = analysis.detectedObjects?.filter(x=>x.category==='person').length || 0;
+  const peopleNote = people ? ' · возможно, людей: ' + people : '';
+  $('attentionStatus').textContent=modeLabel + ' · ' + n + ' ' + noun + peopleNote;
   startGaze(candidate,analysis.points);
 }
 function showLocation(candidate) {
