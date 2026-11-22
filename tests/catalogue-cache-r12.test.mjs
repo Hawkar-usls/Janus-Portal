@@ -29,7 +29,8 @@ test('refresh is clickable while checking and cancels stale in-flight requests',
  assert.match(app,/const generation=\+\+liveGeneration/);
  assert.match(app,/if\(generation!==liveGeneration/);
  assert.ok(!app.includes('state.running || liveRefreshing ||'));
- assert.match(app,/lastManualRefresh<1500/);
+ assert.ok(!app.includes('lastManualRefresh'),'never silently ignore a rapid retry');
+ assert.match(app,/refreshCoverageBtn'\)\.addEventListener\('click'/);
  assert.match(html,/id="refreshCoverageBtn"/);
 });
 test('Google key is user-issued; demo key cannot enable Street View and no key is embedded',()=>{
