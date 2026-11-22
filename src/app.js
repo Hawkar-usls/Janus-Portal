@@ -532,6 +532,7 @@ async function travel() {
         const next=nextAfkRegion();
         if(next){
           state.selectedSourceKey=next.key;
+          $('originChoice').value=next.key; // Keep the disabled selector in sync with the AFK destination.
           state.origin={...CITY[next.key]};
           state.current=null;
           state.startCandidate=next.photo;
