@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   DESTINATIONS, TOURS, TOUR_CATEGORIES, destinationById, tourById,
-  hasCoordinates, getTourStop, pickRandomDestination, DESTINATION_CATEGORIES
+  hasCoordinates, getTourStop, pickRandomDestination, DESTINATION_CATEGORIES,
+  extremeRegionFor, EXTREME_REGIONS
 } from '../src/tours.js';
 import {findTourCandidate} from '../src/tour-runner.js';
 import {distanceKm} from '../src/navigation.js';
@@ -167,4 +168,22 @@ test('extreme trips have provider-sampled named rural stops and do not invent vi
     searchAtRadius:async()=>[]});
   assert.equal(noCoverage.candidate,null);
   assert.equal(noCoverage.skipped,5);
+});
+
+test('regional filters cover India, Africa, Asia and far-flung non-poor places',()=>{
+  const regions=EXTREME_REGIONS.map(x=>x.id);
+  assert.deepEqual(regions,['all','india','africa','asia','world']);
+  assert.equal(extremeRegionFor(destinationById('kibber')),'india');
+  assert.equal(extremeRegionFor(destinationById('opuwo')),'africa');
+  assert.equal(extremeRegionFor(destinationById('namche')),'asia');
+  assert.equal(extremeRegionFor(destinationById('reine')),'world');
+  assert.equal(extremeRegionFor(destinationById('paris')),null);
+  assert.equal(extremeRegionFor(tourById('sahara-atlas')),'africa');
+  for(const region of regions.filter(x=>x!=='all')){
+    assert.ok(TOURS.some(t=>t.category==='extreme'&&extremeRegionFor(t)===region),region);
+    assert.ok(DESTINATIONS.some(d=>d.category==='extreme'&&extremeRegionFor(d)===region),region);
+    const picked=pickRandomDestination({category:'extreme',region,random:()=>.33});
+    assert.equal(extremeRegionFor(picked),region);
+  }
+  assert.throws(()=>pickRandomDestination({category:'cities',region:'africa'}),RangeError);
 });
