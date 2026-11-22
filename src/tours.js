@@ -171,7 +171,7 @@ export const TOURS = Object.freeze([
   ]},
   // Dedicated "Экстремальный туризм": virtual tours of remote landscapes
   // and communities; never an assertion that residents or nations are dangerous.
-  {id:'spiti-villages',icon:'🏔️',category:'extreme',title:'Высокогорные сёла Индии',subtitle:'Читкул, Спити и Гималаи',stops:[
+  {id:'spiti-villages',region:'india',icon:'🏔️',category:'extreme',title:'Высокогорные сёла Индии',subtitle:'Читкул, Спити и Гималаи',stops:[
     STOP('Село Читкул, долина Баспа',31.35184,78.43683,'Высокогорная долина'),
     STOP('Каза, долина Спити',32.2260,78.0721,'Главный посёлок долины'),
     STOP('Село Киббер',32.3315,78.0070,'Сельская застройка на склонах'),
@@ -179,41 +179,41 @@ export const TOURS = Object.freeze([
     STOP('Монастырь Ки',32.2970,78.0100,'Монастырь в Гималаях'),
     STOP('Село Туртук',34.8470,76.8270,'Долина Шайок в Ладакхе')
   ]},
-  {id:'india-hidden',icon:'🌾',category:'extreme',title:'Индия: за пределами мегаполисов',subtitle:'Сёла и удалённые горные районы',stops:[
+  {id:'india-hidden',region:'india',icon:'🌾',category:'extreme',title:'Индия: за пределами мегаполисов',subtitle:'Сёла и удалённые горные районы',stops:[
     STOP('Мавлиннонг, Мегхалая',25.2020,91.9160,'Село в зелёных горах'),
     STOP('Долина Зиро',27.5450,93.8230,'Сельский ландшафт'),
     STOP('Таванг',27.5860,91.8650,'Высокогорный городок'),
     STOP('Читкул',31.35184,78.43683,'Горное село'),
     STOP('Туртук',34.8470,76.8270,'Удалённое село')
   ]},
-  {id:'sahara-atlas',icon:'🐪',category:'extreme',title:'Сахара и Атласские горы',subtitle:'Марокко: горные сёла, оазисы и пески',stops:[
+  {id:'sahara-atlas',region:'africa',icon:'🐪',category:'extreme',title:'Сахара и Атласские горы',subtitle:'Марокко: горные сёла, оазисы и пески',stops:[
     STOP('Село Имлиль, Атлас',31.1350,-7.9200,'Горное поселение'),
     STOP('Аит-Бен-Хадду',31.0470,-7.1320,'Глинобитная архитектура'),
     STOP('Загoра',30.3320,-5.8370,'Оазисная долина'),
     STOP('Мхамид-эль-Гизлан',29.8250,-5.7200,'На границе Сахары'),
     STOP('Мерзуга и дюны Эрг-Шебби',31.0980,-4.0130,'Пустынная панорама')
   ]},
-  {id:'namib-desert',icon:'🏜️',category:'extreme',title:'Пустыни Намибии',subtitle:'Удалённые поселения и дороги Намиба',stops:[
+  {id:'namib-desert',region:'africa',icon:'🏜️',category:'extreme',title:'Пустыни Намибии',subtitle:'Удалённые поселения и дороги Намиба',stops:[
     STOP('Посёлок Солитэр',-23.8830,16.0000,'Дорожный перекрёсток'),
     STOP('Сесрием',-24.5850,15.7990,'Подступы к дюнам'),
     STOP('Соссусфлей',-24.7270,15.2920,'Песчаные дюны'),
     STOP('Скалы Шпицкоппе',-21.8260,15.1850,'Гранитные скалы'),
     STOP('Городок Опуво',-18.0607,13.8400,'Север Намибии')
   ]},
-  {id:'east-african-roads',icon:'🌍',category:'extreme',title:'Удалённые дороги Восточной Африки',subtitle:'Кения, Танзания, Уганда и Эфиопия',stops:[
+  {id:'east-african-roads',region:'africa',icon:'🌍',category:'extreme',title:'Удалённые дороги Восточной Африки',subtitle:'Кения, Танзания, Уганда и Эфиопия',stops:[
     STOP('Лойянгалани, озеро Туркана',2.7560,36.7200,'Удалённый посёлок'),
     STOP('Мто-ва-Мбу, Танзания',-3.3700,35.8500,'Сельская местность'),
     STOP('Лушото, горы Усамбара',-4.7820,38.2900,'Горный городок'),
     STOP('Озеро Буньони, Уганда',-1.2700,29.9000,'Сельские берега озера'),
     STOP('Лалибэла, Эфиопия',12.0320,39.0470,'Высокогорные памятники')
   ]},
-  {id:'nepal-trekking-villages',icon:'🥾',category:'extreme',title:'Непал: тропами Гималаев',subtitle:'Высокогорные поселения и долины',stops:[
+  {id:'nepal-trekking-villages',region:'asia',icon:'🥾',category:'extreme',title:'Непал: тропами Гималаев',subtitle:'Высокогорные поселения и долины',stops:[
     STOP('Кагбени, Мустанг',28.8380,83.7840,'Горное село'),
     STOP('Мананг',28.6660,84.0250,'Горный посёлок'),
     STOP('Намче-Базар',27.8060,86.7140,'Поселение у маршрутов к Эвересту'),
     STOP('Долина Кхумбу',27.8050,86.7200,'Горные ландшафты')
   ]},
-  {id:'world-remote',icon:'🧭',category:'extreme',title:'На краю карты',subtitle:'Патагония, Анды, Азия и северные острова',stops:[
+  {id:'world-remote',region:'world',icon:'🧭',category:'extreme',title:'На краю карты',subtitle:'Патагония, Анды, Азия и северные острова',stops:[
     STOP('Посёлок Уюни, Боливия',-20.4620,-66.8250,'Высокогорный солончаковый край'),
     STOP('Сан-Педро-де-Атакама, Чили',-22.9080,-68.1990,'Пустыня Атакама'),
     STOP('Эль-Чальтен, Патагония',-49.3260,-72.8840,'Горный посёлок'),
@@ -238,8 +238,26 @@ export const DESTINATION_CATEGORIES = Object.freeze([
   {id:'nature',label:'Природа'},
   {id:'extreme',label:'🏕️ Экстремальный туризм'}
 ]);
-export function pickRandomDestination({category='all',random=Math.random}={}) {
-  const pool=category==='all'?DESTINATIONS:DESTINATIONS.filter(p=>p.category===category);
+export const EXTREME_REGIONS = Object.freeze([
+  {id:'all',label:'🌐 Все регионы'},
+  {id:'india',label:'🇮🇳 Индия'},
+  {id:'africa',label:'🌍 Африка'},
+  {id:'asia',label:'🏔️ Другая Азия'},
+  {id:'world',label:'🧭 Другие регионы'}
+]);
+const AFRICA_COUNTRIES = new Set(['Марокко','Намибия','Уганда','Танзания','Кения','Эфиопия']);
+const ASIA_COUNTRIES = new Set(['Непал','Вьетнам','Филиппины']);
+export function extremeRegionFor(item) {
+  if(!item || item.category!=='extreme')return null;
+  if(item.region)return item.region;
+  if(item.country==='Индия')return 'india';
+  if(AFRICA_COUNTRIES.has(item.country))return 'africa';
+  if(ASIA_COUNTRIES.has(item.country))return 'asia';
+  return 'world';
+}
+export function pickRandomDestination({category='all',region='all',random=Math.random}={}) {
+  const pool=DESTINATIONS.filter(p=>(category==='all'||p.category===category) &&
+    (region==='all'||extremeRegionFor(p)===region));
   if(!pool.length)throw new RangeError('No destinations in category: '+category);
   const fraction=Number(random());
   const i=Math.min(pool.length-1,Math.max(0,Math.floor((Number.isFinite(fraction)?fraction:0)*pool.length)));
