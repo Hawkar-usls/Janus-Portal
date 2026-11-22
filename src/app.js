@@ -89,7 +89,6 @@ let liveLastCheck=0;
 let liveChecked=0;
 let liveFailed=0;
 let liveTimedOut=false;
-let lastManualRefresh=0;
 let manualNext=false;
 function renderLiveOptions(){
   const select=$('originChoice'),previous=select.value;
@@ -712,9 +711,8 @@ $('provider').addEventListener('change', () => {
   if(!google)maybeRefreshCoverage();
 });
 $('refreshCoverageBtn').addEventListener('click',()=>{
-  const now=Date.now();
-  if(now-lastManualRefresh<1500)return; // avoid accidental request storms
-  lastManualRefresh=now;
+  // Every click is a real retry: abort the previous generation immediately.
+  // Ignoring rapid clicks made the button appear broken to users.
   void refreshLiveCoverage();
 });
 $('manualStartBtn').addEventListener('click',()=>{
