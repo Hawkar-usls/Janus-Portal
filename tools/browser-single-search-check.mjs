@@ -35,12 +35,15 @@ try{
  });
  await page.locator('#originChoice').selectOption('cairo');
  await page.locator('#startBtn').click();
+ await page.locator('.view-feedback').waitFor({state:'visible',timeout:4000});
+ assert.match(await page.locator('.view-feedback').innerText(),/Ищу доступную 360°/);
  await page.waitForFunction(
   ()=>(document.querySelector('#runStatus')?.textContent||'').includes('360° рядом не найдены'),
   null,{timeout:15000});
  assert.equal(calls,16);
  assert.equal(await page.locator('#statUnique').innerText(),'0');
  assert.equal(await page.locator('#startBtn').innerText(),'▶ Запустить');
+ assert.match(await page.locator('.view-feedback').innerText(),/нет доступной 360° панорамы/);
  assert.match(await page.locator('#notice').innerText(),/Не подменяем их фотографиями другой страны/);
  assert.doesNotMatch(await page.locator('#notice').innerText(),/внешние 360°|ссылки ниже/i);
  console.log('PASS_CAIRO_BOUNDED_ZERO_360_NO_FALSE_VISITS');
@@ -52,6 +55,7 @@ try{
       (document.querySelector('#runStatus')?.textContent||'').includes('Живой взгляд'),
   null,{timeout:35000});
  assert.equal(await page.locator('pnx-photo-viewer').count(),1);
+ assert.equal(await page.locator('.view-feedback').count(),0,'no overlay over real panorama');
  const pos=(await page.locator('#coords').innerText()).split(',').map(Number);
  assert.ok(Math.abs(pos[0]-34.061672694)<.05&&Math.abs(pos[1]-(-4.977107))<.05,'wrong photo position');
  assert.deepEqual(errors,[]);
