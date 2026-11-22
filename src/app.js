@@ -245,7 +245,7 @@ async function travel(firstCandidate=null) {
     if(searchBudget!==null)clearTimeout(searchBudget);
     if (!state.running || generation !== state.generation || controller.signal.aborted) return;
     setStatus('Загрузка панорамы…', 'warn');
-    await state.provider.show(candidate, $('viewer'));
+    await state.provider.show(candidate, $('viewer'),{signal:controller.signal});
     if (!state.running || generation !== state.generation || controller.signal.aborted) return;
     const previous = state.current || state.origin;
     const jumpDistance = distanceKm(previous, candidate);
