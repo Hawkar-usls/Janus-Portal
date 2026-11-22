@@ -3,8 +3,8 @@
   "updated_at_utc": "2026-11-22",
   "repo": "Hawkar-usls/Janus-Portal",
   "target_site": "https://tg-pomoyka.hawkarlol.chatgpt.site/",
-  "branch_under_review": "feat/r11-live-360-catalogue-no-random",
-  "engineering_status": "R11_LIVE_PANORAMAX_ONLY_CATALOGUE_19_OF_38_EDGE__45_OF_45_TESTS__PR_RELEASE_PENDING",
+  "branch_under_review": null,
+  "engineering_status": "R11_PUBLISHED__CI_MAIN_45_OF_45__PUBLIC_EDGE_LIVE_CATALOGUE_19_OF_38_FULLSCREEN_MOBILE_PASS",
   "science_or_economy_status": "NO_PRODUCTION_REWARDS__NO_LIVE_WALLET_INTEGRATION",
   "completed": {
     "interface": "responsive standalone Portal HTML/CSS with controls, map and history",
@@ -49,15 +49,17 @@
     "r11_live_catalogue": "Removed two random origin choices; only fresh Panoramax-confirmed FOV>=300/equirectangular photos with valid ID/collection, image asset, nearby coordinates enter one original dropdown; 38 known city centres probed. No unverified options or static fallback.",
     "r11_refresh": "One no-store catalogue query per place with 8s timeout and four concurrent workers; refresh at load, user button, visibility/online and every 5 minutes while idle; fails/obsolete sources removed rather than reused.",
     "r11_browser": "Yaksa real Edge returned 19/38 fresh 360 area hits, Cairo and Pyongyang excluded; Fes real 360 and R10 fullscreen PASS. Mock changed Fes to Kathmandu then empty and HTTP 503, and no stale entries remained; Google auto paid catalogue disabled; mobile PASS, zero JS page errors.",
-    "r11_single_runtime": "Original R2 ./src/app.js five imports, one source/origin search, R9 in-viewer feedback, R10 fullscreen, viewer, history and JC server-only policy unchanged; manual coordinate action outside confirmed list."
+    "r11_single_runtime": "Original R2 ./src/app.js five imports, one source/origin search, R9 in-viewer feedback, R10 fullscreen, viewer, history and JC server-only policy unchanged; manual coordinate action outside confirmed list.",
+    "r11_release": "PR #22 squash-merged as 5b0f959d26905832fef3cb9737f3e61006ac3b6b; main CI run 45028842182 SUCCESS 45/45; GitHub Pages run 45028842222 SUCCESS. Original live HTML and app.js both HTTP 200, five R2 imports retained.",
+    "r11_public_browser": "Public HTTPS in Yaksa Edge: live API confirmed 19 of 38 known geographic starts; no Pyongyang Cairo Giza Nairobi etc where source lacks 360. Fes real panorama 34.06167,-4.97711 and fullscreen PASS; mocked source refresh swaps Fes->Kathmandu, empty, HTTP 503 removes all stale options. Google bulk API disabled/manual only, mobile 390px PASS, 0 JS page errors."
   },
   "gates": {
     "unit_tests": "PASS_MAIN_GITHUB_ACTIONS_23_OF_23_RUN_45012146536",
     "live_panoramax_metadata": "PASS_METADATA_ONLY",
     "real_browser_panoramax_rotation": "PASS_EDGE_NATURAL_GAZE_ZOOM_PAUSE_RESUME",
     "real_browser_google_key_restricted": "PENDING",
-    "github_actions_ci": "PASS_R7_MAIN_45024553613__30_OF_30",
-    "github_pages_publish": "PASS_R10_PAGES_RUN_45027354747",
+    "github_actions_ci": "PASS_MAIN_R11_45028842182_45_OF_45",
+    "github_pages_publish": "PASS_R11_PAGES_45028842222",
     "main_site_tab": "BLOCKED_SITE_EDITOR_ACCESS",
     "main_site_account_auth": "BLOCKED_SITE_SOURCE",
     "server_authoritative_J_coins": "BLOCKED_WALLET_API_AND_RULE_APPROVAL",
@@ -106,12 +108,12 @@
     "r10_r2_bootstrap": "PASS_PUBLIC_HTTPS_SRC_APP_JS_FIVE_IMPORTS",
     "r10_pages": "PASS_PAGES_RUN_45027354747",
     "r10_user_browser": "PENDING_OWNER_CONFIRMATION",
-    "r11_unit_tests": "PASS_LOCAL_45_OF_45",
-    "r11_browser": "PASS_LOCAL_EDGE_REAL_PANORAMAX_19_OF_38_AND_FES_360_FULLSCREEN",
-    "r11_no_stale": "PASS_BROWSER_MOCK_FES_TO_KATHMANDU_EMPTY_503",
+    "r11_unit_tests": "PASS_MAIN_45_OF_45_45028842182",
+    "r11_browser": "PASS_PUBLIC_HTTPS_REAL_PANORAMAX_19_OF_38_FES_360_FULLSCREEN",
+    "r11_no_stale": "PASS_PUBLIC_HTTPS_EDGE_API_FEED_SWAP_EMPTY_503",
     "r11_google_no_paid_auto": "PASS_MANUAL_ONLY_NO_BILLABLE_AUTOMATIC_GOOGLE_CATALOGUE",
-    "r11_public_pages": "PENDING_PR_CI_MERGE_PAGES",
-    "r11_user_browser": "PENDING_OWNER_CONFIRMATION"
+    "r11_public_pages": "PASS_PUBLIC_HTTPS_EDGE_AND_PAGES_45028842222",
+    "r11_user_browser": "PENDING_OWNER_DEVICE_CONFIRMATION"
   },
   "reward_policy": {
     "proposed": "1 J Coin for first eligible unique visited place",
@@ -128,17 +130,17 @@
     "source_credit": "native Panoramax and Google widgets; OSM attribution",
     "notes": "Do not infer no secret exposure outside repo. Restrict and rotate browser key as appropriate."
   },
-  "next": "R11 locally validated. PR CI then merge, Pages and real public HTTPS Edge check; owner confirms own browser. Only 38 candidate regions scanned, no worldwide discovery or independent geotag verification. Google manual key lookup remains gated.",
+  "next": "R11 deployed and publicly tested from Yaksa. Owner to verify the dropdown on own browser, manual refresh and 360 fullscreen. Count may vary by provider availability. 38 known centres only, not global complete coverage; metadata not independent geotag truth. Future sources require licensed APIs and independent photo provenance checks.",
   "browser_bug_history": [
     "First browser run recorded a 360 view but Leaflet global name conflicts interrupted loop; fixed by capturing Leaflet instance.",
     "Second browser run after map fix recorded first visit and pause/resume; auto second jump yielded no new panorama (source sampling took first 8 near-identical photos).",
     "Changed provider to filter visited/nearby positions before filling candidate budget; added 2 provider tests, all 14 CI tests pass. Real second jump after fix awaits repeat browser run."
   ],
   "default_branch": "main",
-  "release_commit": "15625c506e034d538d1e4cc67700992b841e2107",
-  "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/21",
+  "release_commit": "5b0f959d26905832fef3cb9737f3e61006ac3b6b",
+  "pull_request": "https://github.com/Hawkar-usls/Janus-Portal/pull/22",
   "deployment_blocker": null,
-  "release_url": "https://hawkar-usls.github.io/Janus-Portal/?fullscreen=r10-15625c5",
+  "release_url": "https://hawkar-usls.github.io/Janus-Portal/?catalogue=r11-5b0f959",
   "known_nonblocking": "Panoramax viewer requests /api/configuration and receives HTTP 404; panorama and local gaze still work. Verify upstream API compatibility later.",
   "rollback": {
     "source": "1b34bff74e2239d34cbdc09c1753df1041d63dc2",
