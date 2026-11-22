@@ -1,0 +1,27 @@
+name: Portal CI
+on:
+  push:
+    branches: [main, "feat/**"]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    name: Syntax and unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Reject committed Google API keys
+        shell: bash
+        run: |
+          if git grep -nE 'AIza[0-9A-Za-z_-]{35}' -- ':!docs/*.md' ':!README.md' ':!AGENTS.md'; then
+            echo "::error::Possible Google API key committed to repository"
+            exit 1
+          fi
+      - name: Verify syntax and adaptive logic
+        run: npm run verify
