@@ -1,3 +1,15 @@
+## R5 critical start repair — 2026-11-22
+
+- User twice reported: «не работает», then «не работает и не запускает ничего». Prior main Pages loaded correctly on Yaksa desktop/mobile, but this did NOT prove it worked in the user's browser. We found a definite broken Google path and several potential first-visit blockers.
+- Feature branch: fix/start-reliability-native-viewer-r5. Priority: working first click / no indefinite loading, rather than more catalogue additions.
+- New prominent hero button «Начать путешествие сейчас» opens independently verified Reine/Norway Panoramax 360 photo directly from an openly licensed SD asset (Luc Girod, CC-BY-SA-4.0). It DOES NOT require a Panoramax metadata API call, jsdelivr or unpkg. Repeat views do not count as unique again.
+- Native WebGL equirectangular panorama implementation src/native-panorama.js with natural gaze integration, drag and wheel, proper vertical image orientation, artist/license/source credit; static preview when WebGL unavailable (do not claim 360 for fallback). Automatically cancels in-flight images on Stop.
+- GoogleProvider.searchAtRadius had undefined probeCount, visitedPoints and minSeparationKm, a real runtime ReferenceError; now explicitly accepts them. Unit fixture test passes; real credential-gated Google E2E remains open.
+- Panoramax metadata queries have 6.5s timeout, return upon first valid candidate; entire search has 18s budget. On error, visible actionable message and START button resets, rather than inert-looking STOP.
+- Yaksa Node: 36/36 tests PASS. Real Edge local first-click pano + gaze PASS (source image upright). With jsdelivr, unpkg, api.panoramax.xyz blocked in browser, direct quick start and camera movement still PASS. Disabled WebGL -> attributed static image PASS; no uncaught page JS errors.
+- tools/browser-start-check.mjs is the reproducible R5 smoke script. tools/browser-extreme-live-check.mjs and browser-gaze-check.mjs updated for native viewer. Main release gates pending at writing: PR, CI, Pages HTTPS and user-specific access.
+- If user still reports failure AFTER R5 deploy, DO NOT claim fixed for their network: obtain exact error or screenshot and verify whether github.io, panoramax.openstreetmap.fr or JS modules are blocked; use an authorized alternative hosting provider only with actual account access. Vercel connector previously returned forbidden for owner's team; do not invent a Vercel URL.
+
 ## R4 merge & public HTTPS validation — 2026-11-22
 
 - [PR #11](https://github.com/Hawkar-usls/Janus-Portal/pull/11) **merged** to main (squash SHA: 99d9ffbc34c95a5a612d830a4e8c4c5beed9deb1).
