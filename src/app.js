@@ -259,7 +259,7 @@ async function travel(firstCandidate=null) {
     state.history = saved.entries;
     showLocation(candidate,tourResult?.stop);
     updateTourStatus();
-    if(!tourResult)updateRadius(candidate.searchRadiusKm, candidate.expansions
+    if(!tourResult&&!firstCandidate)updateRadius(candidate.searchRadiusKm, candidate.expansions
       ? 'Поиск расширен ' + candidate.expansions + ' раз(а)'
       : 'Найдено в начальном радиусе');
     message((saved.added?'✓ Новая панорама':'✓ Повторное открытие (без нового посещения)') + ' • прыжок ' + jumpDistance.toFixed(2) + ' км' +
