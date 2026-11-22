@@ -1,3 +1,14 @@
+## R13 unified 360 source mixer — draft PR #24 (2026-11-22)
+
+- Branch: feat/r13-unified-panorama-mixer, PR: https://github.com/Hawkar-usls/Janus-Portal/pull/24 .
+- Parallel live-confirmed Panoramax, KartaView, Wikimedia Commons; optional Mapillary developer token and official MapillaryJS; Google only manual with explicit paid consent.
+- One original R2 viewer, five imports, single search, R10 fullscreen, 5km expansion and 40km R7 bounds retained. Third-party image loads must succeed before local visits count.
+- CI: 56/56 offline unit and syntax checks PASS (runs 45033108632, 45033144660, 45033549218).
+- BROWSER_MOCK_PASS: GitHub Actions run 45033556292 on Ubuntu 24.04 with Chromium/Playwright, mock Commons 2:1 equirect WebGL image, credits, pause, fullscreen, flat rejection, stale-catalogue removal and zero JS exceptions. This is **not** a live-provider E2E pass.
+- New code tests: tests/merged-sources-r13.test.mjs; spec: docs/UNIFIED_CATALOGUE_R13.md .
+- BLOCKERS: Mapillary owner token for real browser; real KartaView/Commons CORS, license and sphere review; real Panoramax regression, Firefox/Edge/Chrome mobile/fullscreen; production Pages not deployed until PR merge. Do not merge or claim live until reviewed.
+- Next: inspect PR CI, run real provider browser E2E, verify no provider switch/pause failures; merge only when safe, then Pages SHA-stamped HTML and owner confirmation. Do not commit tokens, invent coverage or grant J Coins.
+
 ## R12 production verified — fixed stuck R11 selector and Google demo misconception (2026-11-22)
 
 - Owner screenshot: loading label `⏳ Проверяем доступные 360°…` stuck with unstyled manual refresh button; asked for Google Street View demo key.

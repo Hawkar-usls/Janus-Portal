@@ -1,0 +1,49 @@
+name: R13 Browser Mock Gate
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'index.html'
+      - 'tools/browser-r13-check.mjs'
+      - 'tools/browser-r13-live-panoramax-check.mjs'
+      - '.github/workflows/r13-browser.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-mock:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright for isolated browser test
+        run: |
+          npm install --no-save playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Verify single-search and WebGL 360 viewer with mocked provider responses
+        run: |
+          node tools/dev-server.mjs >/tmp/janus-r13-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for try in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          PORTAL_URL=http://127.0.0.1:4173/ node tools/browser-r13-check.mjs
+      - name: Advisory genuine Panoramax Fes and fullscreen regression
+        continue-on-error: true
+        run: |
+          node tools/dev-server.mjs >/tmp/janus-r13-live-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for try in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          PORTAL_URL=http://127.0.0.1:4173/ node tools/browser-r13-live-panoramax-check.mjs
