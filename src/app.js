@@ -212,16 +212,17 @@ function updateMap() {
       maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(state.map);
   }
-  if (state.mapLayer) state.map.removeLayer(state.mapLayer);
-  state.mapLayer = L.layerGroup().addTo(state.map);
+  if (state.mapLayer) for (const layer of state.mapLayer) state.map.removeLayer(layer);
+  state.mapLayer = [];
   const entries = state.history.filter(e => e.provider === 'panoramax').slice(-300);
   if (!entries.length) return;
   const points = entries.map(e => [e.lat, e.lng]);
-  L.polyline(points, {color: '#4cbed8', weight: 2, opacity: 0.7}).addTo(state.mapLayer);
+  state.mapLayer.push(L.polyline(points, {color: '#4cbed8', weight: 2, opacity: 0.7}).addTo(state.map));
   entries.forEach((e, i) => {
     const marker = L.circleMarker([e.lat, e.lng], {radius: i === entries.length - 1 ? 7 : 4,
       color: '#99ffea', fillColor: i === entries.length - 1 ? '#60e9bc' : '#327b9b', fillOpacity: 0.85,
-      weight: 1}).addTo(state.mapLayer);
+      weight: 1}).addTo(state.map);
+    state.mapLayer.push(marker);
     marker.bindPopup('<strong>' + (e.provider === 'google' ? 'Google Street View' : 'Panoramax') +
       '</strong><br>№ ' + (state.history.length - entries.length + i + 1) +
       '<br>' + e.lat.toFixed(5) + ', ' + e.lng.toFixed(5));
@@ -282,7 +283,7 @@ function renderStats() {
   $('statCoins').textContent = '—';
   renderAchievements();
   renderHistory();
-  updateMap();
+  try {updateMap();} catch (err) {console.error('Local map unavailable:', err);}
 }
 function downloadHistory() {
   const payload = {schema: 'janus-portal-history-v1', exportedAt: new Date().toISOString(),
