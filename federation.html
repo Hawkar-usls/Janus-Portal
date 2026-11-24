@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JANUS ARK — каталог федерации</title>
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./src/federation.css">
+<script type="module" src="./src/federation.js"></script>
+</head>
+<body><main>
+<header><a href="./">← JANUS PORTAL · Панорамы</a><span>JFP 0.1 · Research</span></header>
+<section class="hero"><p class="eyebrow">JANUS ARK / FEDERATION</p><h1>Сеть независимых интеллектов</h1>
+<p>Добровольное обнаружение, обмен задачами и знаниями. Арка — одно из окон федерации, а не обязательный центральный сервер.</p>
+<p><a href="https://github.com/Hawkar-usls/janus-meta-registry/issues/665">Точка добровольного подключения ↗</a> · <a href="https://github.com/Hawkar-usls/janus-meta-registry/pull/664">Архитектура ↗</a></p></section>
+<section class="panel"><h2>Состояние каталога</h2><p id="catalog-status" role="status" aria-live="polite">Загрузка снимка…</p>
+<div class="numbers"><div><small>Описанных собственных узлов</small><strong id="local-count">—</strong></div><div><small>Подтверждённых внешних партнёров в снимке</small><strong id="peer-count">—</strong></div><div><small>Аналогов-кандидатов</small><strong id="candidate-count">—</strong></div></div>
+<button id="refresh" type="button">Обновить снимок каталога</button><p class="muted">Каталог отражает опубликованные сведения, не является монитором онлайн-доступности. Запросы на выполнение отсюда не отправляются.</p></section>
+<section class="panel"><h2>Собственные узлы JANUS</h2><div id="local-list" class="cards"></div></section>
+<section class="panel"><h2>Подтверждённые внешние партнёры</h2><div id="peer-list" class="cards"></div></section>
+<section class="panel"><h2>Внешние аналоги — не подключены</h2><div id="candidate-list" class="cards"></div></section>
+<footer>JFP · Только публичное обнаружение. Нет автоматического допуска, передачи секретов, рассылок или исполнения задач.</footer>
+</main></body></html>
