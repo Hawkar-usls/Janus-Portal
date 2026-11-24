@@ -1,0 +1,12 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+import {validateCatalog,safeLink,freshness} from "../src/federation.js";
+const fixture=()=>JSON.parse(readFileSync(new URL("../federation-catalog.json",import.meta.url),"utf8"));
+test("published snapshot distinguishes nodes and candidates",()=>{const x=validateCatalog(fixture());assert.equal(x.local_nodes.length,5);assert.equal(x.candidates.length,13);assert.equal(x.verified_external_peers.length,0)});
+test("candidate cannot be declared connected",()=>{const x=fixture();x.candidates[0].state="CONNECTED";assert.throws(()=>validateCatalog(x))});
+test("duplicates rejected",()=>{const x=fixture();x.local_nodes.push(x.local_nodes[0]);assert.throws(()=>validateCatalog(x))});
+test("peer requires evidence",()=>{const x=fixture();x.verified_external_peers.push({id:"peer",name:"peer",role:"peer",state:"VERIFIED_RECEIPT_SNAPSHOT"});assert.throws(()=>validateCatalog(x))});
+test("unsafe URLs rejected",()=>{for(const s of ["javascript:alert(1)","https://github.com.evil.example","https://u@github.com/x","http://github.com/x"])assert.equal(safeLink(s),false);assert.equal(safeLink("https://github.com/Hawkar-usls/Janus"),true)});
+test("staleness is never online status",()=>{assert.match(freshness("2026-11-24",Date.parse("2026-12-10")),/Устаревший/);assert.match(freshness("2026-11-24",Date.parse("2026-11-24T12:00:00Z")),/неизвестна/);assert.match(freshness("2026-02-31",Date.parse("2026-11-24")),/не подтверждена/)});
+test("separate page linked and packaged",()=>{const index=readFileSync(new URL("../index.html",import.meta.url),"utf8");const workflow=readFileSync(new URL("../.github/workflows/pages.yml",import.meta.url),"utf8");assert.match(index,/href="\.\/federation\.html"/);assert.match(workflow,/federation-catalog\.json/);assert.match(workflow,/federation\.css/)});
