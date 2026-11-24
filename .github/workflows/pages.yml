@@ -26,8 +26,10 @@ jobs:
       - name: Assemble public files only
         run: |
           mkdir -p dist/src
-          cp index.html favicon.svg dist/
-          cp src/*.js src/styles.css dist/src/
+          cp index.html favicon.svg federation.html federation-catalog.json dist/
+          cp src/*.js src/styles.css src/federation.css dist/src/
+          sed -i "s|./src/federation.js|./src/federation.js?build=${GITHUB_SHA}|g; s|./src/federation.css|./src/federation.css?build=${GITHUB_SHA}|g" dist/federation.html
+          test -s dist/federation-catalog.json
           test -s dist/src/gaze.js
           test -s dist/src/attention.js
           # GitHub Pages caches both JS and CSS for 600 seconds. HTML can be
