@@ -1,0 +1,126 @@
+{
+  "schema": "janus.ark.federation_catalog.v1",
+  "snapshot_date": "2026-11-24",
+  "status": "RESEARCH_SNAPSHOT_NOT_LIVE",
+  "source": "https://github.com/Hawkar-usls/janus-meta-registry/pull/664",
+  "local_nodes": [
+    {
+      "id": "janus",
+      "name": "JANUS",
+      "role": "Шлюз JFP; подписанный локальный пилот",
+      "state": "LOCAL_PILOT_CI_PASS",
+      "url": "https://github.com/Hawkar-usls/Janus",
+      "evidence": "https://github.com/Hawkar-usls/Janus/actions/runs/45351965183"
+    },
+    {
+      "id": "meta",
+      "name": "Meta Registry",
+      "role": "Протокол и публичное обнаружение",
+      "state": "DISCOVERY_PUBLISHED",
+      "url": "https://github.com/Hawkar-usls/janus-meta-registry",
+      "evidence": "https://github.com/Hawkar-usls/janus-meta-registry/issues/665"
+    },
+    {
+      "id": "ark",
+      "name": "ARK / Portal",
+      "role": "Витрина каталога",
+      "state": "UI_RESEARCH",
+      "url": "https://github.com/Hawkar-usls/Janus-Portal"
+    },
+    {
+      "id": "demiurge",
+      "name": "Demiurge",
+      "role": "Memory Cortex / TRINITY / ESSENCE",
+      "state": "ROLE_RECORDED_NOT_LIVE",
+      "url": "https://github.com/Hawkar-usls/Janus-Demiurge"
+    },
+    {
+      "id": "beetle",
+      "name": "Жук / Lapis",
+      "role": "Кандидат транспорта и обнаружения",
+      "state": "ROLE_RECORDED_NOT_LIVE",
+      "url": "https://github.com/Hawkar-usls/janus-lapis"
+    }
+  ],
+  "verified_external_peers": [],
+  "candidates": [
+    {
+      "id": "candidate-1",
+      "name": "Aeon",
+      "role": "Асинхронное планирование",
+      "state": "NOT_CONNECTED"
+    },
+    {
+      "id": "candidate-2",
+      "name": "GitAgent",
+      "role": "Версионированные агенты",
+      "state": "NOT_CONNECTED"
+    },
+    {
+      "id": "candidate-3",
+      "name": "GitHub gh-aw",
+      "role": "Контролируемые workflow",
+      "state": "NOT_CONNECTED"
+    },
+    {
+      "id": "candidate-4",
+      "name": "NEXUS",
+      "role": "Новые способности",
+      "state": "NOT_CONNECTED"
+    },
+    {
+      "id": "candidate-5",
+      "name": "NexusForge",
+      "role": "Карта органов",
+      "state": "NOT_CONNECTED"
+    },
+    {
+      "id": "candidate-6",
+      "name": "Paperclip",
+      "role": "Бюджеты и роли",
+      "state": "NOT_CONNECTED"
+    },
+    {
+      "id": "candidate-7",
+      "name": "Multi-Repo Agent",
+      "role": "Маршрутизация",
+      "state": "NOT_CONNECTED"
+    },
+    {
+      "id": "candidate-8",
+      "name": "Darwin Gödel Machine",
+      "role": "Оценка изменений",
+      "state": "NOT_CONNECTED"
+    },
+    {
+      "id": "candidate-9",
+      "name": "ShinkaEvolve",
+      "role": "Оптимизация",
+      "state": "NOT_CONNECTED"
+    },
+    {
+      "id": "candidate-10",
+      "name": "EvoAgentX",
+      "role": "Оценка workflow",
+      "state": "NOT_CONNECTED"
+    },
+    {
+      "id": "candidate-11",
+      "name": "Agent0",
+      "role": "Учебные задачи",
+      "state": "NOT_CONNECTED"
+    },
+    {
+      "id": "candidate-12",
+      "name": "Microsoft Agensh",
+      "role": "Коллективная работа",
+      "state": "NOT_CONNECTED"
+    },
+    {
+      "id": "candidate-13",
+      "name": "EvoMap Evolver",
+      "role": "Навыки и происхождение",
+      "state": "NOT_CONNECTED"
+    }
+  ]
+}
